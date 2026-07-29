@@ -9,6 +9,36 @@ class Education(BaseModel):
     duration: str | None = None
 
 
+class Project(BaseModel):
+    title:str|None=None
+    subtitles:str|None=None
+    duration:str|None=None
+
+    tech_stack:List[str]=Field(default_factory=list)
+    description:List[str]=Field(default_factory=list)
+    links:List[str]=Field(default_factory=list)
+
+
+class Experience(BaseModel):
+    company:str|None=None
+    role:str|None=None
+    location:str|None=None
+    duration:str|None=None
+
+    responsibilities:List[str]=Field(default_factory=list)
+    tech_stack:List[str]=Field(default_factory=list)
+
+
+class Certification(BaseModel):
+    title:str|None=None
+    issuer:str|None=None
+    date:str|None=None
+
+    credential_id:str|None=None
+    description:List[str]=Field(default_factory=list)
+    links:List[str]=Field(default_factory=list)
+
+
 class ParsedResume(BaseModel):
     name: str | None = None
     email: str | None = None
@@ -23,9 +53,9 @@ class ParsedResume(BaseModel):
 
     education: List[Education] = Field(default_factory=list)
 
-    experience: List[str] = Field(default_factory=list)
-    projects: List[str] = Field(default_factory=list)
-    certifications: List[str] = Field(default_factory=list)
+    experience: List[Experience] = Field(default_factory=list)
+    projects: List[Project] = Field(default_factory=list)
+    certifications: List[Certification] = Field(default_factory=list)
 
 
 class ResumeResponse(BaseModel):

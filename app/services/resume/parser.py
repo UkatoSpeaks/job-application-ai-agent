@@ -4,6 +4,9 @@ from app.schemas.resume import ParsedResume
 from app.services.resume.section_parser import SectionParser
 from app.services.resume.skils_parser import SkillsParser
 from app.services.resume.education_parser import EducationParser
+from app.services.resume.project_parser import ProjectParser
+from app.services.resume.experience_parser import ExperienceParser
+from app.services.resume.certification_parser import CertificationParser
 
 
 class ResumeParser:
@@ -15,9 +18,9 @@ class ResumeParser:
         # ---------------------------------
         sections = SectionParser.parse(text)
 
-        # -----------------------------
+        # ---------------------------------
         # Contact Information
-        # -----------------------------
+        # ---------------------------------
         email = None
         phone = None
         github = None
@@ -67,9 +70,9 @@ class ResumeParser:
         if portfolio_match:
             portfolio = portfolio_match.group()
 
-        # -----------------------------
+        # ---------------------------------
         # Name
-        # -----------------------------
+        # ---------------------------------
         lines = [
             line.strip()
             for line in text.splitlines()
@@ -78,9 +81,9 @@ class ResumeParser:
 
         name = lines[0] if lines else None
 
-        # -----------------------------
-        # Sections
-        # -----------------------------
+        # ---------------------------------
+        # Parse Individual Sections
+        # ---------------------------------
         summary = sections.get("Summary", "")
 
         skills = SkillsParser.parse(
@@ -91,9 +94,21 @@ class ResumeParser:
             sections.get("Education", "")
         )
 
-        # -----------------------------
-        # Return Parsed Resume
-        # -----------------------------
+        experience = ExperienceParser.parse(
+            sections.get("Experience", "")
+        )
+
+        projects = ProjectParser.parse(
+            sections.get("Projects", "")
+        )
+
+        certifications = CertificationParser.parse(
+            sections.get("Certifications", "")
+        )
+
+        # ---------------------------------
+        # Return Structured Resume
+        # ---------------------------------
         return ParsedResume(
             name=name,
             email=email,
@@ -104,4 +119,7 @@ class ResumeParser:
             summary=summary,
             skills=skills,
             education=education,
+            experience=experience,
+            projects=projects,
+            certifications=certifications,
         )
