@@ -1,13 +1,13 @@
 import re
 
 from app.schemas.resume import ParsedResume
-from app.services.resume.section_parser import SectionParser
-from app.services.resume.skils_parser import SkillsParser
-from app.services.resume.education_parser import EducationParser
-from app.services.resume.project_parser import ProjectParser
-from app.services.resume.experience_parser import ExperienceParser
-from app.services.resume.certification_parser import CertificationParser
 
+from app.services.resume.parsers.section_parser import SectionParser
+from app.services.resume.parsers.skils_parser import SkillsParser
+from app.services.resume.parsers.education_parser import EducationParser
+from app.services.resume.parsers.project_parser import ProjectParser
+from app.services.resume.parsers.experience_parser import ExperienceParser
+from app.services.resume.parsers.certification_parser import CertificationParser
 
 class ResumeParser:
 
