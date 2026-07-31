@@ -1,20 +1,19 @@
 import re
-
 from app.schemas.resume import Project
 
 
 class ProjectParser:
-    TITLE_PATTERN = re.compile(
-        r"^(?!Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec).+?\s+–\s+.+$"
+    MONTHS = (
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     )
 
-    DATE_PATTERN = re.compile(
-        r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}\s+–\s+.+$"
-    )
+    TITLE_PATTERN = re.compile(r"^.+?\s+[–-]\s+.+$")
 
     @classmethod
     def parse(cls, text: str) -> list[Project]:
-        if not text:
+
+        if not text.strip():
             return []
 
         lines = [
@@ -28,17 +27,21 @@ class ProjectParser:
 
         for line in lines:
 
-            # -----------------------------
-            # Project Title
-            # Example:
-            # IndiaLand – Full-Stack Marketplace
-            # -----------------------------
-            if cls.TITLE_PATTERN.match(line):
+            # ---------------------------------------------------
+            # New Project
+            # ---------------------------------------------------
+            if cls.TITLE_PATTERN.match(line) and not any(
+                line.startswith(month) for month in cls.MONTHS
+            ):
 
                 if current:
                     projects.append(current)
 
-                title, subtitle = line.split("–", 1)
+                title, subtitle = re.split(
+                    r"\s+[–-]\s+",
+                    line,
+                    maxsplit=1
+                )
 
                 current = Project(
                     title=title.strip(),
@@ -50,45 +53,47 @@ class ProjectParser:
             if current is None:
                 continue
 
-            # -----------------------------
+            # ---------------------------------------------------
             # Duration
-            # Example:
-            # Jan 2026 – Present
-            # -----------------------------
-            if cls.DATE_PATTERN.match(line):
-                current.duration = line.strip()
+            # ---------------------------------------------------
+            if any(line.startswith(month) for month in cls.MONTHS):
+                current.duration = line
                 continue
 
-            # -----------------------------
-            # Tech Stack + Links
-            # Example:
-            # – Next.js, Firebase | Live | Code
-            # -----------------------------
-            if line.startswith("–") and "|" in line:
+            # ---------------------------------------------------
+            # Bullet
+            # ---------------------------------------------------
+            if re.match(r"^[•\-–—]", line):
 
-                cleaned = line.lstrip("–").strip()
+                bullet = re.sub(r"^[•\-–—]\s*", "", line)
 
-                parts = [part.strip() for part in cleaned.split("|")]
+                # Tech Stack
+                if "|" in bullet:
 
-                current.tech_stack = [
-                    tech.strip()
-                    for tech in parts[0].split(",")
-                    if tech.strip()
-                ]
+                    parts = [p.strip() for p in bullet.split("|")]
 
-                if len(parts) > 1:
-                    current.links = parts[1:]
+                    current.tech_stack = [
+                        tech.strip()
+                        for tech in parts[0].split(",")
+                        if tech.strip()
+                    ]
+
+                    current.links = [
+                        p
+                        for p in parts[1:]
+                        if p
+                    ]
+
+                else:
+                    current.description.append(bullet)
 
                 continue
 
-            # -----------------------------
-            # Description Bullet
-            # -----------------------------
-            if line.startswith("–"):
-
-                current.description.append(
-                    line.lstrip("–").strip()
-                )
+            # ---------------------------------------------------
+            # Wrapped description line
+            # ---------------------------------------------------
+            if current.description:
+                current.description[-1] += " " + line
 
         if current:
             projects.append(current)
