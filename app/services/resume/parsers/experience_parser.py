@@ -1,16 +1,24 @@
 import re
 
 from app.schemas.resume import Experience
+from app.services.resume.constants import TECH_STACK
 
 
 class ExperienceParser:
+
+    MONTHS = (
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    )
+
     DATE_PATTERN = re.compile(
-        r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}\s+–\s+.+$"
+        r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}\s+[–-]\s+.+$"
     )
 
     @classmethod
     def parse(cls, text: str) -> list[Experience]:
-        if not text:
+
+        if not text.strip():
             return []
 
         lines = [
@@ -21,57 +29,90 @@ class ExperienceParser:
 
         experiences = []
         current = None
-        state = 0
 
         for line in lines:
 
-            # Company
+            # ---------------------------------------------------
+            # New Experience
+            # ---------------------------------------------------
             if current is None:
+
                 current = Experience(company=line)
-                state = 1
+
                 continue
 
-            # Role
-            if state == 1:
-                current.role = line
-                state = 2
-                continue
-
-            # Location
-            if state == 2 and not cls.DATE_PATTERN.match(line):
-                current.location = line
-                state = 3
-                continue
-
+            # ---------------------------------------------------
             # Duration
+            # ---------------------------------------------------
             if cls.DATE_PATTERN.match(line):
+
                 current.duration = line
-                state = 4
+
                 continue
 
-            # Responsibilities / Tech Stack
-            if state >= 4:
+            # ---------------------------------------------------
+            # Bullet Point
+            # ---------------------------------------------------
+            if re.match(r"^[•\-–—]", line):
 
-                cleaned = line.lstrip("•-– ").strip()
+                bullet = re.sub(r"^[•\-–—]\s*", "", line)
 
-                if not cleaned:
-                    continue
+                current.responsibilities.append(bullet)
 
-                # Detect tech stack if the line looks like a comma-separated list
-                if (
-                    "," in cleaned
-                    and len(cleaned.split()) <= 12
-                    and cleaned.count(",") >= 2
-                ):
-                    current.tech_stack = [
-                        tech.strip()
-                        for tech in cleaned.split(",")
-                        if tech.strip()
-                    ]
-                else:
-                    current.responsibilities.append(cleaned)
+                continue
+
+            # ---------------------------------------------------
+            # Wrapped Bullet
+            # ---------------------------------------------------
+            if current.responsibilities:
+
+                current.responsibilities[-1] += " " + line
+
+                continue
+
+            # ---------------------------------------------------
+            # Role
+            # ---------------------------------------------------
+            if current.role is None:
+
+                current.role = line
+
+                continue
+
+            # ---------------------------------------------------
+            # Location
+            # ---------------------------------------------------
+            if current.location is None:
+
+                current.location = line
+
+                continue
+
+            # ---------------------------------------------------
+            # New Company
+            # ---------------------------------------------------
+            experiences.append(current)
+
+            current = Experience(company=line)
 
         if current:
             experiences.append(current)
+
+        # -------------------------------------------------------
+        # Detect Tech Stack
+        # -------------------------------------------------------
+        for exp in experiences:
+
+            found = set()
+
+            for bullet in exp.responsibilities:
+
+                for tech in TECH_STACK:
+
+                    if tech.lower() in bullet.lower():
+
+                        found.add(tech)
+
+            exp.tech_stack = sorted(found)
 
         return experiences
