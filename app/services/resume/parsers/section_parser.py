@@ -18,29 +18,33 @@ class SectionParser:
     }
 
     @classmethod
-    def parse(cls, text: str) -> dict[str, str]:
+    def parse(cls, text: str):
+
         sections = {}
+        current = "Header"
+        sections[current] = []
 
-        current_section = "Header"
-        sections[current_section] = []
+        for raw_line in text.splitlines():
 
-        for line in text.splitlines():
-
-            line = line.strip()
+            line = raw_line.strip()
 
             if not line:
                 continue
 
-            normalized = line.lower().rstrip(":")
+            normalized = re.sub(r"\s+", " ", line)
+            normalized = normalized.strip().lower().rstrip(":")
 
             if normalized in cls.SECTION_ALIASES:
-                current_section = cls.SECTION_ALIASES[normalized]
-                sections.setdefault(current_section, [])
+                current = cls.SECTION_ALIASES[normalized]
+
+                if current not in sections:
+                    sections[current] = []
+
                 continue
 
-            sections[current_section].append(line)
+            sections[current].append(line)
 
         return {
-            key: "\n".join(value)
-            for key, value in sections.items()
+            k: "\n".join(v)
+            for k, v in sections.items()
         }

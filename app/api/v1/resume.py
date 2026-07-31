@@ -2,9 +2,10 @@ from pathlib import Path
 import shutil
 
 from fastapi import APIRouter, UploadFile, File
+
+from app.services.resume.extractor import ResumeExtractor
 from app.services.resume.parser import ResumeParser
 from app.schemas.resume import ResumeResponse
-from app.services.resume.extractor import ResumeExtractor
 from app.utils.file_utils import validate_pdf
 
 router = APIRouter(prefix="/resume", tags=["Resume"])
@@ -29,6 +30,5 @@ async def upload_resume(file: UploadFile = File(...)):
     return ResumeResponse(
         filename=file.filename,
         extracted_text=extracted_text,
-        parsed_resume=parsed_resume
+        parsed_resume=parsed_resume,
     )
-

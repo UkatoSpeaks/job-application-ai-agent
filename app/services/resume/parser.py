@@ -1,121 +1,148 @@
-import re
+from pathlib import Path
 
 from app.schemas.resume import ParsedResume
 
+from app.services.resume.preprocess.text_cleaner import TextCleaner
+
+from app.services.resume.parsers.contact_parser import ContactParser
 from app.services.resume.parsers.section_parser import SectionParser
 from app.services.resume.parsers.skils_parser import SkillsParser
 from app.services.resume.parsers.education_parser import EducationParser
-from app.services.resume.parsers.project_parser import ProjectParser
 from app.services.resume.parsers.experience_parser import ExperienceParser
+from app.services.resume.parsers.project_parser import ProjectParser
 from app.services.resume.parsers.certification_parser import CertificationParser
+
+print(f">>> ResumeParser module loaded from: {Path(__file__).resolve()}")
+
 
 class ResumeParser:
 
     @staticmethod
     def parse(text: str) -> ParsedResume:
+
+        print("\n==============================")
+        print(">>> ResumeParser.parse() called <<<")
+        print("==============================\n")
+
         # ---------------------------------
-        # Parse Resume Sections
+        # Raw Text
+        # ---------------------------------
+        print("RAW TEXT (first 300 chars):")
+        print(text[:300])
+        print()
+
+        # ---------------------------------
+        # Clean Text
+        # ---------------------------------
+        text = TextCleaner.clean(text)
+
+        print("CLEANED TEXT (first 300 chars):")
+        print(text[:300])
+        print()
+
+        # ---------------------------------
+        # Parse Sections
         # ---------------------------------
         sections = SectionParser.parse(text)
 
-        # ---------------------------------
-        # Contact Information
-        # ---------------------------------
-        email = None
-        phone = None
-        github = None
-        linkedin = None
-        portfolio = None
+        print("========== PARSED SECTIONS ==========")
 
-        email_match = re.search(
-            r"[\w\.-]+@[\w\.-]+\.\w+",
-            text
-        )
+        for key, value in sections.items():
+            print(f"\n[{key}]")
+            print(value[:500])
+            print("-----------------------------------")
 
-        if email_match:
-            email = email_match.group()
-
-        phone_match = re.search(
-            r"(\+?\d[\d\s-]{8,}\d)",
-            text
-        )
-
-        if phone_match:
-            phone = phone_match.group()
-
-        github_match = re.search(
-            r"github\.com/\S+",
-            text,
-            re.IGNORECASE
-        )
-
-        if github_match:
-            github = github_match.group()
-
-        linkedin_match = re.search(
-            r"linkedin\.com/\S+",
-            text,
-            re.IGNORECASE
-        )
-
-        if linkedin_match:
-            linkedin = linkedin_match.group()
-
-        portfolio_match = re.search(
-            r"https?://\S+",
-            text,
-            re.IGNORECASE
-        )
-
-        if portfolio_match:
-            portfolio = portfolio_match.group()
+        print("====================================\n")
 
         # ---------------------------------
-        # Name
+        # Contact
         # ---------------------------------
-        lines = [
-            line.strip()
-            for line in text.splitlines()
-            if line.strip()
-        ]
+        contact = ContactParser.parse(text)
 
-        name = lines[0] if lines else None
+        print("CONTACT")
+        print(contact)
+        print()
 
         # ---------------------------------
-        # Parse Individual Sections
+        # Summary
         # ---------------------------------
         summary = sections.get("Summary", "")
 
+        print("SUMMARY")
+        print(summary)
+        print()
+
+        # ---------------------------------
+        # Skills
+        # ---------------------------------
         skills = SkillsParser.parse(
             sections.get("Technical Skills", "")
         )
 
+        print("SKILLS")
+        print(skills)
+        print()
+
+        # ---------------------------------
+        # Education
+        # ---------------------------------
         education = EducationParser.parse(
             sections.get("Education", "")
         )
 
+        print("EDUCATION")
+        print(education)
+        print()
+
+        # ---------------------------------
+        # Experience
+        # ---------------------------------
         experience = ExperienceParser.parse(
             sections.get("Experience", "")
         )
 
-        projects = ProjectParser.parse(
-            sections.get("Projects", "")
-        )
+        print("EXPERIENCE")
+        print(experience)
+        print()
 
+        # ---------------------------------
+        # Projects Section
+        # ---------------------------------
+        project_text = sections.get("Projects", "")
+
+        print("PROJECT SECTION")
+        print("-----------------------------------")
+        print(repr(project_text))
+        print("-----------------------------------\n")
+
+        projects = ProjectParser.parse(project_text)
+
+        print("PARSED PROJECTS")
+        print(projects)
+        print()
+
+        # ---------------------------------
+        # Certifications
+        # ---------------------------------
         certifications = CertificationParser.parse(
             sections.get("Certifications", "")
         )
 
-        # ---------------------------------
-        # Return Structured Resume
-        # ---------------------------------
+        print("CERTIFICATIONS")
+        print(certifications)
+        print()
+
+        print("========== FINAL ==========")
+        print(f"Projects Parsed: {len(projects)}")
+        print("===========================\n")
+
         return ParsedResume(
-            name=name,
-            email=email,
-            phone=phone,
-            github=github,
-            linkedin=linkedin,
-            portfolio=portfolio,
+            name=contact["name"],
+            email=contact["email"],
+            phone=contact["phone"],
+            github=contact["github"],
+            linkedin=contact["linkedin"],
+            portfolio=contact["portfolio"],
             summary=summary,
             skills=skills,
             education=education,

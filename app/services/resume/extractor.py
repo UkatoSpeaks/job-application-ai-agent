@@ -5,7 +5,6 @@ class ResumeExtractor:
 
     @staticmethod
     def extract_text(file_path: str) -> str:
-
         document = fitz.open(file_path)
 
         text = ""
@@ -16,4 +15,3 @@ class ResumeExtractor:
         document.close()
 
         return text
-        
