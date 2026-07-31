@@ -28,6 +28,8 @@ class Experience(BaseModel):
     responsibilities: List[str] = Field(default_factory=list)
     tech_stack: List[str] = Field(default_factory=list)
 
+    employment_type: str | None = None
+
 
 class Certification(BaseModel):
     title: str | None = None
