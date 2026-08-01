@@ -6,6 +6,7 @@ class ValidationIssue(BaseModel):
     field:str
     severity:Literal["error","warning","info"]
     message:str
+    security:str
 
 
 
