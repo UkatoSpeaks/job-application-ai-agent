@@ -4,7 +4,7 @@ import re
 class SectionParser:
 
     SECTION_ALIASES = {
-        "summary": [
+        "Summary": [
             "summary",
             "professional summary",
             "profile",
@@ -13,14 +13,14 @@ class SectionParser:
             "about me",
         ],
 
-        "education": [
+        "Education": [
             "education",
             "academic background",
             "academic qualifications",
             "education & training",
         ],
 
-        "skills": [
+        "Technical Skills": [
             "technical skills",
             "skills",
             "technical expertise",
@@ -29,7 +29,7 @@ class SectionParser:
             "tech stack",
         ],
 
-        "experience": [
+        "Experience": [
             "experience",
             "work experience",
             "professional experience",
@@ -38,7 +38,7 @@ class SectionParser:
             "internships",
         ],
 
-        "projects": [
+        "Projects": [
             "projects",
             "project",
             "personal projects",
@@ -46,7 +46,7 @@ class SectionParser:
             "academic projects",
         ],
 
-        "certifications": [
+        "Certifications": [
             "certifications",
             "certification",
             "licenses",
@@ -56,15 +56,11 @@ class SectionParser:
         ],
     }
 
-    # -----------------------------
-
     NORMALIZED_HEADINGS = {}
 
     for canonical, aliases in SECTION_ALIASES.items():
         for alias in aliases:
-            NORMALIZED_HEADINGS[alias] = canonical.title()
-
-    # -----------------------------
+            NORMALIZED_HEADINGS[alias] = canonical
 
     @classmethod
     def normalize_heading(cls, line: str) -> str:
@@ -72,17 +68,14 @@ class SectionParser:
         line = line.strip()
 
         line = re.sub(r"[-_=]{2,}", "", line)
-
         line = re.sub(r"\s+", " ", line)
 
         line = line.rstrip(":|-")
 
         return line.lower()
 
-    # -----------------------------
-
     @classmethod
-    def parse(cls, text: str):
+    def parse(cls, text: str) -> dict[str, str]:
 
         sections = {
             "Header": []
@@ -107,9 +100,9 @@ class SectionParser:
 
                 continue
 
-            sections.setdefault(current, []).append(line)
+            sections[current].append(line)
 
         return {
-            section: "\n".join(content).strip()
-            for section, content in sections.items()
+            key: "\n".join(value).strip()
+            for key, value in sections.items()
         }

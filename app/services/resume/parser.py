@@ -75,6 +75,11 @@ class ResumeParser:
         # ---------------------------------
         # Skills
         # ---------------------------------
+        print("SKILLS SECTION")
+        print("-----------------------------------")
+        print(repr(sections.get("Technical Skills", "")))
+        print("-----------------------------------\n")
+
         skills = SkillsParser.parse(
             sections.get("Technical Skills", "")
         )
@@ -106,7 +111,7 @@ class ResumeParser:
         print()
 
         # ---------------------------------
-        # Projects Section
+        # Projects
         # ---------------------------------
         project_text = sections.get("Projects", "")
 
