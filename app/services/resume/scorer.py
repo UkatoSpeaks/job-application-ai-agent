@@ -99,25 +99,94 @@ class ResumeScorer:
         return score
 
     @classmethod
-    def score_summary(cls, resume, validation):
+    def score_summary(
+        cls,
+        resume: ParsedResume,
+        validation: ValidationResult,
+    ) -> int:
+
+        if not resume.summary:
+            return 0
+
+        score = 0
+
+        words = len(resume.summary.split())
+
+        # Has a summary
+        score += 4
+
+        # Good length (30–80 words)
+        if 30 <= words <= 80:
+            score += 3
+
+        # Contains action/technical keywords
+        keywords = {
+            "developed",
+            "built",
+            "designed",
+            "implemented",
+            "engineer",
+            "developer",
+            "full-stack",
+            "backend",
+            "frontend",
+            "python",
+            "javascript",
+            "react",
+            "next.js",
+            "ai",
+            "langchain",
+        }
+
+        lower_summary = resume.summary.lower()
+
+        matches = sum(
+            1
+            for keyword in keywords
+            if keyword in lower_summary
+        )
+
+        if matches >= 3:
+            score += 3
+
+        return min(score, 10)
+
+    @classmethod
+    def score_skills(
+        cls,
+        resume: ParsedResume,
+        validation: ValidationResult,
+    ) -> int:
         return 0
 
     @classmethod
-    def score_skills(cls, resume, validation):
+    def score_education(
+        cls,
+        resume: ParsedResume,
+        validation: ValidationResult,
+    ) -> int:
         return 0
 
     @classmethod
-    def score_education(cls, resume, validation):
+    def score_experience(
+        cls,
+        resume: ParsedResume,
+        validation: ValidationResult,
+    ) -> int:
         return 0
 
     @classmethod
-    def score_experience(cls, resume, validation):
+    def score_projects(
+        cls,
+        resume: ParsedResume,
+        validation: ValidationResult,
+    ) -> int:
         return 0
 
     @classmethod
-    def score_projects(cls, resume, validation):
-        return 0
-
-    @classmethod
-    def score_certifications(cls, resume, validation):
+    def score_certifications(
+        cls,
+        resume: ParsedResume,
+        validation: ValidationResult,
+    ) -> int:
         return 0
