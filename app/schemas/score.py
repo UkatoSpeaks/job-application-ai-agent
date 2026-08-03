@@ -7,7 +7,7 @@ class ScoreBreakdown(BaseModel):
     education: int = 0
     experience: int = 0
     projects: int = 0
-    certifiaction: int = 0
+    certification: int = 0
 
 
 
