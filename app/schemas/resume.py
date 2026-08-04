@@ -1,5 +1,10 @@
 from typing import Dict, List
+
 from pydantic import BaseModel, Field
+
+from app.schemas.validation import ValidationResult
+from app.schemas.score import ResumeScore
+from app.schemas.analysis import ResumeAnalysis
 
 
 class Education(BaseModel):
@@ -11,7 +16,7 @@ class Education(BaseModel):
 
 class Project(BaseModel):
     title: str | None = None
-    subtitle: str | None = None      # Fixed: subtitle (singular)
+    subtitle: str | None = None
     duration: str | None = None
 
     tech_stack: List[str] = Field(default_factory=list)
@@ -62,4 +67,11 @@ class ParsedResume(BaseModel):
 class ResumeResponse(BaseModel):
     filename: str
     extracted_text: str
+
     parsed_resume: ParsedResume
+
+    validation: ValidationResult
+
+    score: ResumeScore
+
+    analysis: ResumeAnalysis

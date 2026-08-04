@@ -7,17 +7,29 @@ from app.services.resume.extractor import ResumeExtractor
 from app.services.resume.parser import ResumeParser
 from app.services.resume.validator import ResumeValidator
 from app.services.resume.scorer import ResumeScorer
+from app.services.resume.analyzer import ResumeAnalyzer
+
+from app.schemas.resume import ResumeResponse
 
 from app.utils.file_utils import validate_pdf
 
-router = APIRouter(prefix="/resume", tags=["Resume"])
+router = APIRouter(
+    prefix="/resume",
+    tags=["Resume"],
+)
 
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 
 
 @router.post("/upload")
-async def upload_resume(file: UploadFile = File(...)):
+async def upload_resume(
+    file: UploadFile = File(...),
+):
+
+    # ---------------------------------
+    # Validate Upload
+    # ---------------------------------
 
     validate_pdf(file)
 
@@ -26,16 +38,52 @@ async def upload_resume(file: UploadFile = File(...)):
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    extracted_text = ResumeExtractor.extract_text(str(file_path))
+    # ---------------------------------
+    # Extract Text
+    # ---------------------------------
 
-    parsed_resume = ResumeParser.parse(extracted_text)
+    extracted_text = ResumeExtractor.extract_text(
+        str(file_path)
+    )
 
-    validation = ResumeValidator.validate(parsed_resume)
+    # ---------------------------------
+    # Parse Resume
+    # ---------------------------------
+
+    parsed_resume = ResumeParser.parse(
+        extracted_text
+    )
+
+    # ---------------------------------
+    # Validate Resume
+    # ---------------------------------
+
+    validation = ResumeValidator.validate(
+        parsed_resume
+    )
+
+    # ---------------------------------
+    # Score Resume
+    # ---------------------------------
 
     score = ResumeScorer.score(
         parsed_resume,
         validation,
     )
+
+    # ---------------------------------
+    # Analyze Resume
+    # ---------------------------------
+
+    analysis = ResumeAnalyzer.analyze(
+        parsed_resume,
+        validation,
+        score,
+    )
+
+    # ---------------------------------
+    # Response
+    # ---------------------------------
 
     return {
         "filename": file.filename,
@@ -43,4 +91,5 @@ async def upload_resume(file: UploadFile = File(...)):
         "parsed_resume": parsed_resume,
         "validation": validation,
         "score": score,
+        "analysis": analysis,
     }
