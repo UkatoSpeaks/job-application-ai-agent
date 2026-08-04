@@ -10,7 +10,7 @@ from app.schemas.analysis import ResumeAnalysis
 class Education(BaseModel):
     institution: str | None = None
     location: str | None = None
-    degree: str | None = None
+    degree: str | None = None 
     duration: str | None = None
 
 
