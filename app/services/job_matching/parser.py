@@ -1,150 +1,164 @@
 import re
 
-from app.schemas.resume import ParsedResume
 from app.schemas.job_description import JobDescription
+from app.services.job_matching.keyword_extractor import KeywordExtractor
 
 
-class KeywordExtractor:
+class JobDescriptionParser:
 
-    STOPWORDS = {
-        "and",
-        "or",
-        "with",
-        "using",
-        "the",
-        "a",
-        "an",
-        "to",
-        "of",
-        "for",
-        "in",
-        "on",
-        "at",
-        "by",
-        "from",
-        "is",
-        "are",
-        "be",
-        "as",
-        "will",
-        "should",
-        "have",
-        "has",
-        "our",
-        "your",
-        "their",
-        "this",
-        "that",
-        "into",
-        "across",
-        "through",
-    }
+    RESPONSIBILITY_HEADERS = [
+        "responsibilities",
+        "job responsibilities",
+        "key responsibilities",
+        "what you'll do",
+        "what you will do",
+    ]
+
+    REQUIREMENT_HEADERS = [
+        "requirements",
+        "required qualifications",
+        "minimum qualifications",
+        "basic qualifications",
+        "qualifications",
+        "skills required",
+    ]
+
+    PREFERRED_HEADERS = [
+        "preferred qualifications",
+        "preferred skills",
+        "nice to have",
+        "good to have",
+    ]
 
     @classmethod
-    def extract_resume_keywords(
-        cls,
-        resume: ParsedResume,
-    ) -> set[str]:
+    def parse(cls, text: str) -> JobDescription:
 
-        keywords = set()
+        if not text.strip():
+            return JobDescription()
 
-        # -----------------------------
-        # Skills
-        # -----------------------------
-        for skill_list in resume.skills.values():
+        job = JobDescription()
 
-            for skill in skill_list:
-                keywords.add(skill.lower())
+        # ----------------------------------------
+        # Normalize text
+        # ----------------------------------------
 
-        # -----------------------------
-        # Experience Tech Stack
-        # -----------------------------
-        for exp in resume.experience:
+        text = text.replace("\r", "\n")
 
-            for tech in exp.tech_stack:
-                keywords.add(tech.lower())
+        # convert "- xxx" into new lines if pasted in one line
+        text = re.sub(r"\s+-\s+", "\n- ", text)
 
-        # -----------------------------
-        # Project Tech Stack
-        # -----------------------------
-        for project in resume.projects:
+        # split headings onto their own line
+        for heading in (
+            cls.RESPONSIBILITY_HEADERS
+            + cls.REQUIREMENT_HEADERS
+            + cls.PREFERRED_HEADERS
+        ):
+            pattern = re.compile(
+                rf"\s*{re.escape(heading)}\s*:",
+                re.IGNORECASE,
+            )
 
-            for tech in project.tech_stack:
-                keywords.add(tech.lower())
+            text = pattern.sub(
+                f"\n{heading.title()}:\n",
+                text,
+            )
 
-        # -----------------------------
+        lines = [
+            line.strip()
+            for line in text.splitlines()
+            if line.strip()
+        ]
+
+        # ----------------------------------------
+        # Title
+        # ----------------------------------------
+
+        if lines:
+            job.title = lines[0]
+
+        current = None
+
+        for line in lines:
+
+            lower = line.lower().rstrip(":")
+
+            # ------------------------------------
+            # Detect Section
+            # ------------------------------------
+
+            if lower in cls.RESPONSIBILITY_HEADERS:
+                current = "responsibilities"
+                continue
+
+            if lower in cls.REQUIREMENT_HEADERS:
+                current = "requirements"
+                continue
+
+            if lower in cls.PREFERRED_HEADERS:
+                current = "preferred"
+                continue
+
+            # ------------------------------------
+            # Bullet
+            # ------------------------------------
+
+            if line.startswith("-"):
+                bullet = line[1:].strip()
+
+                if current == "responsibilities":
+                    job.responsibilities.append(bullet)
+
+                elif current == "requirements":
+                    job.qualifications.append(bullet)
+
+                elif current == "preferred":
+                    job.preferred_skills.append(bullet)
+
+                continue
+
+            # wrapped bullet
+            if current == "responsibilities" and job.responsibilities:
+                job.responsibilities[-1] += " " + line
+
+            elif current == "requirements" and job.qualifications:
+                job.qualifications[-1] += " " + line
+
+            elif current == "preferred" and job.preferred_skills:
+                job.preferred_skills[-1] += " " + line
+
+        # ----------------------------------------
         # Summary
-        # -----------------------------
-        if resume.summary:
+        # ----------------------------------------
 
-            keywords.update(
-                cls.extract_text_keywords(
-                    resume.summary
-                )
-            )
+        summary = []
 
-        return keywords
+        for line in lines[1:]:
 
-    @classmethod
-    def extract_job_keywords(
-        cls,
-        job: JobDescription,
-    ) -> set[str]:
+            lower = line.lower().rstrip(":")
 
-        keywords = set()
+            if (
+                lower in cls.RESPONSIBILITY_HEADERS
+                or lower in cls.REQUIREMENT_HEADERS
+                or lower in cls.PREFERRED_HEADERS
+            ):
+                break
 
-        # -----------------------------
-        # Required Skills
-        # -----------------------------
-        for skill in job.required_skills:
-            keywords.add(skill.lower())
+            summary.append(line)
 
-        # -----------------------------
-        # Preferred Skills
-        # -----------------------------
-        for skill in job.preferred_skills:
-            keywords.add(skill.lower())
+        job.summary = "\n".join(summary)
 
-        # -----------------------------
-        # Responsibilities
-        # -----------------------------
-        for responsibility in job.responsibilities:
+        # ----------------------------------------
+        # Extract Required Skills
+        # ----------------------------------------
 
-            keywords.update(
-                cls.extract_text_keywords(
-                    responsibility
-                )
-            )
-
-        # -----------------------------
-        # Qualifications
-        # -----------------------------
-        for qualification in job.qualifications:
-
-            keywords.update(
-                cls.extract_text_keywords(
-                    qualification
-                )
-            )
-
-        return keywords
-
-    @classmethod
-    def extract_text_keywords(
-        cls,
-        text: str,
-    ) -> set[str]:
-
-        words = re.findall(
-            r"[A-Za-z0-9.+#-]+",
-            text.lower(),
+        blob = "\n".join(
+            job.qualifications
+            + job.responsibilities
+            + job.preferred_skills
         )
 
-        return {
-            word
-            for word in words
-            if (
-                len(word) > 2
-                and word not in cls.STOPWORDS
-            )
-        }
+        job.required_skills = sorted(
+            KeywordExtractor.extract_text_keywords(blob)
+        )
+
+        return job
