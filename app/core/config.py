@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
     MISTRAL_API_KEY: str = ""
+    MODEL_NAME: str = "mistral-small-latest"
 
     LOG_LEVEL: str
 

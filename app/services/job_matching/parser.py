@@ -20,7 +20,6 @@ class JobDescriptionParser:
         "minimum qualifications",
         "basic qualifications",
         "qualifications",
-        "skills required",
     ]
 
     PREFERRED_HEADERS = [
@@ -38,40 +37,38 @@ class JobDescriptionParser:
 
         job = JobDescription()
 
-        # ----------------------------------------
-        # Normalize text
-        # ----------------------------------------
+        # --------------------------------
+        # Normalize newlines
+        # --------------------------------
 
         text = text.replace("\r", "\n")
 
-        # convert "- xxx" into new lines if pasted in one line
-        text = re.sub(r"\s+-\s+", "\n- ", text)
-
-        # split headings onto their own line
-        for heading in (
+        # Put headings on their own line
+        headings = (
             cls.RESPONSIBILITY_HEADERS
             + cls.REQUIREMENT_HEADERS
             + cls.PREFERRED_HEADERS
-        ):
-            pattern = re.compile(
-                rf"\s*{re.escape(heading)}\s*:",
-                re.IGNORECASE,
-            )
+        )
 
-            text = pattern.sub(
+        for heading in headings:
+            text = re.sub(
+                rf"(?i)\s*{re.escape(heading)}\s*:",
                 f"\n{heading.title()}:\n",
                 text,
             )
+
+        # Every bullet gets its own line
+        text = re.sub(
+            r"\s*-\s*",
+            "\n- ",
+            text,
+        )
 
         lines = [
             line.strip()
             for line in text.splitlines()
             if line.strip()
         ]
-
-        # ----------------------------------------
-        # Title
-        # ----------------------------------------
 
         if lines:
             job.title = lines[0]
@@ -81,10 +78,6 @@ class JobDescriptionParser:
         for line in lines:
 
             lower = line.lower().rstrip(":")
-
-            # ------------------------------------
-            # Detect Section
-            # ------------------------------------
 
             if lower in cls.RESPONSIBILITY_HEADERS:
                 current = "responsibilities"
@@ -98,11 +91,8 @@ class JobDescriptionParser:
                 current = "preferred"
                 continue
 
-            # ------------------------------------
-            # Bullet
-            # ------------------------------------
-
             if line.startswith("-"):
+
                 bullet = line[1:].strip()
 
                 if current == "responsibilities":
@@ -116,7 +106,6 @@ class JobDescriptionParser:
 
                 continue
 
-            # wrapped bullet
             if current == "responsibilities" and job.responsibilities:
                 job.responsibilities[-1] += " " + line
 
@@ -126,35 +115,12 @@ class JobDescriptionParser:
             elif current == "preferred" and job.preferred_skills:
                 job.preferred_skills[-1] += " " + line
 
-        # ----------------------------------------
-        # Summary
-        # ----------------------------------------
-
-        summary = []
-
-        for line in lines[1:]:
-
-            lower = line.lower().rstrip(":")
-
-            if (
-                lower in cls.RESPONSIBILITY_HEADERS
-                or lower in cls.REQUIREMENT_HEADERS
-                or lower in cls.PREFERRED_HEADERS
-            ):
-                break
-
-            summary.append(line)
-
-        job.summary = "\n".join(summary)
-
-        # ----------------------------------------
-        # Extract Required Skills
-        # ----------------------------------------
+        job.summary = ""
 
         blob = "\n".join(
             job.qualifications
-            + job.responsibilities
             + job.preferred_skills
+            + job.responsibilities
         )
 
         job.required_skills = sorted(
