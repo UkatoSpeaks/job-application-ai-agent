@@ -1,5 +1,6 @@
 from pathlib import Path
 import shutil
+import traceback
 
 from fastapi import (
     APIRouter,
@@ -16,9 +17,15 @@ from app.services.resume.validator import ResumeValidator
 from app.services.resume.scorer import ResumeScorer
 from app.services.resume.analyzer import ResumeAnalyzer
 
-from app.services.job_matching.parser import JobDescriptionParser
-from app.services.job_matching.matcher import ResumeJobMatcher
-from app.services.job_matching.similarity import SimilarityCalculator
+from app.services.job_matching.llm_parser import (
+    JobDescriptionLLMParser,
+)
+from app.services.job_matching.matcher import (
+    ResumeJobMatcher,
+)
+from app.services.job_matching.similarity import (
+    SimilarityCalculator,
+)
 
 from app.utils.file_utils import validate_pdf
 
@@ -33,7 +40,7 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 
 
 # ==========================================================
-# Resume Upload & Analysis
+# Resume Upload
 # ==========================================================
 
 @router.post(
@@ -94,6 +101,10 @@ async def match_resume(
     job_description: str = Form(...),
 ):
 
+    print("\n========================================")
+    print("MATCH ENDPOINT CALLED")
+    print("========================================")
+
     validate_pdf(file)
 
     file_path = UPLOAD_DIR / file.filename
@@ -102,28 +113,49 @@ async def match_resume(
         shutil.copyfileobj(file.file, buffer)
 
     # ---------------------------------
-    # Parse Resume
+    # Resume
     # ---------------------------------
+
+    print("\nExtracting Resume...")
 
     extracted_text = ResumeExtractor.extract_text(
         str(file_path)
     )
+
+    print("Parsing Resume...")
 
     parsed_resume = ResumeParser.parse(
         extracted_text
     )
 
     # ---------------------------------
-    # Parse Job Description
+    # Job Description
     # ---------------------------------
 
-    job = JobDescriptionParser.parse(
-        job_description
-    )
+    print("\nCalling LLM Parser...")
+
+    try:
+
+        job = JobDescriptionLLMParser.parse(
+            job_description
+        )
+
+        print("\n========== PARSED JOB ==========")
+        print(job)
+        print("================================")
+
+    except Exception:
+
+        print("\n========== LLM EXCEPTION ==========")
+        traceback.print_exc()
+        print("===================================\n")
+        raise
 
     # ---------------------------------
-    # Match Resume
+    # Match
     # ---------------------------------
+
+    print("\nCalculating Match...")
 
     match = ResumeJobMatcher.match(
         parsed_resume,
@@ -135,9 +167,7 @@ async def match_resume(
         job,
     )
 
-    # ---------------------------------
-    # Response
-    # ---------------------------------
+    print("\nFinished Matching.")
 
     return {
         "resume": parsed_resume,
