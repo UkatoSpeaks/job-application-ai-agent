@@ -15,35 +15,23 @@ class SimilarityCalculator:
         job: JobDescription,
     ) -> float:
 
-        resume_keywords = (
-            KeywordExtractor.extract_resume_keywords(
-                resume
-            )
+        resume_keywords = KeywordExtractor.extract_resume_keywords(
+            resume
         )
 
-        job_keywords = (
-            KeywordExtractor.extract_job_keywords(
-                job
-            )
+        job_keywords = KeywordExtractor.extract_job_keywords(
+            job
         )
 
-        if not resume_keywords or not job_keywords:
+        if not job_keywords:
             return 0.0
 
-        intersection = (
-            resume_keywords.intersection(
-                job_keywords
-            )
-        )
-
-        union = (
-            resume_keywords.union(
-                job_keywords
-            )
+        matched = resume_keywords.intersection(
+            job_keywords
         )
 
         similarity = (
-            len(intersection) / len(union)
+            len(matched) / len(job_keywords)
         )
 
         return round(similarity, 2)
@@ -55,7 +43,7 @@ class SimilarityCalculator:
         job: JobDescription,
     ) -> int:
 
-        return int(
+        return round(
             cls.calculate(
                 resume,
                 job,
