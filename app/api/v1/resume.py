@@ -28,6 +28,11 @@ from app.services.job_matching.matcher import (
 from app.services.job_matching.similarity import (
     SimilarityCalculator,
 )
+from app.services.cover_letter.generator import (
+    CoverLetterGenerator,
+)
+
+
 
 from app.utils.file_utils import validate_pdf
 
@@ -207,3 +212,62 @@ async def tailor_resume(
         parsed_resume,
         job_description,
     )
+
+
+# ==========================================================
+# AI Cover Letter Generator
+# ==========================================================
+
+@router.post("/cover-letter")
+async def generate_cover_letter(
+    file: UploadFile = File(...),
+    job_description: str = Form(...),
+    tone: str = Form("professional"),
+):
+
+    print("\n========================================")
+    print("COVER LETTER ENDPOINT CALLED")
+    print("========================================")
+
+    print(f"Tone: {tone}")
+
+    validate_pdf(file)
+
+    file_path = UPLOAD_DIR / file.filename
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    # ---------------------------------
+    # Parse Resume
+    # ---------------------------------
+
+    print("\nExtracting Resume...")
+
+    extracted_text = ResumeExtractor.extract_text(
+        str(file_path)
+    )
+
+    print("Parsing Resume...")
+
+    parsed_resume = ResumeParser.parse(
+        extracted_text
+    )
+
+    # ---------------------------------
+    # Generate Cover Letter
+    # ---------------------------------
+
+    print("\nGenerating Cover Letter...")
+
+    cover_letter = CoverLetterGenerator.generate(
+        resume=parsed_resume,
+        job_description=job_description,
+        tone=tone,
+    )
+
+    print("\n========== SUCCESS ==========")
+    print("Cover Letter Generated")
+    print("=============================\n")
+
+    return cover_letter
