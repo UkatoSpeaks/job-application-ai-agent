@@ -19,22 +19,59 @@ class KeywordExtractor:
 
         keywords = set()
 
-        # Resume skills
+        # ----------------------------
+        # Resume Skills
+        # ----------------------------
         for skills in resume.skills.values():
             for skill in skills:
                 keywords.add(skill.lower())
 
-        # Experience tech stack
+        # ----------------------------
+        # Experience
+        # ----------------------------
         for exp in resume.experience:
+
             for tech in exp.tech_stack:
                 keywords.add(tech.lower())
 
-        # Project tech stack
+            for line in exp.responsibilities:
+                keywords.update(
+                    cls.extract_text_keywords(line)
+                )
+
+        # ----------------------------
+        # Projects
+        # ----------------------------
         for project in resume.projects:
+
             for tech in project.tech_stack:
                 keywords.add(tech.lower())
 
+            for line in project.description:
+                keywords.update(
+                    cls.extract_text_keywords(line)
+                )
+
+        # ----------------------------
+        # Certifications
+        # ----------------------------
+        for cert in resume.certifications:
+
+            if cert.title:
+                keywords.update(
+                    cls.extract_text_keywords(
+                        cert.title
+                    )
+                )
+
+            for line in cert.description:
+                keywords.update(
+                    cls.extract_text_keywords(line)
+                )
+
+        # ----------------------------
         # Summary
+        # ----------------------------
         if resume.summary:
             keywords.update(
                 cls.extract_text_keywords(
@@ -69,7 +106,6 @@ class KeywordExtractor:
         found = set()
 
         for keyword in TECH_KEYWORDS:
-
             if keyword in normalized:
                 found.add(keyword)
 

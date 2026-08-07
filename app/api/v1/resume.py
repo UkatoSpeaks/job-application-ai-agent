@@ -16,6 +16,8 @@ from app.services.resume.parser import ResumeParser
 from app.services.resume.validator import ResumeValidator
 from app.services.resume.scorer import ResumeScorer
 from app.services.resume.analyzer import ResumeAnalyzer
+from app.schemas.tailor import ResumeTailorResponse
+from app.services.resume_tailor.tailor import ResumeTailor
 
 from app.services.job_matching.llm_parser import (
     JobDescriptionLLMParser,
@@ -175,3 +177,33 @@ async def match_resume(
         "match": match,
         "similarity": similarity,
     }
+
+
+@router.post(
+    "/tailor",
+    response_model=ResumeTailorResponse,
+)
+async def tailor_resume(
+    file: UploadFile = File(...),
+    job_description: str = Form(...),
+):
+
+    validate_pdf(file)
+
+    file_path = UPLOAD_DIR / file.filename
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    extracted_text = ResumeExtractor.extract_text(
+        str(file_path)
+    )
+
+    parsed_resume = ResumeParser.parse(
+        extracted_text
+    )
+
+    return ResumeTailor.tailor(
+        parsed_resume,
+        job_description,
+    )

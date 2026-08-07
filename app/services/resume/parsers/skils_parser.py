@@ -4,12 +4,16 @@ import re
 class SkillsParser:
 
     @staticmethod
-    def parse(skills_text: str) -> dict[str, list[str]]:
+    def parse(
+        skills_text: str,
+    ) -> dict[str, list[str]]:
 
         skills = {}
 
         if not skills_text.strip():
             return skills
+
+        current_category = None
 
         for line in skills_text.splitlines():
 
@@ -18,32 +22,71 @@ class SkillsParser:
             if not line:
                 continue
 
-            # Remove bullet if present
-            line = re.sub(r"^[•\-–—]\s*", "", line)
+            # Remove bullets
+            line = re.sub(
+                r"^[•●▪◦*-]\s*",
+                "",
+                line,
+            )
 
-            # Must contain a category
-            if ":" not in line:
-                continue
+            # -------------------------
+            # Category : values
+            # -------------------------
 
-            category, values = line.split(":", 1)
+            if ":" in line:
 
-            category = category.strip()
+                category, values = line.split(
+                    ":",
+                    1,
+                )
 
-            values = values.strip()
+                current_category = category.strip()
 
-            if not values:
-                continue
+                parsed = re.split(
+                    r",|\||•|;",
+                    values,
+                )
 
-            parsed = []
+                parsed = [
+                    skill.strip()
+                    for skill in parsed
+                    if skill.strip()
+                ]
 
-            for skill in values.split(","):
+                skills[current_category] = parsed
 
-                skill = skill.strip()
+            # -------------------------
+            # Category
+            # -------------------------
 
-                if skill:
-                    parsed.append(skill)
+            elif (
+                current_category is None
+                and len(line.split()) <= 3
+            ):
 
-            if parsed:
-                skills[category] = parsed
+                current_category = line
+
+                skills[current_category] = []
+
+            # -------------------------
+            # Values
+            # -------------------------
+
+            elif current_category:
+
+                parsed = re.split(
+                    r",|\||•|;",
+                    line,
+                )
+
+                parsed = [
+                    skill.strip()
+                    for skill in parsed
+                    if skill.strip()
+                ]
+
+                skills[current_category].extend(
+                    parsed
+                )
 
         return skills
