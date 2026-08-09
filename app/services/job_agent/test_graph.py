@@ -15,21 +15,36 @@ def main():
     )
 
     job_description = """
-    Software Engineer Intern
+Senior Java Backend Engineer
 
-    We are looking for a Software Engineer Intern with experience in
-    Python, FastAPI, React, Next.js, Node.js, PostgreSQL, MongoDB,
-    Docker, Git, LangChain, LangGraph, RAG, and AI applications.
+We are looking for an experienced backend engineer with strong
+production experience in Java and Spring Boot.
 
-    Responsibilities:
-    - Build REST APIs using FastAPI and Python.
-    - Develop frontend applications using React and Next.js.
-    - Build backend services using Node.js.
-    - Work with PostgreSQL and MongoDB.
-    - Build RAG pipelines.
-    - Work with LangChain and LangGraph.
-    - Write clean and maintainable code.
-    """
+Requirements:
+- Java
+- Spring Boot
+- Hibernate
+- Kafka
+- Redis
+- AWS
+- Kubernetes
+- Microservices
+- Terraform
+- Jenkins
+- CI/CD
+- Elasticsearch
+- System Design
+- Distributed Systems
+
+Responsibilities:
+- Design distributed backend services.
+- Build high-throughput microservices.
+- Work with Kafka and Elasticsearch.
+- Deploy services on AWS.
+- Design scalable distributed systems.
+- Implement CI/CD pipelines.
+- Monitor production systems.
+"""
 
     initial_state = {
         "resume_text": resume_text,

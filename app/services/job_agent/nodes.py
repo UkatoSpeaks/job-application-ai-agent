@@ -8,6 +8,10 @@ from app.services.resume_tailor.tailor import ResumeTailor
 from app.services.cover_letter.generator import CoverLetterGenerator
 
 
+# ==========================================================
+# Parse Resume
+# ==========================================================
+
 def parse_resume_node(state: JobAgentState) -> dict:
 
     print("\n========== NODE: PARSE RESUME ==========")
@@ -22,6 +26,10 @@ def parse_resume_node(state: JobAgentState) -> dict:
         "resume": resume,
     }
 
+
+# ==========================================================
+# Parse Job Description
+# ==========================================================
 
 def parse_job_node(state: JobAgentState) -> dict:
 
@@ -38,6 +46,10 @@ def parse_job_node(state: JobAgentState) -> dict:
     }
 
 
+# ==========================================================
+# Match Resume With Job
+# ==========================================================
+
 def match_resume_node(state: JobAgentState) -> dict:
 
     print("\n========== NODE: MATCH RESUME ==========")
@@ -52,14 +64,27 @@ def match_resume_node(state: JobAgentState) -> dict:
         state["job_description"],
     )
 
-    print(f"Match Score: {match.match_score}")
+    match_score = match.match_score
+
+    print(f"Match Score: {match_score}")
     print(f"Similarity: {similarity}")
+
+    print("\nMatched Skills:")
+    print(match.matched_skills)
+
+    print("\nMissing Skills:")
+    print(match.missing_skills)
 
     return {
         "match": match,
+        "match_score": match_score,
         "similarity": similarity,
     }
 
+
+# ==========================================================
+# Tailor Resume
+# ==========================================================
 
 def tailor_resume_node(state: JobAgentState) -> dict:
 
@@ -76,6 +101,10 @@ def tailor_resume_node(state: JobAgentState) -> dict:
         "tailored_resume": tailored_resume,
     }
 
+
+# ==========================================================
+# Generate Cover Letter
+# ==========================================================
 
 def generate_cover_letter_node(state: JobAgentState) -> dict:
 
