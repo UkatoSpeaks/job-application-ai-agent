@@ -12,6 +12,8 @@ from app.services.job_agent.nodes import (
 
 from app.services.job_agent.edges import (
     route_after_match,
+    route_after_tailoring,
+    route_after_cover_letter,
 )
 
 
@@ -53,7 +55,7 @@ builder.add_node(
 
 
 # ==========================================================
-# Edges
+# START
 # ==========================================================
 
 builder.add_edge(
@@ -61,10 +63,20 @@ builder.add_edge(
     "parse_resume",
 )
 
+
+# ==========================================================
+# Resume Parsing
+# ==========================================================
+
 builder.add_edge(
     "parse_resume",
     "parse_job",
 )
+
+
+# ==========================================================
+# Job Parsing
+# ==========================================================
 
 builder.add_edge(
     "parse_job",
@@ -73,7 +85,7 @@ builder.add_edge(
 
 
 # ==========================================================
-# Conditional Routing
+# Match Routing
 # ==========================================================
 
 builder.add_conditional_edges(
@@ -87,22 +99,30 @@ builder.add_conditional_edges(
 
 
 # ==========================================================
-# Tailor → Cover Letter
+# Resume Tailoring Validation / Retry
 # ==========================================================
 
-builder.add_edge(
+builder.add_conditional_edges(
     "tailor_resume",
-    "generate_cover_letter",
+    route_after_tailoring,
+    {
+        "retry_tailor_resume": "tailor_resume",
+        "generate_cover_letter": "generate_cover_letter",
+    },
 )
 
 
 # ==========================================================
-# End
+# Cover Letter Validation / Retry
 # ==========================================================
 
-builder.add_edge(
+builder.add_conditional_edges(
     "generate_cover_letter",
-    END,
+    route_after_cover_letter,
+    {
+        "retry_cover_letter": "generate_cover_letter",
+        "end": END,
+    },
 )
 
 
@@ -111,3 +131,16 @@ builder.add_edge(
 # ==========================================================
 
 job_agent_graph = builder.compile()
+
+
+print(
+    "\n========================================"
+)
+
+print(
+    "JOB AGENT GRAPH COMPILED SUCCESSFULLY"
+)
+
+print(
+    "========================================\n"
+)

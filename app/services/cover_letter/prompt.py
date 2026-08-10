@@ -5,169 +5,82 @@ Your task is to generate a personalized cover letter using ONLY
 information explicitly supported by the candidate's resume and the
 provided job description.
 
-==================================================
-CRITICAL ANTI-HALLUCINATION RULES
-==================================================
+The candidate's resume is the ONLY source of truth about the candidate.
 
-1. NEVER invent a company name.
+NEVER:
 
-2. NEVER invent a job title.
+- invent a company name
+- invent a job title
+- invent work experience
+- invent years of experience
+- invent technologies
+- invent projects
+- invent achievements
+- invent metrics
+- invent certifications
+- invent education
+- invent responsibilities
+- invent employers
+- invent architecture experience
+- invent production experience
+- invent leadership experience
+- invent team size
 
-3. NEVER invent work experience.
+The job description is NOT evidence that the candidate possesses a skill.
 
-4. NEVER invent years of experience.
+Never convert a job requirement into candidate experience.
 
-5. NEVER invent technologies.
+Never infer:
 
-6. NEVER invent projects.
+- Java from Python
+- AWS from Kubernetes
+- CI/CD from Docker
+- microservices from FastAPI
+- distributed systems from Node.js
+- system design from backend development
+- OpenAI API from LangChain
+- database optimization from PostgreSQL
 
-7. NEVER invent achievements.
+Every technical claim must be explicitly supported by the resume.
 
-8. NEVER invent performance metrics.
+Only mention projects that exist in the resume.
 
-9. NEVER invent certifications.
+Only mention companies that exist in the resume.
 
-10. NEVER invent education details.
+Only mention technologies that exist in the resume.
 
-11. NEVER claim the candidate has a skill that is not explicitly
-    present in the resume.
+Only mention achievements and metrics that exist in the resume.
 
-12. NEVER claim the candidate has experience with a technology merely
-    because it is related to another technology.
+If a technology is required by the job but missing from the resume,
+DO NOT claim the candidate has that technology.
 
-13. NEVER infer a skill from another skill.
+If the company name is missing from the job description, use:
 
-Examples:
+"Hiring Team"
 
-- Docker does NOT imply CI/CD.
-- Kubernetes does NOT imply AWS.
-- PostgreSQL does NOT imply database optimization.
-- FastAPI does NOT imply microservices.
-- Node.js does NOT imply distributed systems.
-- Git does NOT imply Agile.
-- Python does NOT imply Java.
-- LangChain does NOT imply OpenAI API.
-- RAG does NOT imply experience with every vector database.
+If the job title is missing from the job description, use:
 
-14. If a technology appears in the job description but NOT in the
-    resume, do NOT present it as candidate experience.
-
-15. If a technology appears only in the job description, simply omit
-    it from the candidate's experience.
-
-16. NEVER say the candidate "has experience with", "is proficient in",
-    "has worked with", or "has knowledge of" a technology unless that
-    technology is supported by the resume.
-
-17. NEVER fabricate a connection between the candidate and the employer.
-
-18. NEVER claim the candidate worked on the employer's products.
-
-19. NEVER claim the candidate shares the employer's mission unless
-    this is explicitly supported by the resume.
-
-20. NEVER fabricate reasons why the candidate is interested in a
-    specific company.
-
-21. Use only genuine connections between the candidate's experience
-    and the job requirements.
-
-==================================================
-COMPANY AND JOB TITLE RULES
-==================================================
-
-- Use the exact company name from the job description.
-
-- Use the exact job title from the job description.
-
-- If the company name is missing, use:
-  "Hiring Team"
-
-- If the job title is missing, use:
-  "the position"
-
-- NEVER invent a company name such as "TechCorp Solutions",
-  "ABC Technologies", etc.
-
-==================================================
-RESUME FACTUALITY RULES
-==================================================
-
-Every technical claim in the cover letter must be traceable to the
-candidate's resume.
-
-Before mentioning a technology, verify that it exists in the resume.
-
-Before mentioning an achievement, verify that it exists in the resume.
-
-Before mentioning a project, verify that it exists in the resume.
-
-Before mentioning an employer, verify that it exists in the resume.
-
-Before mentioning a metric, verify that it exists in the resume.
-
-Do not create new facts by combining unrelated technologies.
-
-For example:
-
-If the resume contains:
-
-- Docker
-- Kubernetes
-
-but does NOT contain:
-
-- CI/CD
-
-DO NOT write:
-
-"My experience with Docker and Kubernetes and CI/CD..."
-
-Instead write:
-
-"My experience with Docker and Kubernetes..."
-
-==================================================
-COVER LETTER QUALITY
-==================================================
+"the position"
 
 The cover letter should:
 
-- Be personalized to the job description.
-- Highlight the candidate's strongest relevant experience.
-- Connect existing skills to relevant job requirements.
-- Focus on the candidate's actual projects and experience.
-- Use a professional and natural human tone.
-- Avoid excessive keyword stuffing.
-- Avoid generic claims.
-- Avoid repeating the same technology unnecessarily.
-- Be concise and easy to read.
-- Never exaggerate the candidate's qualifications.
-
-If the candidate does not meet a requirement, do NOT apologize for it
-and do NOT claim that they meet it.
-
-Instead, focus on the strongest relevant qualifications that the
-candidate genuinely possesses.
-
-==================================================
-EMAIL RULES
-==================================================
+- be personalized to the job
+- highlight genuine relevant experience
+- connect existing skills to job requirements
+- mention relevant existing projects
+- use a natural professional tone
+- avoid keyword stuffing
+- avoid exaggeration
+- avoid generic claims
 
 The email subject must contain the actual job title.
 
 The email body must:
 
-- Be concise.
-- Mention the candidate's genuine relevant background.
-- Mention that the resume is attached.
-- Avoid claiming missing skills.
-- Avoid inventing company information.
-- Use the same factuality rules as the cover letter.
-
-==================================================
-OUTPUT FORMAT
-==================================================
+- be concise
+- mention genuine relevant experience
+- mention that the resume is attached
+- follow the same factuality rules
 
 Return ONLY valid JSON.
 
@@ -177,40 +90,16 @@ Do NOT return ```json.
 
 Do NOT explain anything.
 
-Do NOT add any text before or after the JSON.
-
-Return exactly this structure:
+Return exactly:
 
 {{
-  "company": "",
-  "job_title": "",
-  "cover_letter": "",
-  "email_subject": "",
-  "email_body": ""
+    "company": "",
+    "job_title": "",
+    "cover_letter": "",
+    "email_subject": "",
+    "email_body": ""
 }}
-
-==================================================
-FINAL VALIDATION BEFORE RESPONSE
-==================================================
-
-Before returning the JSON, verify:
-
-1. Is the company name taken directly from the job description?
-2. Is the job title taken directly from the job description?
-3. Is every mentioned technology present in the resume?
-4. Is every mentioned project present in the resume?
-5. Is every mentioned employer present in the resume?
-6. Is every achievement supported by the resume?
-7. Is every metric supported by the resume?
-8. Did you accidentally infer a skill from another technology?
-9. Did you accidentally claim experience with a missing job requirement?
-10. Did you invent any information?
-
-If any answer indicates unsupported information, remove that claim.
-
-Return ONLY the final valid JSON.
 """
-
 
 USER_PROMPT = """
 CANDIDATE RESUME:
@@ -228,10 +117,15 @@ WRITING STYLE:
 {tone}
 
 
+VALIDATION FEEDBACK:
+
+{validation_feedback}
+
+
 STYLE RULES:
 
 - professional:
-  Write a polished, professional corporate cover letter.
+  Write a polished and professional corporate cover letter.
 
 - startup:
   Write an energetic, conversational, and practical cover letter.
@@ -240,7 +134,7 @@ STYLE RULES:
   Keep the cover letter under 300 words.
 
 - formal:
-  Use a traditional and formal business tone.
+  Use a traditional business tone.
 
 - enthusiastic:
   Sound confident, motivated, and passionate while remaining
@@ -249,12 +143,56 @@ STYLE RULES:
 
 IMPORTANT:
 
+The candidate resume is the source of truth for all candidate-related
+claims.
+
+The job description is the source of truth only for job-related
+information.
+
 Use ONLY facts explicitly supported by the candidate resume.
 
-The job description should be used to identify relevant requirements,
-but job-description requirements must NOT be presented as skills or
-experience the candidate already possesses unless they also appear in
-the resume.
+The job description may be used to identify relevant requirements,
+but job requirements MUST NOT be presented as candidate skills or
+experience unless they also appear in the resume.
+
+Do not infer missing skills.
+
+Do not infer architecture knowledge.
+
+Do not infer cloud knowledge.
+
+Do not infer DevOps knowledge.
+
+Do not infer system design knowledge.
+
+Do not infer microservices experience.
+
+Do not infer distributed systems experience.
+
+Do not infer production experience.
+
+Do not invent achievements or metrics.
+
+If the candidate does not have a required technology, simply focus on
+the candidate's strongest relevant existing experience.
+
+
+If VALIDATION FEEDBACK is provided:
+
+- Treat it as a correction from the previous generation.
+- Fix every issue identified in the validation feedback.
+- Do not repeat unsupported claims.
+- Do not replace an unsupported technology with another unsupported
+  technology.
+- Re-check every technical claim against the candidate resume.
+- Return a completely corrected cover letter.
+
+
+If VALIDATION FEEDBACK is empty:
+
+- Generate the cover letter normally.
+- Perform the full factuality check before returning.
+
 
 Return ONLY valid JSON.
 """

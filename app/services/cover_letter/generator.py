@@ -31,12 +31,17 @@ class CoverLetterGenerator:
         resume: ParsedResume,
         job_description: str,
         tone: str = "professional",
+        validation_feedback: str = "",
     ) -> CoverLetterResponse:
 
         print("\n========================================")
         print("GENERATING COVER LETTER")
         print("========================================")
         print(f"Tone: {tone}")
+
+        if validation_feedback:
+            print("\nPrevious validation feedback:")
+            print(validation_feedback)
 
         llm = ChatMistralAI(
             api_key=settings.MISTRAL_API_KEY,
@@ -48,6 +53,7 @@ class CoverLetterGenerator:
             resume=resume.model_dump_json(indent=2),
             job_description=job_description,
             tone=tone,
+            validation_feedback=validation_feedback,
         )
 
         try:
@@ -62,6 +68,10 @@ class CoverLetterGenerator:
 
             content = response.content.strip()
 
+            # ---------------------------------
+            # Remove markdown code fences
+            # ---------------------------------
+
             if content.startswith("```json"):
                 content = (
                     content.replace("```json", "")
@@ -72,15 +82,27 @@ class CoverLetterGenerator:
             elif content.startswith("```"):
                 content = (
                     content.replace("```", "")
-                    .replace("```", "")
                     .strip()
                 )
+
+            # ---------------------------------
+            # Parse JSON
+            # ---------------------------------
 
             data = json.loads(content)
 
             print("========== PARSED JSON ==========")
-            print(json.dumps(data, indent=2))
+            print(
+                json.dumps(
+                    data,
+                    indent=2,
+                )
+            )
             print("=================================\n")
+
+            # ---------------------------------
+            # Validate Pydantic schema
+            # ---------------------------------
 
             result = CoverLetterResponse.model_validate(
                 data
@@ -96,14 +118,27 @@ class CoverLetterGenerator:
 
             print("\n========== JSON ERROR ==========")
             print(e)
+            print("\nRaw content:")
             print(content)
+            print("===============================\n")
+
             raise
 
         except ValidationError as e:
 
             print("\n======= VALIDATION ERROR =======")
             print(e)
-            print(json.dumps(data, indent=2))
+
+            if "data" in locals():
+                print(
+                    json.dumps(
+                        data,
+                        indent=2,
+                    )
+                )
+
+            print("===============================\n")
+
             raise
 
         except Exception as e:
@@ -111,4 +146,6 @@ class CoverLetterGenerator:
             print("\n========== LLM ERROR ==========")
             print(type(e))
             print(e)
+            print("===============================\n")
+
             raise
