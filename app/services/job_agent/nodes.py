@@ -201,10 +201,18 @@ def match_resume_node(
         "\n========== NODE: MATCH RESUME =========="
     )
 
+    # ------------------------------------------
+    # Resume ↔ Job Match
+    # ------------------------------------------
+
     match = ResumeJobMatcher.match(
         state["resume"],
         state["job_description"],
     )
+
+    # ------------------------------------------
+    # Semantic Similarity
+    # ------------------------------------------
 
     similarity = (
         SimilarityCalculator.percentage(
@@ -214,6 +222,10 @@ def match_resume_node(
     )
 
     match_score = match.match_score
+
+    # ------------------------------------------
+    # Print Match Results
+    # ------------------------------------------
 
     print(
         f"Match Score: {match_score}"
@@ -228,6 +240,48 @@ def match_resume_node(
 
     print("\nMissing Skills:")
     print(match.missing_skills)
+
+    # ------------------------------------------
+    # Keyword Results
+    #
+    # Your current ResumeJobMatch schema does
+    # not appear to expose these fields.
+    #
+    # Therefore use hasattr() so the graph
+    # doesn't crash if they aren't present.
+    # ------------------------------------------
+
+    if hasattr(match, "matched_keywords"):
+
+        print("\nMatched Keywords:")
+        print(match.matched_keywords)
+
+    else:
+
+        print(
+            "\nMatched Keywords:"
+        )
+        print(
+            "Not available in ResumeJobMatch schema."
+        )
+
+    if hasattr(match, "missing_keywords"):
+
+        print("\nMissing Keywords:")
+        print(match.missing_keywords)
+
+    else:
+
+        print(
+            "\nMissing Keywords:"
+        )
+        print(
+            "Not available in ResumeJobMatch schema."
+        )
+
+    # ------------------------------------------
+    # Return State
+    # ------------------------------------------
 
     return {
         "match": match,
@@ -247,6 +301,10 @@ def tailor_resume_node(
     print(
         "\n========== NODE: TAILOR RESUME =========="
     )
+
+    # ------------------------------------------
+    # Retry count
+    # ------------------------------------------
 
     retry_count = state.get(
         "tailor_retry_count",
@@ -282,7 +340,7 @@ def tailor_resume_node(
     )
 
     print(
-        "Tailored resume validated successfully."
+        "Tailored resume validation completed."
     )
 
     # ------------------------------------------
@@ -291,17 +349,31 @@ def tailor_resume_node(
 
     validation_errors = []
 
-    original_skills = {
-        skill.lower().strip()
-        for skills in state["resume"].skills.values()
-        for skill in skills
-    }
+    # ------------------------------------------
+    # Resume skills
+    #
+    # Use GroundingValidator.get_resume_skills()
+    # so skills from:
+    #
+    # 1. Resume skills
+    # 2. Experience tech stack
+    # 3. Project tech stack
+    #
+    # are all recognized.
+    # ------------------------------------------
+
+    original_skills = (
+        GroundingValidator.get_resume_skills(
+            state["resume"]
+        )
+    )
 
     invalid_skills = [
         skill
         for skill in validated_resume.improved_skills
-        if skill.lower().strip()
-        not in original_skills
+        if GroundingValidator.normalize(
+            skill
+        ) not in original_skills
     ]
 
     if invalid_skills:
@@ -311,18 +383,23 @@ def tailor_resume_node(
             + ", ".join(invalid_skills)
         )
 
-    project_titles = {
-        project.title.lower().strip()
-        for project in state["resume"].projects
-        if project.title
-    }
+    # ------------------------------------------
+    # Project validation
+    # ------------------------------------------
+
+    project_titles = (
+        GroundingValidator.get_project_titles(
+            state["resume"]
+        )
+    )
 
     invalid_projects = [
         project.title
         for project
         in validated_resume.project_improvements
-        if project.title.lower().strip()
-        not in project_titles
+        if GroundingValidator.normalize(
+            project.title
+        ) not in project_titles
     ]
 
     if invalid_projects:
@@ -332,18 +409,23 @@ def tailor_resume_node(
             + ", ".join(invalid_projects)
         )
 
-    company_names = {
-        experience.company.lower().strip()
-        for experience in state["resume"].experience
-        if experience.company
-    }
+    # ------------------------------------------
+    # Company validation
+    # ------------------------------------------
+
+    company_names = (
+        GroundingValidator.get_companies(
+            state["resume"]
+        )
+    )
 
     invalid_companies = [
         experience.company
         for experience
         in validated_resume.experience_improvements
-        if experience.company.lower().strip()
-        not in company_names
+        if GroundingValidator.normalize(
+            experience.company
+        ) not in company_names
     ]
 
     if invalid_companies:
@@ -352,6 +434,10 @@ def tailor_resume_node(
             "Unsupported companies: "
             + ", ".join(invalid_companies)
         )
+
+    # ------------------------------------------
+    # Validation result
+    # ------------------------------------------
 
     validated = not validation_errors
 
@@ -366,6 +452,7 @@ def tailor_resume_node(
         )
 
         for error in validation_errors:
+
             print(
                 f"- {error}"
             )
@@ -383,12 +470,15 @@ def tailor_resume_node(
     next_retry_count = retry_count
 
     if not validated:
+
         next_retry_count += 1
 
     return {
         "tailored_resume": validated_resume,
 
-        "tailored_resume_validated": validated,
+        "tailored_resume_validated": (
+            validated
+        ),
 
         "tailor_retry_count": (
             next_retry_count
@@ -411,6 +501,10 @@ def generate_cover_letter_node(
     print(
         "\n========== NODE: GENERATE COVER LETTER =========="
     )
+
+    # ------------------------------------------
+    # Retry count
+    # ------------------------------------------
 
     retry_count = state.get(
         "cover_letter_retry_count",
@@ -450,6 +544,10 @@ def generate_cover_letter_node(
 
     validated = not validation_errors
 
+    # ------------------------------------------
+    # Print validation result
+    # ------------------------------------------
+
     print(
         f"Cover Letter Validated: {validated}"
     )
@@ -461,6 +559,7 @@ def generate_cover_letter_node(
         )
 
         for error in validation_errors:
+
             print(
                 f"- {error}"
             )
@@ -482,12 +581,15 @@ def generate_cover_letter_node(
     next_retry_count = retry_count
 
     if not validated:
+
         next_retry_count += 1
 
     return {
         "cover_letter": validated_cover_letter,
 
-        "cover_letter_validated": validated,
+        "cover_letter_validated": (
+            validated
+        ),
 
         "cover_letter_retry_count": (
             next_retry_count

@@ -4,7 +4,13 @@ from app.schemas.resume import ParsedResume
 from app.schemas.tailor import ResumeTailorResponse
 from app.schemas.cover_letter import CoverLetterResponse
 
-from app.services.job_matching.constants import TECH_KEYWORDS
+from app.services.job_matching.constants import (
+    TECH_KEYWORDS,
+)
+
+from app.services.job_matching.matcher import (
+    ResumeJobMatcher,
+)
 
 
 class GroundingValidator:
@@ -13,9 +19,17 @@ class GroundingValidator:
     # Normalization
     # ==========================================================
 
-    @staticmethod
-    def normalize(value: str) -> str:
-        return value.lower().strip()
+    @classmethod
+    def normalize(
+        cls,
+        value: str,
+    ) -> str:
+
+        value = value.lower().strip()
+
+        return ResumeJobMatcher.normalize_skill(
+            value
+        )
 
     # ==========================================================
     # Resume Skills
@@ -85,14 +99,20 @@ class GroundingValidator:
 
         for experience in resume.experience:
 
+            # --------------------------------------
             # Tech stack
+            # --------------------------------------
+
             for tech in experience.tech_stack:
 
                 technologies.add(
                     cls.normalize(tech)
                 )
 
+            # --------------------------------------
             # Responsibilities
+            # --------------------------------------
+
             responsibility_text = " ".join(
                 experience.responsibilities
             )
@@ -109,14 +129,20 @@ class GroundingValidator:
 
         for project in resume.projects:
 
+            # --------------------------------------
             # Tech stack
+            # --------------------------------------
+
             for tech in project.tech_stack:
 
                 technologies.add(
                     cls.normalize(tech)
                 )
 
+            # --------------------------------------
             # Project descriptions
+            # --------------------------------------
+
             description_text = " ".join(
                 project.description
             )
@@ -152,7 +178,8 @@ class GroundingValidator:
         )
 
         # ------------------------------------------
-        # Explicit technologies from experience
+        # Explicit technologies from
+        # experience / projects
         # ------------------------------------------
 
         evidence.update(
@@ -227,13 +254,31 @@ class GroundingValidator:
 
         for keyword in TECH_KEYWORDS:
 
-            keyword_normalized = cls.normalize(
-                keyword
+            # --------------------------------------
+            # Normalize keyword using the SAME
+            # aliases used by ResumeJobMatcher.
+            # --------------------------------------
+
+            keyword_normalized = (
+                cls.normalize(keyword)
             )
+
+            # --------------------------------------
+            # Skip empty values
+            # --------------------------------------
+
+            if not keyword_normalized:
+                continue
+
+            # --------------------------------------
+            # Match complete words / phrases
+            # --------------------------------------
 
             pattern = (
                 r"(?<!\w)"
-                + re.escape(keyword_normalized)
+                + re.escape(
+                    keyword_normalized
+                )
                 + r"(?!\w)"
             )
 
@@ -259,16 +304,22 @@ class GroundingValidator:
         tailored: ResumeTailorResponse,
     ) -> ResumeTailorResponse:
 
-        resume_skills = cls.get_resume_skills(
-            resume
+        resume_skills = (
+            cls.get_resume_skills(
+                resume
+            )
         )
 
-        project_titles = cls.get_project_titles(
-            resume
+        project_titles = (
+            cls.get_project_titles(
+                resume
+            )
         )
 
-        companies = cls.get_companies(
-            resume
+        companies = (
+            cls.get_companies(
+                resume
+            )
         )
 
         # ------------------------------------------
@@ -301,7 +352,8 @@ class GroundingValidator:
 
         project_improvements = [
             project
-            for project in tailored.project_improvements
+            for project
+            in tailored.project_improvements
             if cls.normalize(project.title)
             in project_titles
         ]
@@ -314,17 +366,36 @@ class GroundingValidator:
             experience
             for experience
             in tailored.experience_improvements
-            if cls.normalize(experience.company)
+            if cls.normalize(
+                experience.company
+            )
             in companies
         ]
 
         return ResumeTailorResponse(
-            improved_summary=tailored.improved_summary,
-            improved_skills=improved_skills,
-            keywords_to_add=keywords_to_add,
-            project_improvements=project_improvements,
-            experience_improvements=experience_improvements,
-            ats_tips=tailored.ats_tips,
+            improved_summary=(
+                tailored.improved_summary
+            ),
+
+            improved_skills=(
+                improved_skills
+            ),
+
+            keywords_to_add=(
+                keywords_to_add
+            ),
+
+            project_improvements=(
+                project_improvements
+            ),
+
+            experience_improvements=(
+                experience_improvements
+            ),
+
+            ats_tips=(
+                tailored.ats_tips
+            ),
         )
 
     # ==========================================================
@@ -339,7 +410,9 @@ class GroundingValidator:
     ) -> bool:
 
         tech = re.escape(
-            cls.normalize(technology)
+            cls.normalize(
+                technology
+            )
         )
 
         future_patterns = [
@@ -348,35 +421,51 @@ class GroundingValidator:
             # Learning
             # --------------------------------------
 
-            rf"\beager to (learn|explore|develop skills in)\s+{tech}\b",
+            rf"\beager to "
+            rf"(learn|explore|develop skills in)"
+            rf"\s+{tech}\b",
 
-            rf"\binterested in (learning|exploring)\s+{tech}\b",
+            rf"\binterested in "
+            rf"(learning|exploring)"
+            rf"\s+{tech}\b",
 
-            rf"\blooking to (learn|explore|develop skills in)\s+{tech}\b",
+            rf"\blooking to "
+            rf"(learn|explore|develop skills in)"
+            rf"\s+{tech}\b",
 
-            rf"\bcurrently learning\s+{tech}\b",
+            rf"\bcurrently learning"
+            rf"\s+{tech}\b",
 
-            rf"\bwant to (learn|explore)\s+{tech}\b",
+            rf"\bwant to "
+            rf"(learn|explore)"
+            rf"\s+{tech}\b",
 
-            rf"\bhope to (learn|explore)\s+{tech}\b",
+            rf"\bhope to "
+            rf"(learn|explore)"
+            rf"\s+{tech}\b",
 
             # --------------------------------------
             # Skill development
             # --------------------------------------
 
-            rf"\bexpand(ing)? my skills in\s+{tech}\b",
+            rf"\bexpand(ing)? my skills in"
+            rf"\s+{tech}\b",
 
-            rf"\b(build|develop|strengthen) my skills in\s+{tech}\b",
+            rf"\b(build|develop|strengthen)"
+            rf" my skills in\s+{tech}\b",
 
-            rf"\bgain(ing)? experience (with|in)\s+{tech}\b",
+            rf"\bgain(ing)? experience "
+            rf"(with|in)\s+{tech}\b",
 
             # --------------------------------------
             # Career transition
             # --------------------------------------
 
-            rf"\btransition(ing)? (to|into)\s+{tech}\b",
+            rf"\btransition(ing)? "
+            rf"(to|into)\s+{tech}\b",
 
-            rf"\btransition my .* to\s+{tech}\b",
+            rf"\btransition my .* to"
+            rf"\s+{tech}\b",
         ]
 
         normalized_text = cls.normalize(
@@ -403,7 +492,9 @@ class GroundingValidator:
     ) -> bool:
 
         tech = re.escape(
-            cls.normalize(technology)
+            cls.normalize(
+                technology
+            )
         )
 
         strong_patterns = [
@@ -487,13 +578,15 @@ class GroundingValidator:
         # Resume skills
         # ------------------------------------------
 
-        resume_skills = cls.get_resume_skills(
-            resume
+        resume_skills = (
+            cls.get_resume_skills(
+                resume
+            )
         )
 
         # ------------------------------------------
         # Technologies explicitly supported
-        # by the complete resume
+        # by complete resume
         # ------------------------------------------
 
         resume_technical_evidence = (
@@ -503,8 +596,8 @@ class GroundingValidator:
         )
 
         # ------------------------------------------
-        # Technologies explicitly used
-        # in experience/projects
+        # Technologies explicitly used in
+        # experience / projects
         # ------------------------------------------
 
         used_technologies = (
@@ -514,8 +607,8 @@ class GroundingValidator:
         )
 
         # ------------------------------------------
-        # Technical keywords mentioned
-        # in cover letter
+        # Technical keywords mentioned in
+        # cover letter
         # ------------------------------------------
 
         mentioned_technologies = (
@@ -536,17 +629,16 @@ class GroundingValidator:
             # Technology exists anywhere in resume
             # --------------------------------------
 
-            if technology in resume_technical_evidence:
+            if (
+                technology
+                in resume_technical_evidence
+            ):
 
                 continue
 
             # --------------------------------------
             # Missing technology used as a future /
             # learning target is allowed.
-            #
-            # Example:
-            #
-            # "I am eager to expand my skills in Java."
             # --------------------------------------
 
             if cls.is_future_or_learning_reference(
@@ -568,10 +660,10 @@ class GroundingValidator:
         # ==================================================
         # Strong Usage Claims
         #
-        # If a technology appears ONLY in the general
-        # resume skills section, do not allow the LLM
-        # to make strong experience claims unless the
-        # resume contains actual evidence.
+        # If a technology appears ONLY in the
+        # general resume skills section, do not allow
+        # strong experience claims unless actual
+        # evidence exists.
         # ==================================================
 
         for technology in sorted(
@@ -626,15 +718,33 @@ class GroundingValidator:
         # ==================================================
 
         unsupported_concepts = {
-            "system design": "System Design",
-            "distributed systems": "Distributed Systems",
-            "distributed architecture": "Distributed Architecture",
-            "distributed architectures": "Distributed Architecture",
-            "microservices": "Microservices",
-            "cloud architecture": "Cloud Architecture",
-            "devops": "DevOps",
-            "enterprise architecture": "Enterprise Architecture",
-            "software architecture": "Software Architecture",
+
+            "system design":
+                "System Design",
+
+            "distributed systems":
+                "Distributed Systems",
+
+            "distributed architecture":
+                "Distributed Architecture",
+
+            "distributed architectures":
+                "Distributed Architecture",
+
+            "microservices":
+                "Microservices",
+
+            "cloud architecture":
+                "Cloud Architecture",
+
+            "devops":
+                "DevOps",
+
+            "enterprise architecture":
+                "Enterprise Architecture",
+
+            "software architecture":
+                "Software Architecture",
         }
 
         # ------------------------------------------
@@ -653,15 +763,26 @@ class GroundingValidator:
             unsupported_concepts.items()
         ):
 
-            if phrase not in normalized_text:
+            normalized_phrase = cls.normalize(
+                phrase
+            )
+
+            if (
+                normalized_phrase
+                not in normalized_text
+            ):
 
                 continue
 
-            if phrase in resume_text:
+            if (
+                normalized_phrase
+                in resume_text
+            ):
 
                 continue
 
             # Future / learning reference is okay.
+
             if cls.is_future_or_learning_reference(
                 text,
                 phrase,
@@ -679,7 +800,9 @@ class GroundingValidator:
         # ==================================================
 
         return list(
-            dict.fromkeys(errors)
+            dict.fromkeys(
+                errors
+            )
         )
 
     # ==========================================================

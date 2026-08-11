@@ -9,24 +9,187 @@ from app.services.job_matching.keyword_extractor import (
 
 class ResumeJobMatcher:
 
+    # ==========================================================
+    # Skill Aliases
+    # ==========================================================
+
     SKILL_ALIASES = {
+
         "postgresql": "sql",
         "mysql": "sql",
         "mariadb": "sql",
 
         "express.js": "express",
+        "expressjs": "express",
+
         "node.js": "node",
+        "nodejs": "node",
+
+        "reactjs": "react",
+        "react.js": "react",
 
         "rest apis": "rest api",
         "restful api": "rest api",
         "restful apis": "rest api",
         "rest api development": "rest api",
+
+        "typescript/javascript": "typescript",
+        "javascript/typescript": "javascript",
     }
 
+    # ==========================================================
+    # Normalize Skill
+    # ==========================================================
+
     @classmethod
-    def normalize_skill(cls, skill: str) -> str:
-        skill = skill.lower().strip()
-        return cls.SKILL_ALIASES.get(skill, skill)
+    def normalize_skill(
+        cls,
+        skill: str,
+    ) -> str:
+
+        skill = (
+            skill
+            .lower()
+            .strip()
+        )
+
+        skill = (
+            skill
+            .replace("reactjs", "react")
+            .replace("react.js", "react")
+            .replace("node.js", "node")
+            .replace("nodejs", "node")
+            .replace("express.js", "express")
+            .replace("expressjs", "express")
+        )
+
+        return cls.SKILL_ALIASES.get(
+            skill,
+            skill,
+        )
+
+    # ==========================================================
+    # Extract Resume Skills
+    # ==========================================================
+
+    @classmethod
+    def get_resume_skills(
+        cls,
+        resume: ParsedResume,
+    ) -> set[str]:
+
+        skills = set()
+
+        # ------------------------------------------
+        # Skills section
+        # ------------------------------------------
+
+        for skill_list in resume.skills.values():
+
+            for skill in skill_list:
+
+                skills.add(
+                    cls.normalize_skill(skill)
+                )
+
+        # ------------------------------------------
+        # Experience tech stack
+        # ------------------------------------------
+
+        for experience in resume.experience:
+
+            for tech in experience.tech_stack:
+
+                skills.add(
+                    cls.normalize_skill(tech)
+                )
+
+        # ------------------------------------------
+        # Project tech stack
+        # ------------------------------------------
+
+        for project in resume.projects:
+
+            for tech in project.tech_stack:
+
+                skills.add(
+                    cls.normalize_skill(tech)
+                )
+
+        # ------------------------------------------
+        # Keyword extraction
+        # ------------------------------------------
+
+        keywords = (
+            KeywordExtractor
+            .extract_resume_keywords(
+                resume
+            )
+        )
+
+        for keyword in keywords:
+
+            skills.add(
+                cls.normalize_skill(keyword)
+            )
+
+        return skills
+
+    # ==========================================================
+    # Extract Job Skills
+    # ==========================================================
+
+    @classmethod
+    def get_job_skills(
+        cls,
+        job: JobDescription,
+    ) -> set[str]:
+
+        skills = set()
+
+        # ------------------------------------------
+        # Required skills
+        # ------------------------------------------
+
+        for skill in job.required_skills:
+
+            extracted = (
+                KeywordExtractor
+                .extract_text_keywords(
+                    skill
+                )
+            )
+
+            for keyword in extracted:
+
+                skills.add(
+                    cls.normalize_skill(keyword)
+                )
+
+        # ------------------------------------------
+        # Preferred skills
+        # ------------------------------------------
+
+        for skill in job.preferred_skills:
+
+            extracted = (
+                KeywordExtractor
+                .extract_text_keywords(
+                    skill
+                )
+            )
+
+            for keyword in extracted:
+
+                skills.add(
+                    cls.normalize_skill(keyword)
+                )
+
+        return skills
+
+    # ==========================================================
+    # Match
+    # ==========================================================
 
     @classmethod
     def match(
@@ -35,79 +198,73 @@ class ResumeJobMatcher:
         job: JobDescription,
     ) -> ResumeJobMatch:
 
-        # =================================
-        # KEYWORDS
-        # =================================
+        # ======================================================
+        # Skills
+        # ======================================================
+
+        resume_skills = (
+            cls.get_resume_skills(
+                resume
+            )
+        )
+
+        job_skills = (
+            cls.get_job_skills(
+                job
+            )
+        )
+
+        matched_skills = sorted(
+            resume_skills.intersection(
+                job_skills
+            )
+        )
+
+        missing_skills = sorted(
+            job_skills.difference(
+                resume_skills
+            )
+        )
+
+        # ======================================================
+        # Keywords
+        # ======================================================
 
         resume_keywords = {
             cls.normalize_skill(keyword)
-            for keyword in KeywordExtractor.extract_resume_keywords(
-                resume
+            for keyword in (
+                KeywordExtractor
+                .extract_resume_keywords(
+                    resume
+                )
             )
         }
 
         job_keywords = {
             cls.normalize_skill(keyword)
-            for keyword in KeywordExtractor.extract_job_keywords(
-                job
+            for keyword in (
+                KeywordExtractor
+                .extract_job_keywords(
+                    job
+                )
             )
         }
 
         matched_keywords = sorted(
-            resume_keywords.intersection(job_keywords)
+            resume_keywords.intersection(
+                job_keywords
+            )
         )
 
         missing_keywords = sorted(
-            job_keywords.difference(resume_keywords)
-        )
-
-        # =================================
-        # RESUME SKILLS
-        # =================================
-
-        resume_skills = {
-            cls.normalize_skill(skill)
-            for skills in resume.skills.values()
-            for skill in skills
-        }
-
-        # Experience tech stack
-        for experience in resume.experience:
-            for tech in experience.tech_stack:
-                resume_skills.add(
-                    cls.normalize_skill(tech)
-                )
-
-        # Project tech stack
-        for project in resume.projects:
-            for tech in project.tech_stack:
-                resume_skills.add(
-                    cls.normalize_skill(tech)
-                )
-
-        # =================================
-        # JOB SKILLS
-        # =================================
-
-        job_skills = {
-            cls.normalize_skill(skill)
-            for skill in (
-                job.required_skills
-                + job.preferred_skills
+            job_keywords.difference(
+                resume_keywords
             )
-        }
-
-        matched_skills = sorted(
-            resume_skills.intersection(job_skills)
         )
 
-        missing_skills = sorted(
-            job_skills.difference(resume_skills)
-        )
-
-        # =================================
-        # SCORE
-        # =================================
+        # ======================================================
+        # Score
+        # ======================================================
 
         score = cls.calculate_score(
             matched_skills=matched_skills,
@@ -116,14 +273,20 @@ class ResumeJobMatcher:
             missing_keywords=missing_keywords,
         )
 
-        # =================================
-        # RECOMMENDATIONS
-        # =================================
+        # ======================================================
+        # Recommendations
+        # ======================================================
 
-        recommendations = cls.generate_recommendations(
-            missing_skills,
-            missing_keywords,
+        recommendations = (
+            cls.generate_recommendations(
+                missing_skills,
+                missing_keywords,
+            )
         )
+
+        # ======================================================
+        # Result
+        # ======================================================
 
         return ResumeJobMatch(
             match_score=score,
@@ -134,9 +297,9 @@ class ResumeJobMatcher:
             recommendations=recommendations,
         )
 
-    # =====================================
-    # SCORE CALCULATION
-    # =====================================
+    # ==========================================================
+    # Score
+    # ==========================================================
 
     @staticmethod
     def calculate_score(
@@ -146,43 +309,49 @@ class ResumeJobMatcher:
         missing_keywords: list[str],
     ) -> int:
 
-        # ---------------------------------
-        # Skill score
-        # ---------------------------------
+        # ------------------------------------------
+        # Skill Score
+        # ------------------------------------------
 
         total_skills = (
             len(matched_skills)
             + len(missing_skills)
         )
 
-        if total_skills > 0:
+        if total_skills:
+
             skill_score = (
                 len(matched_skills)
                 / total_skills
             ) * 100
+
         else:
+
             skill_score = 0
 
-        # ---------------------------------
-        # Keyword score
-        # ---------------------------------
+        # ------------------------------------------
+        # Keyword Score
+        # ------------------------------------------
 
         total_keywords = (
             len(matched_keywords)
             + len(missing_keywords)
         )
 
-        if total_keywords > 0:
+        if total_keywords:
+
             keyword_score = (
                 len(matched_keywords)
                 / total_keywords
             ) * 100
+
         else:
+
             keyword_score = 0
 
-        # ---------------------------------
+        # ------------------------------------------
         # Weighted score
-        # ---------------------------------
+        # ------------------------------------------
 
         score = (
             skill_score * 0.70
@@ -191,9 +360,9 @@ class ResumeJobMatcher:
 
         return round(score)
 
-    # =====================================
-    # RECOMMENDATIONS
-    # =====================================
+    # ==========================================================
+    # Recommendations
+    # ==========================================================
 
     @staticmethod
     def generate_recommendations(
@@ -204,24 +373,32 @@ class ResumeJobMatcher:
         recommendations = []
 
         if missing_skills:
+
             recommendations.append(
                 "Add or highlight these skills if you "
                 "actually possess them: "
-                + ", ".join(missing_skills)
+                + ", ".join(
+                    missing_skills
+                )
             )
 
         if missing_keywords:
+
             recommendations.append(
-                "Consider incorporating relevant keywords "
-                "from the job description where they are "
-                "truthfully supported by your experience: "
-                + ", ".join(missing_keywords)
+                "Consider incorporating relevant "
+                "keywords from the job description "
+                "where they are truthfully supported "
+                "by your experience: "
+                + ", ".join(
+                    missing_keywords
+                )
             )
 
         if not recommendations:
+
             recommendations.append(
-                "Excellent match! Your resume aligns very "
-                "well with the job description."
+                "Excellent match! Your resume aligns "
+                "very well with the job description."
             )
 
         return recommendations
