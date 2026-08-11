@@ -1,4 +1,5 @@
 from app.services.job_agent.state import JobAgentState
+from app.services.job_agent.state import JobAgentState
 
 
 # ==========================================================
@@ -135,3 +136,57 @@ def route_after_cover_letter(
     print("Route: END")
 
     return "end"
+
+
+
+
+
+def route_after_resume(
+    state: JobAgentState,
+) -> str:
+    """
+    Decide how the job description should
+    enter the agent.
+    """
+
+    print(
+        "\n========== ROUTING JOB INPUT =========="
+    )
+
+    job_url = state.get(
+        "job_url"
+    )
+
+    job_description_text = state.get(
+        "job_description_text"
+    )
+
+    if job_url:
+
+        print(
+            f"Job URL detected: {job_url}"
+        )
+
+        print(
+            "Route: extract_job_page"
+        )
+
+        return "extract_job_page"
+
+    if job_description_text:
+
+        print(
+            "Manual job description detected."
+        )
+
+        print(
+            "Route: parse_job"
+        )
+
+        return "parse_job"
+
+    raise ValueError(
+        "No job input provided. "
+        "Provide either job_url or "
+        "job_description_text."
+    )

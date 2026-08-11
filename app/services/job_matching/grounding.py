@@ -29,23 +29,38 @@ class GroundingValidator:
 
         skills = set()
 
+        # ------------------------------------------
         # Skills section
+        # ------------------------------------------
+
         for skill_list in resume.skills.values():
+
             for skill in skill_list:
+
                 skills.add(
                     cls.normalize(skill)
                 )
 
+        # ------------------------------------------
         # Experience tech stack
+        # ------------------------------------------
+
         for experience in resume.experience:
+
             for tech in experience.tech_stack:
+
                 skills.add(
                     cls.normalize(tech)
                 )
 
+        # ------------------------------------------
         # Project tech stack
+        # ------------------------------------------
+
         for project in resume.projects:
+
             for tech in project.tech_stack:
+
                 skills.add(
                     cls.normalize(tech)
                 )
@@ -53,7 +68,7 @@ class GroundingValidator:
         return skills
 
     # ==========================================================
-    # Technologies Explicitly Used In Experience / Projects
+    # Technologies Explicitly Supported By Resume
     # ==========================================================
 
     @classmethod
@@ -64,21 +79,103 @@ class GroundingValidator:
 
         technologies = set()
 
+        # ------------------------------------------
         # Experience
+        # ------------------------------------------
+
         for experience in resume.experience:
+
+            # Tech stack
             for tech in experience.tech_stack:
+
                 technologies.add(
                     cls.normalize(tech)
                 )
 
+            # Responsibilities
+            responsibility_text = " ".join(
+                experience.responsibilities
+            )
+
+            technologies.update(
+                cls.extract_technical_keywords(
+                    responsibility_text
+                )
+            )
+
+        # ------------------------------------------
         # Projects
+        # ------------------------------------------
+
         for project in resume.projects:
+
+            # Tech stack
             for tech in project.tech_stack:
+
                 technologies.add(
                     cls.normalize(tech)
                 )
+
+            # Project descriptions
+            description_text = " ".join(
+                project.description
+            )
+
+            technologies.update(
+                cls.extract_technical_keywords(
+                    description_text
+                )
+            )
 
         return technologies
+
+    # ==========================================================
+    # All Resume Technical Evidence
+    # ==========================================================
+
+    @classmethod
+    def get_resume_technical_evidence(
+        cls,
+        resume: ParsedResume,
+    ) -> set[str]:
+
+        evidence = set()
+
+        # ------------------------------------------
+        # Skills
+        # ------------------------------------------
+
+        evidence.update(
+            cls.get_resume_skills(
+                resume
+            )
+        )
+
+        # ------------------------------------------
+        # Explicit technologies from experience
+        # ------------------------------------------
+
+        evidence.update(
+            cls.get_used_technologies(
+                resume
+            )
+        )
+
+        # ------------------------------------------
+        # Full resume text
+        # ------------------------------------------
+
+        resume_text = cls.build_resume_text(
+            resume
+        )
+
+        evidence.update(
+            cls.extract_technical_keywords(
+                resume_text
+            )
+        )
+
+        return evidence
 
     # ==========================================================
     # Existing Projects
@@ -113,7 +210,7 @@ class GroundingValidator:
         }
 
     # ==========================================================
-    # Extract Technical Keywords From Text
+    # Extract Technical Keywords
     # ==========================================================
 
     @classmethod
@@ -122,7 +219,9 @@ class GroundingValidator:
         text: str,
     ) -> set[str]:
 
-        normalized_text = cls.normalize(text)
+        normalized_text = cls.normalize(
+            text
+        )
 
         found = set()
 
@@ -131,9 +230,6 @@ class GroundingValidator:
             keyword_normalized = cls.normalize(
                 keyword
             )
-
-            # Word-boundary matching for simple
-            # technologies.
 
             pattern = (
                 r"(?<!\w)"
@@ -145,6 +241,7 @@ class GroundingValidator:
                 pattern,
                 normalized_text,
             ):
+
                 found.add(
                     keyword_normalized
                 )
@@ -175,7 +272,7 @@ class GroundingValidator:
         )
 
         # ------------------------------------------
-        # Improved Skills
+        # Improved skills
         # ------------------------------------------
 
         improved_skills = [
@@ -186,9 +283,9 @@ class GroundingValidator:
         ]
 
         # ------------------------------------------
-        # Keywords To Add
+        # Keywords to add
         #
-        # Must NOT already exist in resume.
+        # These must NOT already exist in resume.
         # ------------------------------------------
 
         keywords_to_add = [
@@ -199,7 +296,7 @@ class GroundingValidator:
         ]
 
         # ------------------------------------------
-        # Project Improvements
+        # Existing projects only
         # ------------------------------------------
 
         project_improvements = [
@@ -210,7 +307,7 @@ class GroundingValidator:
         ]
 
         # ------------------------------------------
-        # Experience Improvements
+        # Existing companies only
         # ------------------------------------------
 
         experience_improvements = [
@@ -231,7 +328,137 @@ class GroundingValidator:
         )
 
     # ==========================================================
-    # Find Unsupported Technical Claims
+    # Future / Learning Reference
+    # ==========================================================
+
+    @classmethod
+    def is_future_or_learning_reference(
+        cls,
+        text: str,
+        technology: str,
+    ) -> bool:
+
+        tech = re.escape(
+            cls.normalize(technology)
+        )
+
+        future_patterns = [
+
+            # --------------------------------------
+            # Learning
+            # --------------------------------------
+
+            rf"\beager to (learn|explore|develop skills in)\s+{tech}\b",
+
+            rf"\binterested in (learning|exploring)\s+{tech}\b",
+
+            rf"\blooking to (learn|explore|develop skills in)\s+{tech}\b",
+
+            rf"\bcurrently learning\s+{tech}\b",
+
+            rf"\bwant to (learn|explore)\s+{tech}\b",
+
+            rf"\bhope to (learn|explore)\s+{tech}\b",
+
+            # --------------------------------------
+            # Skill development
+            # --------------------------------------
+
+            rf"\bexpand(ing)? my skills in\s+{tech}\b",
+
+            rf"\b(build|develop|strengthen) my skills in\s+{tech}\b",
+
+            rf"\bgain(ing)? experience (with|in)\s+{tech}\b",
+
+            # --------------------------------------
+            # Career transition
+            # --------------------------------------
+
+            rf"\btransition(ing)? (to|into)\s+{tech}\b",
+
+            rf"\btransition my .* to\s+{tech}\b",
+        ]
+
+        normalized_text = cls.normalize(
+            text
+        )
+
+        return any(
+            re.search(
+                pattern,
+                normalized_text,
+            )
+            for pattern in future_patterns
+        )
+
+    # ==========================================================
+    # Strong Existing Experience Claims
+    # ==========================================================
+
+    @classmethod
+    def has_strong_usage_claim(
+        cls,
+        text: str,
+        technology: str,
+    ) -> bool:
+
+        tech = re.escape(
+            cls.normalize(technology)
+        )
+
+        strong_patterns = [
+
+            rf"\bused\s+{tech}\b",
+
+            rf"\bworked with\s+{tech}\b",
+
+            rf"\bworked on\s+{tech}\b",
+
+            rf"\bbuilt with\s+{tech}\b",
+
+            rf"\bbuilt using\s+{tech}\b",
+
+            rf"\bdeveloped with\s+{tech}\b",
+
+            rf"\bdeveloped using\s+{tech}\b",
+
+            rf"\bimplemented with\s+{tech}\b",
+
+            rf"\bimplemented using\s+{tech}\b",
+
+            rf"\bdeployed with\s+{tech}\b",
+
+            rf"\bdeployed using\s+{tech}\b",
+
+            rf"\bexperience with\s+{tech}\b",
+
+            rf"\bexperience in\s+{tech}\b",
+
+            rf"\bproficient in\s+{tech}\b",
+
+            rf"\bexpertise in\s+{tech}\b",
+
+            rf"\bskilled in\s+{tech}\b",
+
+            rf"\bstrong experience in\s+{tech}\b",
+
+            rf"\bstrong experience with\s+{tech}\b",
+        ]
+
+        normalized_text = cls.normalize(
+            text
+        )
+
+        return any(
+            re.search(
+                pattern,
+                normalized_text,
+            )
+            for pattern in strong_patterns
+        )
+
+    # ==========================================================
+    # Find Cover Letter Errors
     # ==========================================================
 
     @classmethod
@@ -244,7 +471,7 @@ class GroundingValidator:
         errors = []
 
         # ------------------------------------------
-        # Combine cover letter + email
+        # Combine generated content
         # ------------------------------------------
 
         text = (
@@ -257,12 +484,28 @@ class GroundingValidator:
         )
 
         # ------------------------------------------
-        # Resume technologies
+        # Resume skills
         # ------------------------------------------
 
         resume_skills = cls.get_resume_skills(
             resume
         )
+
+        # ------------------------------------------
+        # Technologies explicitly supported
+        # by the complete resume
+        # ------------------------------------------
+
+        resume_technical_evidence = (
+            cls.get_resume_technical_evidence(
+                resume
+            )
+        )
+
+        # ------------------------------------------
+        # Technologies explicitly used
+        # in experience/projects
+        # ------------------------------------------
 
         used_technologies = (
             cls.get_used_technologies(
@@ -271,7 +514,8 @@ class GroundingValidator:
         )
 
         # ------------------------------------------
-        # Technical keywords in generated text
+        # Technical keywords mentioned
+        # in cover letter
         # ------------------------------------------
 
         mentioned_technologies = (
@@ -280,92 +524,105 @@ class GroundingValidator:
             )
         )
 
-        # ------------------------------------------
-        # Unsupported technologies
-        # ------------------------------------------
+        # ==================================================
+        # Unsupported Technologies
+        # ==================================================
 
-        unsupported = sorted(
-            technology
-            for technology
-            in mentioned_technologies
-            if technology not in resume_skills
-        )
+        for technology in sorted(
+            mentioned_technologies
+        ):
 
-        for technology in unsupported:
+            # --------------------------------------
+            # Technology exists anywhere in resume
+            # --------------------------------------
+
+            if technology in resume_technical_evidence:
+
+                continue
+
+            # --------------------------------------
+            # Missing technology used as a future /
+            # learning target is allowed.
+            #
+            # Example:
+            #
+            # "I am eager to expand my skills in Java."
+            # --------------------------------------
+
+            if cls.is_future_or_learning_reference(
+                text,
+                technology,
+            ):
+
+                continue
+
+            # --------------------------------------
+            # Unsupported technology
+            # --------------------------------------
 
             errors.append(
                 f"Unsupported technology mentioned "
                 f"in cover letter: {technology}"
             )
 
-        # ------------------------------------------
-        # Strong experience claims
+        # ==================================================
+        # Strong Usage Claims
         #
-        # These verbs indicate actual usage/work.
-        # ------------------------------------------
-
-        strong_claim_patterns = [
-            "used {technology}",
-            "worked with {technology}",
-            "worked on {technology}",
-            "built with {technology}",
-            "built using {technology}",
-            "developed with {technology}",
-            "developed using {technology}",
-            "implemented with {technology}",
-            "implemented using {technology}",
-            "deployed with {technology}",
-            "deployed using {technology}",
-            "experience with {technology}",
-            "experience in {technology}",
-            "proficient in {technology}",
-            "expertise in {technology}",
-        ]
-
-        # ------------------------------------------
-        # Check technologies that only exist in the
-        # resume's general skills section.
-        #
-        # We don't reject simply mentioning them.
-        # We reject strong "I used X" claims when
-        # the resume doesn't explicitly place X in
-        # experience/project tech stacks.
-        # ------------------------------------------
+        # If a technology appears ONLY in the general
+        # resume skills section, do not allow the LLM
+        # to make strong experience claims unless the
+        # resume contains actual evidence.
+        # ==================================================
 
         for technology in sorted(
             mentioned_technologies
         ):
 
+            # --------------------------------------
+            # Not even present in resume
+            # --------------------------------------
+
             if technology not in resume_skills:
+
                 continue
+
+            # --------------------------------------
+            # Explicitly supported by experience /
+            # project evidence
+            # --------------------------------------
 
             if technology in used_technologies:
+
                 continue
 
-            for claim_pattern in strong_claim_patterns:
+            # --------------------------------------
+            # Future / learning statement
+            # --------------------------------------
 
-                pattern = claim_pattern.format(
-                    technology=re.escape(
-                        technology
-                    )
+            if cls.is_future_or_learning_reference(
+                text,
+                technology,
+            ):
+
+                continue
+
+            # --------------------------------------
+            # Strong unsupported usage claim
+            # --------------------------------------
+
+            if cls.has_strong_usage_claim(
+                text,
+                technology,
+            ):
+
+                errors.append(
+                    f"Unsupported usage claim for "
+                    f"{technology}: technology appears "
+                    f"only in the resume skills section."
                 )
 
-                if re.search(
-                    pattern,
-                    normalized_text,
-                ):
-
-                    errors.append(
-                        f"Unsupported usage claim for "
-                        f"{technology}: "
-                        f"technology appears only in the "
-                        f"resume skills section."
-                    )
-
-                    break
-
         # ==================================================
-        # Unsupported Concept Detection
+        # Unsupported Technical Concepts
         # ==================================================
 
         unsupported_concepts = {
@@ -380,31 +637,53 @@ class GroundingValidator:
             "software architecture": "Software Architecture",
         }
 
+        # ------------------------------------------
+        # Full resume text
+        # ------------------------------------------
+
+        resume_text = cls.build_resume_text(
+            resume
+        )
+
+        # ------------------------------------------
+        # Validate concepts
+        # ------------------------------------------
+
         for phrase, display_name in (
             unsupported_concepts.items()
         ):
 
-            if phrase in normalized_text:
+            if phrase not in normalized_text:
 
-                # Only allow the phrase if the resume
-                # explicitly contains it as a skill or
-                # experience/project evidence.
+                continue
 
-                resume_text = cls.build_resume_text(
-                    resume
-                )
+            if phrase in resume_text:
 
-                if phrase not in resume_text:
+                continue
 
-                    errors.append(
-                        f"Unsupported technical concept "
-                        f"mentioned: {display_name}"
-                    )
+            # Future / learning reference is okay.
+            if cls.is_future_or_learning_reference(
+                text,
+                phrase,
+            ):
 
-        return errors
+                continue
+
+            errors.append(
+                f"Unsupported technical concept "
+                f"mentioned: {display_name}"
+            )
+
+        # ==================================================
+        # Remove duplicate errors
+        # ==================================================
+
+        return list(
+            dict.fromkeys(errors)
+        )
 
     # ==========================================================
-    # Build Resume Text
+    # Build Complete Resume Text
     # ==========================================================
 
     @classmethod
@@ -415,24 +694,40 @@ class GroundingValidator:
 
         parts = []
 
+        # ------------------------------------------
+        # Summary
+        # ------------------------------------------
+
         if resume.summary:
+
             parts.append(
                 resume.summary
             )
 
+        # ------------------------------------------
         # Skills
-        for skill_list in resume.skills.values():
-            parts.extend(skill_list)
+        # ------------------------------------------
 
+        for skill_list in resume.skills.values():
+
+            parts.extend(
+                skill_list
+            )
+
+        # ------------------------------------------
         # Experience
+        # ------------------------------------------
+
         for experience in resume.experience:
 
             if experience.company:
+
                 parts.append(
                     experience.company
                 )
 
             if experience.role:
+
                 parts.append(
                     experience.role
                 )
@@ -445,15 +740,20 @@ class GroundingValidator:
                 experience.tech_stack
             )
 
+        # ------------------------------------------
         # Projects
+        # ------------------------------------------
+
         for project in resume.projects:
 
             if project.title:
+
                 parts.append(
                     project.title
                 )
 
             if project.subtitle:
+
                 parts.append(
                     project.subtitle
                 )
@@ -477,7 +777,7 @@ class GroundingValidator:
     @classmethod
     def validate_cover_letter(
         cls,
-resume: ParsedResume,
+        resume: ParsedResume,
         cover_letter: CoverLetterResponse,
     ) -> tuple[
         CoverLetterResponse,

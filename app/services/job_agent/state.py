@@ -2,6 +2,7 @@ from typing import TypedDict
 
 from app.schemas.resume import ParsedResume
 from app.schemas.job_description import JobDescription
+from app.schemas.job_page import JobPage
 from app.schemas.match import ResumeJobMatch
 from app.schemas.tailor import ResumeTailorResponse
 from app.schemas.cover_letter import CoverLetterResponse
@@ -14,7 +15,18 @@ class JobAgentState(TypedDict, total=False):
     # ---------------------------------
 
     resume_text: str
+
+    # Manual job description
     job_description_text: str
+
+    # Job URL for Playwright
+    job_url: str
+
+    # ---------------------------------
+    # Browser
+    # ---------------------------------
+
+    job_page: JobPage
 
     # ---------------------------------
     # Parsed Data

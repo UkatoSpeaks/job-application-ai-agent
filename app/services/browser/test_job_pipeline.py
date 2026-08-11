@@ -11,7 +11,7 @@ from app.services.browser.job_page_parser import (
 
 async def main():
 
-    url = "https://wellfound.com/jobs?job_listing_slug=4574420-full-stack-developerv"
+    url = "https://wellfound.com/jobs?job_listing_slug=4574420-full-stack-developer"
 
     # ---------------------------------
     # Playwright

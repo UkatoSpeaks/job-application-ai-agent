@@ -1,16 +1,24 @@
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import (
+    StateGraph,
+    START,
+    END,
+)
 
-from app.services.job_agent.state import JobAgentState
+from app.services.job_agent.state import (
+    JobAgentState,
+)
 
 from app.services.job_agent.nodes import (
     parse_resume_node,
     parse_job_node,
+    extract_job_page_node,
     match_resume_node,
     tailor_resume_node,
     generate_cover_letter_node,
 )
 
 from app.services.job_agent.edges import (
+    route_after_resume,
     route_after_match,
     route_after_tailoring,
     route_after_cover_letter,
@@ -21,7 +29,9 @@ from app.services.job_agent.edges import (
 # Build Job Application Agent Graph
 # ==========================================================
 
-builder = StateGraph(JobAgentState)
+builder = StateGraph(
+    JobAgentState
+)
 
 
 # ==========================================================
@@ -31,6 +41,11 @@ builder = StateGraph(JobAgentState)
 builder.add_node(
     "parse_resume",
     parse_resume_node,
+)
+
+builder.add_node(
+    "extract_job_page",
+    extract_job_page_node,
 )
 
 builder.add_node(
@@ -65,17 +80,31 @@ builder.add_edge(
 
 
 # ==========================================================
-# Resume Parsing
+# Route Job Input
+# ==========================================================
+
+builder.add_conditional_edges(
+    "parse_resume",
+    route_after_resume,
+    {
+        "extract_job_page": "extract_job_page",
+        "parse_job": "parse_job",
+    },
+)
+
+
+# ==========================================================
+# Playwright → Job Parser
 # ==========================================================
 
 builder.add_edge(
-    "parse_resume",
+    "extract_job_page",
     "parse_job",
 )
 
 
 # ==========================================================
-# Job Parsing
+# Job Parsing → Matching
 # ==========================================================
 
 builder.add_edge(
@@ -93,7 +122,9 @@ builder.add_conditional_edges(
     route_after_match,
     {
         "tailor_resume": "tailor_resume",
-        "generate_cover_letter": "generate_cover_letter",
+        "generate_cover_letter": (
+            "generate_cover_letter"
+        ),
     },
 )
 
@@ -106,8 +137,12 @@ builder.add_conditional_edges(
     "tailor_resume",
     route_after_tailoring,
     {
-        "retry_tailor_resume": "tailor_resume",
-        "generate_cover_letter": "generate_cover_letter",
+        "retry_tailor_resume": (
+            "tailor_resume"
+        ),
+        "generate_cover_letter": (
+            "generate_cover_letter"
+        ),
     },
 )
 
@@ -120,7 +155,9 @@ builder.add_conditional_edges(
     "generate_cover_letter",
     route_after_cover_letter,
     {
-        "retry_cover_letter": "generate_cover_letter",
+        "retry_cover_letter": (
+            "generate_cover_letter"
+        ),
         "end": END,
     },
 )

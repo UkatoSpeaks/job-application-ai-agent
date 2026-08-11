@@ -22,15 +22,31 @@ class JobPageExtractor:
 
         try:
 
+            # ---------------------------------
+            # Start browser
+            # ---------------------------------
+
             browser = await client.start()
 
+            # ---------------------------------
+            # Create page
+            # ---------------------------------
+
             page = await browser.new_page()
+
+            # ---------------------------------
+            # Navigate
+            # ---------------------------------
 
             await page.goto(
                 url,
                 wait_until="domcontentloaded",
                 timeout=30000,
             )
+
+            # ---------------------------------
+            # Wait for page
+            # ---------------------------------
 
             try:
 
@@ -46,11 +62,25 @@ class JobPageExtractor:
                     "Continuing with current page."
                 )
 
+            # ---------------------------------
+            # Page information
+            # ---------------------------------
+
             page_title = await page.title()
+
+            current_url = page.url
 
             print(
                 f"Page title: {page_title}"
             )
+
+            print(
+                f"Current URL: {current_url}"
+            )
+
+            # ---------------------------------
+            # Extract visible text
+            # ---------------------------------
 
             page_text = await page.locator(
                 "body"
@@ -65,6 +95,47 @@ class JobPageExtractor:
                     "from the job page."
                 )
 
+            # ---------------------------------
+            # Authentication detection
+            # ---------------------------------
+
+            title_lower = page_title.lower()
+            text_lower = page_text.lower()
+
+            login_indicators = [
+                "log in",
+                "login",
+                "sign in",
+                "sign up",
+            ]
+
+            is_login_page = any(
+                indicator in title_lower
+                for indicator in login_indicators
+            )
+
+            if is_login_page:
+
+                raise ValueError(
+                    "Job page requires authentication. "
+                    f"Redirected to: {current_url}"
+                )
+
+            # ---------------------------------
+            # Basic content validation
+            # ---------------------------------
+
+            if len(page_text) < 300:
+
+                raise ValueError(
+                    "Job page contains insufficient "
+                    "content to extract a job description."
+                )
+
+            # ---------------------------------
+            # Success
+            # ---------------------------------
+
             print(
                 f"Extracted characters: "
                 f"{len(page_text)}"
@@ -73,7 +144,7 @@ class JobPageExtractor:
             return JobPage(
                 url=url,
                 company=None,
-                job_title=page_title,
+                job_title=None,
                 job_description=page_text,
             )
 

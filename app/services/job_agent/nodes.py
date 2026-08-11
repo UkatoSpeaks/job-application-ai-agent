@@ -1,13 +1,15 @@
 from app.services.job_agent.state import JobAgentState
 
-from app.services.job_matching.grounding import (
-    GroundingValidator,
+from app.services.browser.job_page import (
+    JobPageExtractor,
 )
-
-from app.services.resume.parser import ResumeParser
 
 from app.services.job_matching.llm_parser import (
     JobDescriptionLLMParser,
+)
+
+from app.services.resume.parser import (
+    ResumeParser,
 )
 
 from app.services.job_matching.matcher import (
@@ -24,6 +26,10 @@ from app.services.resume_tailor.tailor import (
 
 from app.services.cover_letter.generator import (
     CoverLetterGenerator,
+)
+
+from app.services.job_matching.grounding import (
+    GroundingValidator,
 )
 
 
@@ -53,6 +59,52 @@ def parse_resume_node(
 
 
 # ==========================================================
+# Extract Job Page
+# ==========================================================
+
+async def extract_job_page_node(
+    state: JobAgentState,
+) -> dict:
+
+    print(
+        "\n========== NODE: EXTRACT JOB PAGE =========="
+    )
+
+    job_url = state.get("job_url")
+
+    if not job_url:
+        raise ValueError(
+            "job_url is required for "
+            "browser-based job extraction."
+        )
+
+    print(
+        f"Job URL: {job_url}"
+    )
+
+    job_page = await JobPageExtractor.extract(
+        job_url
+    )
+
+    print(
+        "\nJob page extracted successfully."
+    )
+
+    print(
+        f"Page URL: {job_page.url}"
+    )
+
+    print(
+        f"Characters: "
+        f"{len(job_page.job_description)}"
+    )
+
+    return {
+        "job_page": job_page,
+    }
+
+
+# ==========================================================
 # Parse Job Description
 # ==========================================================
 
@@ -64,18 +116,76 @@ def parse_job_node(
         "\n========== NODE: PARSE JOB =========="
     )
 
+    # ------------------------------------------
+    # Determine job input
+    # ------------------------------------------
+
+    job_description_text = state.get(
+        "job_description_text"
+    )
+
+    job_page = state.get(
+        "job_page"
+    )
+
+    # ------------------------------------------
+    # Job URL flow
+    # ------------------------------------------
+
+    if job_page:
+
+        print(
+            "Using job description extracted "
+            "from browser."
+        )
+
+        job_description_text = (
+            job_page.job_description
+        )
+
+    # ------------------------------------------
+    # Validate input
+    # ------------------------------------------
+
+    if not job_description_text:
+
+        raise ValueError(
+            "No job description available."
+        )
+
+    # ------------------------------------------
+    # Parse with LLM
+    # ------------------------------------------
+
     job_description = (
         JobDescriptionLLMParser.parse(
-            state["job_description_text"]
+            job_description_text
         )
     )
 
     print(
-        "Job description parsed successfully."
+        "\nJob description parsed successfully."
+    )
+
+    print(
+        f"Title: {job_description.title}"
+    )
+
+    print(
+        f"Company: {job_description.company}"
+    )
+
+    print(
+        f"Location: {job_description.location}"
     )
 
     return {
         "job_description": job_description,
+
+        # Keep the extracted/manual text in state.
+        "job_description_text": (
+            job_description_text
+        ),
     }
 
 
@@ -138,10 +248,6 @@ def tailor_resume_node(
         "\n========== NODE: TAILOR RESUME =========="
     )
 
-    # ------------------------------------------
-    # Existing retry count
-    # ------------------------------------------
-
     retry_count = state.get(
         "tailor_retry_count",
         0,
@@ -155,11 +261,9 @@ def tailor_resume_node(
     # Generate
     # ------------------------------------------
 
-    tailored_resume = (
-        ResumeTailor.tailor(
-            state["resume"],
-            state["job_description_text"],
-        )
+    tailored_resume = ResumeTailor.tailor(
+        state["resume"],
+        state["job_description_text"],
     )
 
     # ------------------------------------------
@@ -177,15 +281,15 @@ def tailor_resume_node(
         )
     )
 
+    print(
+        "Tailored resume validated successfully."
+    )
+
     # ------------------------------------------
-    # Determine validation status
+    # Validation
     # ------------------------------------------
 
     validation_errors = []
-
-    # ------------------------------------------
-    # Improved Skills
-    # ------------------------------------------
 
     original_skills = {
         skill.lower().strip()
@@ -195,7 +299,7 @@ def tailor_resume_node(
 
     invalid_skills = [
         skill
-        for skill in tailored_resume.improved_skills
+        for skill in validated_resume.improved_skills
         if skill.lower().strip()
         not in original_skills
     ]
@@ -207,10 +311,6 @@ def tailor_resume_node(
             + ", ".join(invalid_skills)
         )
 
-    # ------------------------------------------
-    # Project Titles
-    # ------------------------------------------
-
     project_titles = {
         project.title.lower().strip()
         for project in state["resume"].projects
@@ -219,7 +319,8 @@ def tailor_resume_node(
 
     invalid_projects = [
         project.title
-        for project in tailored_resume.project_improvements
+        for project
+        in validated_resume.project_improvements
         if project.title.lower().strip()
         not in project_titles
     ]
@@ -231,10 +332,6 @@ def tailor_resume_node(
             + ", ".join(invalid_projects)
         )
 
-    # ------------------------------------------
-    # Companies
-    # ------------------------------------------
-
     company_names = {
         experience.company.lower().strip()
         for experience in state["resume"].experience
@@ -244,7 +341,7 @@ def tailor_resume_node(
     invalid_companies = [
         experience.company
         for experience
-        in tailored_resume.experience_improvements
+        in validated_resume.experience_improvements
         if experience.company.lower().strip()
         not in company_names
     ]
@@ -256,10 +353,6 @@ def tailor_resume_node(
             + ", ".join(invalid_companies)
         )
 
-    # ------------------------------------------
-    # Validation Result
-    # ------------------------------------------
-
     validated = not validation_errors
 
     print(
@@ -269,15 +362,13 @@ def tailor_resume_node(
     if validation_errors:
 
         print(
-            "\n========== TAILORING ERRORS =========="
+            "\nValidation Errors:"
         )
 
         for error in validation_errors:
-            print(f"- {error}")
-
-        print(
-            "======================================"
-        )
+            print(
+                f"- {error}"
+            )
 
     else:
 
@@ -286,7 +377,7 @@ def tailor_resume_node(
         )
 
     # ------------------------------------------
-    # Increment Retry Counter
+    # Retry count
     # ------------------------------------------
 
     next_retry_count = retry_count
@@ -299,7 +390,9 @@ def tailor_resume_node(
 
         "tailored_resume_validated": validated,
 
-        "tailor_retry_count": next_retry_count,
+        "tailor_retry_count": (
+            next_retry_count
+        ),
 
         "tailoring_validation_errors": (
             validation_errors
@@ -319,10 +412,6 @@ def generate_cover_letter_node(
         "\n========== NODE: GENERATE COVER LETTER =========="
     )
 
-    # ------------------------------------------
-    # Existing retry count
-    # ------------------------------------------
-
     retry_count = state.get(
         "cover_letter_retry_count",
         0,
@@ -333,32 +422,6 @@ def generate_cover_letter_node(
     )
 
     # ------------------------------------------
-    # Previous validation feedback
-    # ------------------------------------------
-
-    validation_errors = state.get(
-        "cover_letter_validation_errors",
-        [],
-    )
-
-    validation_feedback = "\n".join(
-        validation_errors
-    )
-
-    if validation_feedback:
-
-        print(
-            "\n========== PREVIOUS VALIDATION FEEDBACK =========="
-        )
-
-        for error in validation_errors:
-            print(f"- {error}")
-
-        print(
-            "===================================================="
-        )
-
-    # ------------------------------------------
     # Generate
     # ------------------------------------------
 
@@ -366,7 +429,6 @@ def generate_cover_letter_node(
         CoverLetterGenerator.generate(
             state["resume"],
             state["job_description_text"],
-            validation_feedback=validation_feedback,
         )
     )
 
@@ -388,10 +450,6 @@ def generate_cover_letter_node(
 
     validated = not validation_errors
 
-    # ------------------------------------------
-    # Print Validation Result
-    # ------------------------------------------
-
     print(
         f"Cover Letter Validated: {validated}"
     )
@@ -403,7 +461,9 @@ def generate_cover_letter_node(
         )
 
         for error in validation_errors:
-            print(f"- {error}")
+            print(
+                f"- {error}"
+            )
 
         print(
             "========================================="
@@ -416,17 +476,13 @@ def generate_cover_letter_node(
         )
 
     # ------------------------------------------
-    # Retry Counter
+    # Retry count
     # ------------------------------------------
 
     next_retry_count = retry_count
 
     if not validated:
         next_retry_count += 1
-
-    # ------------------------------------------
-    # Return State
-    # ------------------------------------------
 
     return {
         "cover_letter": validated_cover_letter,
