@@ -33,6 +33,7 @@ class JobAgentState(TypedDict, total=False):
     # ---------------------------------
 
     resume: ParsedResume
+
     job_description: JobDescription
 
     # ---------------------------------
@@ -40,7 +41,9 @@ class JobAgentState(TypedDict, total=False):
     # ---------------------------------
 
     match: ResumeJobMatch
+
     match_score: int
+
     similarity: int
 
     # ---------------------------------
@@ -48,6 +51,7 @@ class JobAgentState(TypedDict, total=False):
     # ---------------------------------
 
     tailored_resume: ResumeTailorResponse
+
     cover_letter: CoverLetterResponse
 
     # ---------------------------------
@@ -55,6 +59,7 @@ class JobAgentState(TypedDict, total=False):
     # ---------------------------------
 
     tailored_resume_validated: bool
+
     cover_letter_validated: bool
 
     # ---------------------------------
@@ -62,6 +67,7 @@ class JobAgentState(TypedDict, total=False):
     # ---------------------------------
 
     tailor_retry_count: int
+
     cover_letter_retry_count: int
 
     # ---------------------------------
@@ -69,4 +75,5 @@ class JobAgentState(TypedDict, total=False):
     # ---------------------------------
 
     tailoring_validation_errors: list[str]
+
     cover_letter_validation_errors: list[str]

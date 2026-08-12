@@ -1,7 +1,17 @@
+import sys
+import asyncio
+
 from fastapi import FastAPI
 
 from app.api.router import api_router
 from app.core.config import settings
+
+
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(
+        asyncio.WindowsProactorEventLoopPolicy()
+    )
+
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -9,7 +19,10 @@ app = FastAPI(
     debug=True,
 )
 
-app.include_router(api_router)
+
+app.include_router(
+    api_router
+)
 
 
 @app.get("/")
