@@ -1,0 +1,33 @@
+# Node / Frontend
+**/node_modules/
+**/.next/
+**/out/
+**/build/
+**/dist/
+
+# Python / Backend
+**/.venv/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+
+# Environment Variables
+.env
+.env.*
+
+# Uploads & Data
+uploads/
+chroma_db/
+*.db
+
+# Logs
+*.log
+logs/
+
+# System / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
