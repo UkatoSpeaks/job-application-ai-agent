@@ -27,17 +27,15 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Logo */}
         <div className="flex items-center space-x-2 cursor-pointer" onClick={() => setActiveTab('job-agent')}>
-          <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-emerald-400 font-extrabold text-lg shadow-sm">
-            <span className="flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-emerald-400" />
-            </span>
+          <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-emerald-400 font-bold text-lg shadow-sm">
+            <Sparkles className="w-5 h-5 text-emerald-400" />
           </div>
-          <span className="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-1">
+          <span className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-1">
             Joblist<span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
           </span>
         </div>
 
-        {/* Center Navigation Links & Tool Tabs */}
+        {/* Center Navigation Links (Navbar: 14-15px, Body/Nav: 500 weight) */}
         <nav className="hidden lg:flex items-center space-x-7 text-[15px] font-medium text-slate-600">
           <a href="#features" className="hover:text-emerald-600 transition-colors">Features</a>
           <a href="#how-it-works" className="hover:text-emerald-600 transition-colors">How it Works</a>
@@ -46,24 +44,24 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
           <div className="relative">
             <button 
               onClick={() => setResourcesOpen(!resourcesOpen)}
-              className="flex items-center space-x-1 hover:text-emerald-600 transition-colors focus:outline-none"
+              className="flex items-center space-x-1 hover:text-emerald-600 transition-colors focus:outline-none font-medium"
             >
               <span>Resources</span>
               <ChevronDown className="w-4 h-4 text-slate-400" />
             </button>
 
             {resourcesOpen && (
-              <div className="absolute top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50 text-xs">
-                <a href="#tools" className="block px-4 py-2 hover:bg-slate-50 text-slate-700">Resume Templates</a>
-                <a href="#tools" className="block px-4 py-2 hover:bg-slate-50 text-slate-700">Cover Letter Guide</a>
-                <a href="#tools" className="block px-4 py-2 hover:bg-slate-50 text-slate-700">ATS Optimization</a>
+              <div className="absolute top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50 text-[14px]">
+                <a href="#tools" className="block px-4 py-2 hover:bg-slate-50 text-slate-700 font-medium">Resume Templates</a>
+                <a href="#tools" className="block px-4 py-2 hover:bg-slate-50 text-slate-700 font-medium">Cover Letter Guide</a>
+                <a href="#tools" className="block px-4 py-2 hover:bg-slate-50 text-slate-700 font-medium">ATS Optimization</a>
               </div>
             )}
           </div>
         </nav>
 
-        {/* Interactive Application Tool Tabs */}
-        <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
+        {/* Interactive Application Tool Tabs (Buttons: 500-600 weight, 14px) */}
+        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -75,9 +73,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
                   setActiveTab(tab.id);
                   if (onOpenApp) onOpenApp();
                 }}
-                className={`relative flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 whitespace-nowrap ${
+                className={`relative flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-[14px] font-medium transition-all duration-200 whitespace-nowrap ${
                   isActive
-                    ? 'text-emerald-700 font-extrabold'
+                    ? 'text-emerald-700 font-semibold'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                 }`}
               >
@@ -97,12 +95,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
           })}
         </div>
 
-        {/* Right CTA Actions */}
+        {/* Right CTA Actions (Navbar buttons: 500-600 weight, 14-15px) */}
         <div className="flex items-center space-x-3">
-          <button className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors">
-            <Sun className="w-4 h-4" />
+          <button className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors" title="Toggle Theme">
+            <Sun className="w-4.5 h-4.5" />
           </button>
-          <button className="text-sm font-bold text-slate-700 hover:text-slate-900 px-3 py-2 transition-colors hidden sm:block">
+          <button className="text-[14px] font-medium text-slate-700 hover:text-slate-900 px-3 py-2 transition-colors hidden sm:block">
             Sign in
           </button>
           <button
@@ -110,10 +108,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
               setActiveTab('job-agent');
               if (onOpenApp) onOpenApp();
             }}
-            className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all duration-200 shadow-sm flex items-center space-x-1.5 hover:shadow-md"
+            className="bg-slate-900 hover:bg-slate-800 text-white text-[14px] font-semibold px-4.5 py-2.5 rounded-xl transition-all duration-200 shadow-sm flex items-center space-x-1.5 hover:shadow-md"
           >
             <span>Get Started Free</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>
