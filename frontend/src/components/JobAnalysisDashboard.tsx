@@ -492,21 +492,33 @@ export const JobAnalysisDashboard: React.FC<JobAnalysisDashboardProps> = ({
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-1">
-            <button
-              onClick={onTailorResume}
+            <a
+              href="/tailored-resume"
+              onClick={(e) => {
+                if (onTailorResume) {
+                  e.preventDefault();
+                  onTailorResume();
+                }
+              }}
               className="px-6 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-purple-600/30 transition-all flex items-center space-x-2 hover:-translate-y-0.5 cursor-pointer"
             >
               <PenTool className="w-4 h-4" />
               <span>Tailor My Resume →</span>
-            </button>
+            </a>
 
-            <button
-              onClick={onGenerateCoverLetter}
+            <a
+              href="/cover-letter"
+              onClick={(e) => {
+                if (onGenerateCoverLetter) {
+                  e.preventDefault();
+                  onGenerateCoverLetter();
+                }
+              }}
               className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs sm:text-sm border border-white/10 transition-all flex items-center space-x-2 cursor-pointer"
             >
               <Mail className="w-4 h-4 text-purple-400" />
               <span>Generate Cover Letter</span>
-            </button>
+            </a>
           </div>
         </motion.div>
       </main>
