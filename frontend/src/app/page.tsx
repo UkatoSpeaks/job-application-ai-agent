@@ -90,13 +90,13 @@ export default function Home() {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-              <button
-                onClick={() => handleOpenTool('job-agent')}
+              <a
+                href="/analyze"
                 className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-7 py-3.5 rounded-xl text-[15px] transition-all duration-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 flex items-center space-x-2 hover:-translate-y-0.5"
               >
                 <span>Analyze a Job</span>
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </a>
 
               <button
                 onClick={() => {
@@ -830,13 +830,13 @@ export default function Home() {
               Join thousands of job seekers who've already used Joblist to land interviews at top companies. No credit card, no signup — try it free right now.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-              <button
-                onClick={() => handleOpenTool('job-agent')}
+              <a
+                href="/analyze"
                 className="bg-emerald-500 hover:bg-emerald-400 text-white font-semibold px-8 py-4 rounded-xl text-[15px] transition-all duration-200 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-400/35 flex items-center space-x-2 hover:-translate-y-0.5"
               >
                 <span>Analyze a Job Now</span>
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </a>
               <button
                 onClick={() => handleOpenTool('resume-analyzer')}
                 className="bg-white/10 hover:bg-white/15 text-white border border-white/10 font-medium px-6 py-4 rounded-xl text-[15px] transition-all duration-200 flex items-center space-x-2"

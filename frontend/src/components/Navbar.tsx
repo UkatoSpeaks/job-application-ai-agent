@@ -122,16 +122,13 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
             Sign in
           </button>
 
-          <button
-            onClick={() => {
-              setActiveTab('job-agent');
-              if (onOpenApp) onOpenApp();
-            }}
+          <a
+            href="/analyze"
             className="bg-emerald-500 hover:bg-emerald-400 text-white text-[13px] font-semibold px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-1.5 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-400/30"
           >
             <span>Get Started Free</span>
             <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          </a>
 
           {/* Mobile menu toggle */}
           <button
