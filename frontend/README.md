@@ -2,7 +2,19 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+Set the backend address, then run the development server:
+
+```bash
+copy .env.example .env.local
+```
+
+Start the FastAPI backend from `backend` in a separate terminal:
+
+```bash
+uv run uvicorn app.main:app --reload --port 8000
+```
+
+Then, in this `frontend` folder, run:
 
 ```bash
 npm run dev

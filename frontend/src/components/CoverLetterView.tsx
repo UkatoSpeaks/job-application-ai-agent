@@ -44,9 +44,13 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
   const company = data?.job?.company || 'HCLTech';
   const location = data?.job?.location || 'Bengaluru, India';
   const candidateName = 'Anurag Chaudhary';
+  const generatedCoverLetter = data?.cover_letter;
+  const apiLetterBody = typeof generatedCoverLetter === 'string'
+    ? generatedCoverLetter
+    : generatedCoverLetter?.cover_letter;
 
-  // Sample Generated Cover Letter Content
-  const letterBodyText = `Dear Hiring Team,
+  // Fallback content shown before an application has been analyzed.
+  const letterBodyText = apiLetterBody || `Dear Hiring Team,
 
 I am writing to express my enthusiastic interest in the Senior Developer position at HCLTech. With over four years of hands-on experience building scalable web applications, robust REST APIs, and microservices in Python, FastAPI, and React, I am confident in my ability to immediately contribute to your engineering team in Bengaluru.
 

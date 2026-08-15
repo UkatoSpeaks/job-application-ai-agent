@@ -7,6 +7,42 @@ import {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+function normalizeResume(resume: any) {
+  const skills = Array.isArray(resume.skills)
+    ? resume.skills
+    : Object.values(resume.skills || {}).flat() as string[];
+
+  return {
+    contact_info: {
+      name: resume.name,
+      email: resume.email,
+      phone: resume.phone,
+      linkedin: resume.linkedin,
+      github: resume.github,
+    },
+    summary: resume.summary || '',
+    skills,
+    work_experience: (resume.experience || []).map((item: any) => ({
+      job_title: item.role || '',
+      company: item.company || '',
+      location: item.location,
+      start_date: item.duration,
+      responsibilities: item.responsibilities || [],
+    })),
+    education: (resume.education || []).map((item: any) => ({
+      degree: item.degree || '',
+      institution: item.institution || '',
+      graduation_year: item.duration,
+    })),
+    projects: (resume.projects || []).map((item: any) => ({
+      title: item.title || '',
+      description: (item.description || []).join(' '),
+      technologies: item.tech_stack || [],
+    })),
+    certifications: (resume.certifications || []).map((item: any) => item.title).filter(Boolean),
+  };
+}
+
 /**
  * Upload and analyze a PDF resume
  */
@@ -24,7 +60,26 @@ export async function uploadResume(file: File): Promise<ResumeUploadResponse> {
     throw new Error(errorData.detail || 'Failed to upload and analyze resume');
   }
 
-  return response.json();
+  const data = await response.json();
+  return {
+    ...data,
+    parsed_resume: normalizeResume(data.parsed_resume),
+    score: {
+      total_score: data.score.overall,
+      breakdown: data.score.breakdown,
+    },
+    validation: {
+      is_valid: data.validation.valid,
+      score: data.score.overall,
+      issues: [...(data.validation.errors || []), ...(data.validation.warnings || [])].map((issue: any) => issue.message),
+      suggestions: (data.validation.info || []).map((issue: any) => issue.message),
+    },
+    analysis: {
+      strengths: data.analysis.strengths || [],
+      weaknesses: data.analysis.weaknesses || [],
+      actionable_recommendations: data.analysis.recommendations || [],
+    },
+  };
 }
 
 /**
@@ -45,7 +100,11 @@ export async function matchResume(file: File, jobDescription: string): Promise<J
     throw new Error(errorData.detail || 'Failed to match resume with job description');
   }
 
-  return response.json();
+  const data = await response.json();
+  return {
+    ...data,
+    resume: normalizeResume(data.resume),
+  };
 }
 
 /**
@@ -66,7 +125,21 @@ export async function tailorResume(file: File, jobDescription: string): Promise<
     throw new Error(errorData.detail || 'Failed to tailor resume');
   }
 
-  return response.json();
+  const data = await response.json();
+  return {
+    original_resume: { contact_info: {}, summary: '', skills: [], work_experience: [], education: [], projects: [], certifications: [] },
+    tailored_resume: {
+      contact_info: {},
+      summary: data.improved_summary || '',
+      skills: data.improved_skills || [],
+      work_experience: (data.experience_improvements || []).map((item: any) => ({
+        job_title: '', company: item.company, responsibilities: item.improvements || [],
+      })),
+      education: [], projects: [], certifications: [],
+    },
+    summary_of_changes: data.ats_tips || [],
+    targeted_keywords_added: data.keywords_to_add || [],
+  };
 }
 
 /**

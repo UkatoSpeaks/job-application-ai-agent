@@ -148,7 +148,7 @@ export const TailoredResumeView: React.FC<TailoredResumeViewProps> = ({
   const activeResume =
     viewMode === 'tailored'
       ? data?.tailored_resume || defaultTailoredResume
-      : defaultOriginalResume;
+      : data?.original_resume || defaultOriginalResume;
 
   // Added targeted keywords highlight list
   const targetedKeywordsAdded = [

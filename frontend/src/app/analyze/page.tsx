@@ -32,6 +32,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { runJobAgentPipeline } from '@/lib/api';
 import { JobAgentResponse } from '@/types';
 import { JobAnalysisDashboard } from '@/components/JobAnalysisDashboard';
+import { saveApplicationResult } from '@/lib/application-result';
 
 // URL validation helper function
 function isValidJobUrl(urlString: string): boolean {
@@ -214,6 +215,7 @@ export default function AnalyzeJobPage() {
       setAnalysisProgress(100);
       setCurrentStepIndex(analysisSteps.length - 1);
       setAnalysisResult(response);
+      saveApplicationResult(response);
 
       setTimeout(() => {
         setShowDashboard(true);

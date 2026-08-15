@@ -105,8 +105,17 @@ export interface JobAgentResponse {
   success: boolean;
   job: ParsedJobDescription;
   match: MatchDetails;
+  original_resume?: ParsedResume | null;
   tailored_resume?: ParsedResume | any;
-  cover_letter?: string | any;
+  cover_letter?: string | {
+    cover_letter?: string;
+    email_subject?: string;
+    email_body?: string;
+    recipient?: string;
+    company?: string;
+    role?: string;
+    content?: string;
+  };
   validation?: {
     tailored_resume?: any;
     cover_letter?: any;

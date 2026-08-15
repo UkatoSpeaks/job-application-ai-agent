@@ -1,22 +1,25 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 import { JobAnalysisDashboard } from '@/components/JobAnalysisDashboard';
 import { useRouter } from 'next/navigation';
+import { getApplicationResult } from '@/lib/application-result';
+import { JobAgentResponse } from '@/types';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const [data, setData] = useState<JobAgentResponse | null>(null);
+
+  useEffect(() => {
+    setData(getApplicationResult());
+  }, []);
 
   return (
     <JobAnalysisDashboard
+      data={data}
       onReset={() => router.push('/analyze')}
-      onTailorResume={() => {
-        alert('Page 4: Tailored Resume section is next in the flow!');
-      }}
-      onGenerateCoverLetter={() => {
-        alert('Page 5: Cover Letter section is in the flow!');
-      }}
+      onTailorResume={() => router.push('/tailored-resume')}
+      onGenerateCoverLetter={() => router.push('/cover-letter')}
     />
   );
 }
