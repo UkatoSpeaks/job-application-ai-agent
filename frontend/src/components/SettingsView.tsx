@@ -8,8 +8,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  Linkedin,
-  Github,
   FileText,
   Sliders,
   ShieldCheck,

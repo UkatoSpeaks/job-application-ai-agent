@@ -178,8 +178,8 @@ ${activeResume.skills.join(' • ')}
 EXPERIENCE
 ${activeResume.work_experience
   .map(
-    (w) => `${w.job_title} | ${w.company} (${w.start_date} - ${w.end_date})
-${w.responsibilities.map((r) => `• ${r}`).join('\n')}`
+    (w: any) => `${w.job_title} | ${w.company} (${w.start_date} - ${w.end_date})
+${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
   )
   .join('\n\n')}
     `.trim();
@@ -383,7 +383,7 @@ ${w.responsibilities.map((r) => `• ${r}`).join('\n')}`
                     Technical Skills
                   </h3>
                   <div className="flex flex-wrap gap-1.5">
-                    {activeResume.skills.map((skill) => {
+                    {activeResume.skills.map((skill: string) => {
                       const isTargeted = targetedKeywordsAdded.includes(skill) && viewMode === 'tailored';
                       return (
                         <span
@@ -409,7 +409,7 @@ ${w.responsibilities.map((r) => `• ${r}`).join('\n')}`
                   </h3>
 
                   <div className="space-y-4">
-                    {activeResume.work_experience.map((exp, idx) => (
+                    {activeResume.work_experience.map((exp: any, idx: number) => (
                       <div key={idx} className="space-y-1">
                         <div className="flex justify-between items-baseline">
                           <h4 className="text-xs font-bold text-slate-900">
@@ -421,7 +421,7 @@ ${w.responsibilities.map((r) => `• ${r}`).join('\n')}`
                         </div>
 
                         <ul className="list-disc pl-4 space-y-1 text-xs text-slate-700 leading-relaxed">
-                          {exp.responsibilities.map((bullet, bIdx) => (
+                          {exp.responsibilities.map((bullet: string, bIdx: number) => (
                             <li
                               key={bIdx}
                               contentEditable={isEditing}
@@ -444,7 +444,7 @@ ${w.responsibilities.map((r) => `• ${r}`).join('\n')}`
                       Key Projects
                     </h3>
                     <div className="space-y-2">
-                      {activeResume.projects.map((proj, pIdx) => (
+                      {activeResume.projects.map((proj: any, pIdx: number) => (
                         <div key={pIdx} className="space-y-0.5">
                           <h4 className="text-xs font-bold text-slate-900">{proj.title}</h4>
                           <p className="text-xs text-slate-600 leading-relaxed">{proj.description}</p>

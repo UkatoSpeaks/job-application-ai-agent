@@ -78,7 +78,7 @@ export default function Home() {
             </div>
 
             {/* Heading */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[64px] font-bold text-slate-900 tracking-tight leading-[1.08]">
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-[68px] font-extrabold text-slate-900 tracking-[-0.04em] leading-[1.08]">
               Turn every job posting into a{' '}
               <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">stronger application</span>
             </h1>
@@ -265,7 +265,7 @@ export default function Home() {
               <Zap className="w-3.5 h-3.5 text-slate-500" />
               <span>Why Joblist?</span>
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-slate-900 tracking-tight leading-tight">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-[44px] font-bold text-slate-900 tracking-[-0.03em] leading-tight">
               Everything you need to apply smarter
             </h2>
             <p className="text-slate-500 text-[15px] max-w-lg mx-auto leading-relaxed">
