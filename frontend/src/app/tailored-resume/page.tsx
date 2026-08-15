@@ -18,9 +18,7 @@ export default function TailoredResumePage() {
     <TailoredResumeView
       data={data}
       onBackToDashboard={() => router.push('/dashboard')}
-      onGoToCoverLetter={() => {
-        alert('Page 5: Cover Letter section is next in the flow!');
-      }}
+      onGoToCoverLetter={() => router.push('/cover-letter')}
     />
   );
 }

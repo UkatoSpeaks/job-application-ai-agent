@@ -159,6 +159,7 @@ export const TailoredResumeView: React.FC<TailoredResumeViewProps> = ({
     'TypeScript',
     'Microservices',
   ];
+  const resumeKeywords = activeResume.skills.filter((skill: string) => targetedKeywordsAdded.includes(skill));
 
   // Missing skills that were grounded (not falsely hallucinated)
   const groundedMissingSkills =
@@ -195,15 +196,20 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-purple-500 selection:text-white pb-20">
+    <div className="min-h-screen bg-[#f7f8fc] text-slate-900 font-sans selection:bg-violet-200 pb-20">
+      <div className="absolute inset-x-0 top-0 h-[350px] overflow-hidden bg-slate-950">
+        <div className="absolute -top-32 left-[10%] w-[28rem] h-[28rem] rounded-full bg-violet-600/30 blur-[110px]"></div>
+        <div className="absolute right-[8%] top-4 w-80 h-80 rounded-full bg-cyan-500/20 blur-[110px]"></div>
+        <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:22px_22px]"></div>
+      </div>
       {/* Top Application Bar */}
-      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <header className="relative z-40 border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-[76px] flex items-center justify-between">
           <div className="flex items-center space-x-3">
             {onBackToDashboard ? (
               <button
                 onClick={onBackToDashboard}
-                className="flex items-center space-x-1.5 text-slate-500 hover:text-slate-900 transition-colors text-xs font-semibold"
+                className="flex items-center space-x-1.5 text-slate-300 hover:text-white transition-colors text-xs font-semibold"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Dashboard</span>
@@ -211,28 +217,28 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
             ) : (
               <Link
                 href="/dashboard"
-                className="flex items-center space-x-1.5 text-slate-500 hover:text-slate-900 transition-colors text-xs font-semibold"
+                className="flex items-center space-x-1.5 text-slate-300 hover:text-white transition-colors text-xs font-semibold"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Dashboard</span>
               </Link>
             )}
 
-            <span className="text-slate-300">|</span>
+            <span className="text-slate-600">|</span>
 
             <div className="flex items-center space-x-2">
-              <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center shadow-md shadow-purple-600/20">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/25">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
-              <span className="font-bold text-slate-900 text-base tracking-tight">
+              <span className="font-bold text-white text-base tracking-tight">
                 ApplyAI
               </span>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
-            <span className="hidden sm:inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span className="hidden sm:inline-flex items-center space-x-1 px-3 py-1.5 rounded-full bg-emerald-400/10 text-emerald-200 border border-emerald-400/20 text-xs font-semibold">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
               <span>AI Validation Passed</span>
             </span>
           </div>
@@ -240,19 +246,19 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
       </header>
 
       {/* Main Workspace Container */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-6">
+      <main className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 pt-8 space-y-6">
         {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 text-white">
           <div>
-            <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-md border border-purple-200/80 uppercase tracking-wider mb-1">
-              <span>Step 4 of 5</span>
+            <div className="inline-flex items-center space-x-1.5 text-[11px] font-bold text-violet-200 bg-violet-300/10 px-3 py-1 rounded-full border border-violet-300/20 uppercase tracking-[0.14em] mb-2">
+              <span>Step 4 of 5 · Resume studio</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
               Tailored Resume
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
+            <p className="text-xs sm:text-sm text-slate-300 font-normal mt-1">
               Optimized specifically for{' '}
-              <span className="font-semibold text-slate-800">
+              <span className="font-semibold text-white">
                 {jobTitle} · {company}
               </span>
             </p>
@@ -261,13 +267,13 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
           {/* Action Toolbar */}
           <div className="flex flex-wrap items-center gap-2">
             {/* View Mode Toggle */}
-            <div className="flex items-center bg-slate-200/80 p-1 rounded-xl border border-slate-300 text-xs font-semibold">
+            <div className="flex items-center bg-white/10 p-1 rounded-xl border border-white/15 text-xs font-semibold backdrop-blur">
               <button
                 onClick={() => setViewMode('tailored')}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
                   viewMode === 'tailored'
-                    ? 'bg-white text-purple-700 shadow-xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-violet-700 shadow-xs font-bold'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
                 Tailored Resume
@@ -277,7 +283,7 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
                 className={`px-3 py-1.5 rounded-lg transition-all ${
                   viewMode === 'original'
                     ? 'bg-white text-slate-900 shadow-xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
                 Original Resume
@@ -287,7 +293,7 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
             {/* Copy Button */}
             <button
               onClick={handleCopyText}
-              className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:border-slate-400 text-slate-700 font-semibold text-xs transition-colors flex items-center space-x-1.5 shadow-xs"
+              className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/15 hover:bg-white/15 text-white font-semibold text-xs transition-colors flex items-center space-x-1.5"
             >
               {copied ? (
                 <>
@@ -296,7 +302,7 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
                 </>
               ) : (
                 <>
-                  <Copy className="w-3.5 h-3.5 text-slate-500" />
+                  <Copy className="w-3.5 h-3.5 text-slate-300" />
                   <span>Copy</span>
                 </>
               )}
@@ -307,18 +313,18 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
               onClick={() => setIsEditing(!isEditing)}
               className={`px-3.5 py-2 rounded-xl border font-semibold text-xs transition-colors flex items-center space-x-1.5 shadow-xs ${
                 isEditing
-                  ? 'bg-purple-50 text-purple-700 border-purple-300'
-                  : 'bg-white text-slate-700 border-slate-300 hover:border-slate-400'
+                  ? 'bg-violet-100 text-violet-700 border-violet-100'
+                  : 'bg-white/10 text-white border-white/15 hover:bg-white/15'
               }`}
             >
-              <Edit3 className="w-3.5 h-3.5 text-slate-500" />
+              <Edit3 className="w-3.5 h-3.5 text-current" />
               <span>{isEditing ? 'Done Editing' : 'Edit'}</span>
             </button>
 
             {/* Download PDF Primary Button */}
             <button
               onClick={handleDownloadPDF}
-              className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all flex items-center space-x-1.5 cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-white hover:bg-violet-50 text-violet-800 font-bold text-xs shadow-md transition-all flex items-center space-x-1.5 cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Download PDF</span>
@@ -330,7 +336,8 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column: A4 Paper Preview Document */}
           <div className="lg:col-span-8 space-y-4">
-            <div className="bg-white border border-slate-200 rounded-2xl p-8 sm:p-10 shadow-lg shadow-slate-200/50 min-h-[750px] relative overflow-hidden font-sans">
+            <div className="flex items-center justify-between px-1 text-xs font-semibold text-slate-500"><span>Document preview</span><span className="rounded-full bg-white px-3 py-1.5 border border-slate-200">ATS-friendly layout</span></div>
+            <div className="bg-white border border-slate-200 rounded-3xl p-7 sm:p-10 shadow-[0_25px_55px_-30px_rgba(15,23,42,0.38)] min-h-[750px] relative overflow-hidden font-sans">
               {/* Document Stamp / Status */}
               <div className="absolute top-4 right-4 flex items-center space-x-2 print:hidden">
                 <span
@@ -464,7 +471,7 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4 }}
-              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4"
+              className="bg-white border border-slate-200 rounded-3xl p-5 shadow-[0_15px_35px_-25px_rgba(15,23,42,0.35)] space-y-4"
             >
               <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
                 <Sparkles className="w-4 h-4 text-purple-600" />
@@ -491,7 +498,7 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
                   Targeted Keywords Added
                 </span>
                 <div className="flex flex-wrap gap-1.5">
-                  {targetedKeywordsAdded.map((kw) => (
+                  {(resumeKeywords.length ? resumeKeywords : targetedKeywordsAdded).map((kw: string) => (
                     <span
                       key={kw}
                       className="text-[11px] font-semibold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-md"
@@ -508,7 +515,7 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
-              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-3"
+              className="bg-white border border-slate-200 rounded-3xl p-5 shadow-[0_15px_35px_-25px_rgba(15,23,42,0.35)] space-y-3"
             >
               <div className="flex items-center space-x-2 text-slate-900">
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
@@ -539,7 +546,7 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="bg-slate-900 text-white rounded-2xl p-6 sm:p-8 text-center space-y-4 shadow-xl"
+          className="bg-gradient-to-r from-violet-700 via-indigo-700 to-slate-900 text-white rounded-3xl p-6 sm:p-8 text-center space-y-4 shadow-xl shadow-violet-200"
         >
           <div className="space-y-1">
             <h3 className="text-xl font-bold">Your resume is ready.</h3>
@@ -552,7 +559,7 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
             {onGoToCoverLetter ? (
               <button
                 onClick={onGoToCoverLetter}
-                className="px-7 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-purple-600/30 transition-all flex items-center space-x-2 hover:-translate-y-0.5 cursor-pointer"
+                className="px-7 py-3.5 rounded-xl bg-white hover:bg-violet-50 text-violet-800 font-bold text-xs sm:text-sm shadow-lg transition-all flex items-center space-x-2 hover:-translate-y-0.5 cursor-pointer"
               >
                 <span>Generate Cover Letter →</span>
                 <ArrowRight className="w-4 h-4" />
@@ -560,7 +567,7 @@ ${w.responsibilities.map((r: string) => `• ${r}`).join('\n')}`
             ) : (
               <Link
                 href="/cover-letter"
-                className="px-7 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-purple-600/30 transition-all flex items-center space-x-2 hover:-translate-y-0.5 cursor-pointer"
+                className="px-7 py-3.5 rounded-xl bg-white hover:bg-violet-50 text-violet-800 font-bold text-xs sm:text-sm shadow-lg transition-all flex items-center space-x-2 hover:-translate-y-0.5 cursor-pointer"
               >
                 <span>Generate Cover Letter →</span>
                 <ArrowRight className="w-4 h-4" />
