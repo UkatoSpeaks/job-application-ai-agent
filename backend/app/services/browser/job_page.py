@@ -1,5 +1,7 @@
-from app.schemas.job_page import JobPage
+import asyncio
+import sys
 
+from app.schemas.job_page import JobPage
 from app.services.browser.playwright_client import (
     PlaywrightClient,
 )
@@ -9,6 +11,36 @@ class JobPageExtractor:
 
     @classmethod
     async def extract(
+        cls,
+        url: str,
+    ) -> JobPage:
+        if sys.platform == "win32":
+            try:
+                loop = asyncio.get_running_loop()
+                proactor_cls = getattr(asyncio, "ProactorEventLoop", None)
+                if proactor_cls and not isinstance(loop, proactor_cls):
+                    print("Selector loop detected on Windows. Offloading Playwright to Proactor thread...")
+                    return await asyncio.to_thread(cls._extract_in_proactor_thread, url)
+            except RuntimeError:
+                pass
+
+        return await cls._extract_async(url)
+
+    @classmethod
+    def _extract_in_proactor_thread(
+        cls,
+        url: str,
+    ) -> JobPage:
+        asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            return loop.run_until_complete(cls._extract_async(url))
+        finally:
+            loop.close()
+
+    @classmethod
+    async def _extract_async(
         cls,
         url: str,
     ) -> JobPage:
@@ -150,4 +182,4 @@ class JobPageExtractor:
 
         finally:
 
-            await client.close()
+            await client.close()

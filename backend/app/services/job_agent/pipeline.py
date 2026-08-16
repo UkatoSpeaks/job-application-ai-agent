@@ -95,7 +95,7 @@ class JobApplicationPipeline:
         }
 
         result = (
-            job_agent_graph.invoke(
+            await job_agent_graph.ainvoke(
                 initial_state
             )
         )
