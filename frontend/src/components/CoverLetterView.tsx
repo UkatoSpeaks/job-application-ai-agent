@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { JobAgentResponse } from '@/types';
+import { exportCoverLetterPdf, downloadBlob } from '@/lib/api';
 
 interface CoverLetterViewProps {
   data?: JobAgentResponse | null;
@@ -37,6 +38,7 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
   const [tone, setTone] = useState<'Professional' | 'Confident' | 'Concise'>('Confident');
   const [length, setLength] = useState<'Short' | 'Medium' | 'Detailed'>('Medium');
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [copied, setCopied] = useState(false);
 
   // Job Context Info
@@ -95,9 +97,26 @@ LinkedIn: linkedin.com/in/anurag`;
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Download PDF / Print handler
-  const handleDownload = () => {
-    window.print();
+  // Download PDF handler
+  const handleDownload = async () => {
+    setIsExporting(true);
+    try {
+      const payload = {
+        cover_letter: letterBodyText,
+        company: company,
+        job_title: jobTitle,
+        candidate_name: candidateName,
+        email_subject: emailSubject,
+      };
+      const blob = await exportCoverLetterPdf(payload);
+      const companyClean = company.replace(/\s+/g, '_');
+      downloadBlob(blob, `Cover_Letter_${companyClean}.pdf`);
+    } catch (err) {
+      console.error('Cover letter PDF export failed, falling back to window.print():', err);
+      window.print();
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -208,13 +227,15 @@ LinkedIn: linkedin.com/in/anurag`;
             {/* Download Primary Button */}
             <button
               onClick={handleDownload}
-              className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all flex items-center space-x-1.5 cursor-pointer"
+              disabled={isExporting}
+              className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all flex items-center space-x-1.5 cursor-pointer disabled:opacity-50"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Download</span>
+              <span>{isExporting ? 'Generating PDF...' : 'Download PDF'}</span>
             </button>
           </div>
         </div>
+
 
         {/* Two-Column Main Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

@@ -175,6 +175,41 @@ export async function runJobAgentPipeline(file: File, jobUrl: string): Promise<J
   const formData = new FormData();
   formData.append('resume', file);
   formData.append('job_url', jobUrl);
+}
+
+/**
+ * Generate AI Cover Letter from PDF resume & job description
+ */
+export async function generateCoverLetter(
+  file: File,
+  jobDescription: string,
+  tone: string = 'professional'
+): Promise<any> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('job_description', jobDescription);
+  formData.append('tone', tone);
+
+  const response = await fetch(`${API_BASE_URL}/resume/cover-letter`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ detail: 'Cover letter generation failed' }));
+    throw new Error(errorData.detail || 'Failed to generate cover letter');
+  }
+
+  return response.json();
+}
+
+/**
+ * Run full end-to-end Job Agent Pipeline from a Job Posting URL + PDF resume
+ */
+export async function runJobAgentPipeline(file: File, jobUrl: string): Promise<JobAgentResponse> {
+  const formData = new FormData();
+  formData.append('resume', file);
+  formData.append('job_url', jobUrl);
 
   const response = await fetch(`${API_BASE_URL}/job-agent/analyze`, {
     method: 'POST',
@@ -187,4 +222,56 @@ export async function runJobAgentPipeline(file: File, jobUrl: string): Promise<J
   }
 
   return response.json();
+}
+
+/**
+ * Export tailored resume as Jake's Resume PDF
+ */
+export async function exportResumePdf(resumeData: any): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/export/resume-pdf`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(resumeData),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to generate resume PDF');
+  }
+
+  return response.blob();
+}
+
+/**
+ * Export cover letter as PDF
+ */
+export async function exportCoverLetterPdf(coverLetterData: any): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/export/cover-letter-pdf`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(coverLetterData),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to generate cover letter PDF');
+  }
+
+  return response.blob();
+}
+
+/**
+ * Trigger browser file download from Blob
+ */
+export function downloadBlob(blob: Blob, filename: string) {
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
 }

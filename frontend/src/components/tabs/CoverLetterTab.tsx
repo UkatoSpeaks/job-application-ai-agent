@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { FileUpload } from '@/components/ui/FileUpload';
-import { generateCoverLetter } from '@/lib/api';
+import { generateCoverLetter, exportCoverLetterPdf, downloadBlob } from '@/lib/api';
 import { FileText, ArrowRight, AlertTriangle, Copy, Check, Download, Sparkles, Sliders } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -12,6 +12,7 @@ export const CoverLetterTab: React.FC = () => {
   const [jobDescription, setJobDescription] = useState('');
   const [tone, setTone] = useState('professional');
   const [loading, setLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [coverLetter, setCoverLetter] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -46,6 +47,23 @@ export const CoverLetterTab: React.FC = () => {
     navigator.clipboard.writeText(coverLetter);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const downloadPdf = async () => {
+    if (!coverLetter) return;
+    setIsExporting(true);
+    try {
+      const blob = await exportCoverLetterPdf({
+        cover_letter: coverLetter,
+        company: 'Target Company',
+        job_title: 'Position',
+      });
+      downloadBlob(blob, 'Cover_Letter.pdf');
+    } catch (err) {
+      console.error('PDF export failed:', err);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const downloadTxt = () => {
@@ -144,7 +162,15 @@ export const CoverLetterTab: React.FC = () => {
                   className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 text-xs font-semibold flex items-center gap-1.5 transition-colors"
                 >
                   {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copied ? 'Copied!' : 'Copy to Clipboard'}</span>
+                  <span>{copied ? 'Copied!' : 'Copy'}</span>
+                </button>
+                <button
+                  onClick={downloadPdf}
+                  disabled={isExporting}
+                  className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>{isExporting ? 'Generating...' : 'Download PDF'}</span>
                 </button>
                 <button
                   onClick={downloadTxt}
@@ -168,3 +194,4 @@ export const CoverLetterTab: React.FC = () => {
     </div>
   );
 };
+
