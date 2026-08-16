@@ -177,7 +177,6 @@ export default function AnalyzeJobPage() {
     setCurrentStepIndex(0);
     setLogs(['[0.1s] 🚀 Analysis pipeline initiated...']);
 
-    // Log updates during simulation
     const logMessages = [
       '[0.4s] 📄 PDF parser active. Detected candidate profile.',
       '[1.2s] 🌐 Fetching target job description from URL...',
@@ -224,7 +223,6 @@ export default function AnalyzeJobPage() {
       console.warn('API connection fallback activated:', err);
       clearInterval(stepInterval);
 
-      // Create rich fallback result tailored to input URL
       const extractedTitle = jobUrl.toLowerCase().includes('frontend')
         ? 'Senior Frontend Engineer'
         : jobUrl.toLowerCase().includes('full-stack') || jobUrl.toLowerCase().includes('fullstack')
@@ -331,530 +329,392 @@ export default function AnalyzeJobPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
-      {/* Dynamic Background Glows */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]"></div>
-        <div className="absolute top-1/3 -right-40 w-96 h-96 bg-teal-500/10 rounded-full blur-[140px]"></div>
-        <div className="absolute -bottom-40 left-1/3 w-96 h-96 bg-purple-500/10 rounded-full blur-[130px]"></div>
-      </div>
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-purple-500 selection:text-white pb-20">
+      {/* Top Application Bar */}
+      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Link
+              href="/"
+              className="flex items-center space-x-1.5 text-slate-500 hover:text-slate-900 transition-colors text-xs font-semibold"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Home</span>
+            </Link>
 
-      {/* Top Header */}
-      <header className="relative z-20 h-16 border-b border-white/10 bg-[#0f172a]/80 backdrop-blur-xl px-4 lg:px-8 flex items-center justify-between sticky top-0">
-        <div className="flex items-center space-x-4">
-          <Link
-            href="/"
-            className="flex items-center space-x-2 text-slate-400 hover:text-white transition-colors group text-xs font-semibold uppercase tracking-wider"
-          >
-            <ArrowLeft className="w-4 h-4 text-slate-400 group-hover:-translate-x-0.5 transition-transform" />
-            <span>Home</span>
-          </Link>
+            <span className="text-slate-300">|</span>
 
-          <span className="text-slate-700">|</span>
-
-          <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <Sparkles className="w-4 h-4 text-white" />
+            <div className="flex items-center space-x-2">
+              <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center shadow-md shadow-purple-600/20">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-bold text-slate-900 text-base tracking-tight">
+                ApplyAI
+              </span>
             </div>
-            <span className="font-bold text-white text-lg tracking-tight flex items-center">
-              Joblist AI
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block ml-1.5 animate-pulse"></span>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <span className="hidden sm:inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>AI Validation Passed</span>
             </span>
-          </div>
-        </div>
-
-        <div className="flex items-center space-x-4">
-          <div className="hidden sm:flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>AI Workspace Active</span>
-          </div>
-
-          <div className="flex items-center space-x-2 border-l border-white/10 pl-4">
-            <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-              alt="Alex Johnson"
-              className="w-7 h-7 rounded-full border border-white/20 object-cover"
-            />
-            <span className="text-xs font-medium text-slate-300 hidden md:inline">Alex Johnson</span>
           </div>
         </div>
       </header>
 
-      {/* Main Content Layout */}
-      <div className="relative z-10 flex-1 flex max-w-7xl w-full mx-auto">
-        {/* Left Workspace Sidebar */}
-        <aside className="w-64 border-r border-white/10 bg-[#0c1220]/70 backdrop-blur-md p-4 hidden md:flex flex-col justify-between shrink-0">
-          <div className="space-y-6">
-            <div>
-              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-3">
-                Workspace Tools
-              </p>
-              <nav className="space-y-1.5">
-                <button
-                  onClick={resetForm}
-                  className={`w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                    !isAnalyzing
-                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-md shadow-emerald-500/5'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <PlusCircle className="w-4 h-4 text-emerald-400" />
-                  <span>New Analysis</span>
-                </button>
-
-                <button
-                  onClick={() => router.push('/history')}
-                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
-                >
-                  <div className="flex items-center space-x-2.5">
-                    <Clock className="w-4 h-4 text-slate-400" />
-                    <span>Application History</span>
+      {/* Main Workspace Container */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-6">
+        <AnimatePresence mode="wait">
+          {!isAnalyzing ? (
+            /* FORM INPUT STATE */
+            <motion.div
+              key="form-view"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-8"
+            >
+              {/* Header Title */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+                <div>
+                  <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-md border border-purple-200/80 uppercase tracking-wider mb-1">
+                    <span>Step 1 of 5 • Job Intelligence</span>
                   </div>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-                    24
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => router.push('/tailored-resume')}
-                  className="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
-                >
-                  <FileText className="w-4 h-4 text-slate-400" />
-                  <span>Tailored Resumes</span>
-                </button>
-
-                <button
-                  onClick={() => router.push('/cover-letter')}
-                  className="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
-                >
-                  <FileCode className="w-4 h-4 text-slate-400" />
-                  <span>Cover Letters</span>
-                </button>
-              </nav>
-            </div>
-
-            {/* AI Assistant Tip Card */}
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-slate-900 border border-emerald-500/20 space-y-2">
-              <div className="flex items-center space-x-2 text-emerald-400 text-xs font-semibold">
-                <Zap className="w-4 h-4" />
-                <span>Pro Tip</span>
-              </div>
-              <p className="text-[11px] text-slate-300 leading-relaxed">
-                Try clicking one of our preset sample jobs below to test the full matching & cover letter generation pipeline instantly!
-              </p>
-            </div>
-          </div>
-
-          <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 text-[11px] text-slate-400 flex items-center justify-between">
-            <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              FastAPI Engine
-            </span>
-            <span className="text-emerald-400 font-semibold text-[10px] bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-              READY
-            </span>
-          </div>
-        </aside>
-
-        {/* Right Main Content */}
-        <main className="flex-1 p-6 lg:p-10 overflow-y-auto">
-          <AnimatePresence mode="wait">
-            {!isAnalyzing ? (
-              /* FORM INPUT STATE */
-              <motion.div
-                key="form-view"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.3 }}
-                className="max-w-3xl mx-auto space-y-8"
-              >
-                {/* Header Title */}
-                <div className="space-y-2 border-b border-white/10 pb-6">
-                  <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>AI Application Pipeline</span>
-                  </div>
-                  <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-                    Analyze Any Job Posting
+                  <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                    Analyze Job Posting
                   </h1>
-                  <p className="text-sm text-slate-400">
-                    Paste a job URL and upload your resume to extract match scores, missing skills, and a tailored application package.
+                  <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
+                    Paste a target job posting URL and upload your resume to generate a full match analysis.
                   </p>
                 </div>
+              </div>
 
-                {/* Form Inputs Container */}
-                <div className="space-y-6">
-                  {/* Job URL Section */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                        <Globe className="w-4 h-4 text-emerald-400" />
-                        <span>Target Job Posting URL</span>
-                      </label>
-                      <span className="text-[11px] text-slate-400">LinkedIn, Indeed, Company Site</span>
-                    </div>
+              {/* Form Inputs Container */}
+              <div className="space-y-6">
+                {/* Job URL Section */}
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <label className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-purple-600" />
+                      <span>1. Target Job Posting URL</span>
+                    </label>
+                    <span className="text-[11px] text-slate-400 font-semibold">LinkedIn, Indeed, Careers Page</span>
+                  </div>
 
-                    <div className="relative">
-                      <input
-                        type="url"
-                        value={jobUrl}
-                        onChange={(e) => {
-                          setJobUrl(e.target.value);
-                          if (!urlTouched) setUrlTouched(true);
-                        }}
-                        onBlur={() => setUrlTouched(true)}
-                        placeholder="https://company.com/jobs/senior-developer..."
-                        className={`w-full bg-[#0f172a]/90 border ${
-                          showUrlError
-                            ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
-                            : showUrlSuccess
-                            ? 'border-emerald-500/80 focus:ring-2 focus:ring-emerald-500/20'
-                            : 'border-slate-700/80 hover:border-slate-600 focus:border-emerald-500'
-                        } rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none transition-all shadow-inner`}
-                      />
-
-                      {showUrlSuccess && (
-                        <div className="absolute right-3.5 top-3.5 w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
-                          <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[3]" />
-                        </div>
-                      )}
-                    </div>
+                  <div className="relative">
+                    <input
+                      type="url"
+                      value={jobUrl}
+                      onChange={(e) => {
+                        setJobUrl(e.target.value);
+                        if (!urlTouched) setUrlTouched(true);
+                      }}
+                      onBlur={() => setUrlTouched(true)}
+                      placeholder="https://careers.company.com/jobs/senior-developer..."
+                      className={`w-full bg-slate-50 border ${
+                        showUrlError
+                          ? 'border-red-400 focus:ring-2 focus:ring-red-400/20'
+                          : showUrlSuccess
+                          ? 'border-emerald-400 focus:ring-2 focus:ring-emerald-400/20'
+                          : 'border-slate-300 hover:border-slate-400 focus:border-purple-600'
+                      } rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none transition-all font-mono`}
+                    />
 
                     {showUrlSuccess && (
-                      <p className="text-xs text-emerald-400 font-medium flex items-center gap-1.5">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                        <span>Valid job posting URL detected</span>
-                      </p>
-                    )}
-
-                    {showUrlError && (
-                      <p className="text-xs text-red-400 font-medium flex items-center gap-1.5">
-                        <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
-                        <span>Please enter a valid public job posting web address (http/https).</span>
-                      </p>
-                    )}
-
-                    {/* Quick-Fill Preset Pills */}
-                    <div className="pt-2">
-                      <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                        Or test with sample job URL:
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {SAMPLE_JOBS.map((sample) => (
-                          <button
-                            key={sample.company}
-                            type="button"
-                            onClick={() => handleSelectSampleJob(sample)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-center space-x-1.5 ${
-                              jobUrl === sample.url
-                                ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-md'
-                                : 'bg-slate-800/80 hover:bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
-                            }`}
-                          >
-                            <span>{sample.icon}</span>
-                            <span>{sample.company} — {sample.title}</span>
-                          </button>
-                        ))}
+                      <div className="absolute right-3.5 top-3 w-5 h-5 rounded-full bg-emerald-50 border border-emerald-300 flex items-center justify-center">
+                        <Check className="w-3 h-3 text-emerald-600 stroke-[3]" />
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Resume Upload Section */}
-                  <div className="space-y-3 pt-2">
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                        <Briefcase className="w-4 h-4 text-emerald-400" />
-                        <span>Your PDF Resume</span>
-                      </label>
-                      <button
-                        type="button"
-                        onClick={handleUseSampleResume}
-                        className="text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 underline flex items-center gap-1"
-                      >
-                        <Sparkle className="w-3 h-3 text-emerald-400" />
-                        <span>Use Demo Resume (Alex_Johnson.pdf)</span>
-                      </button>
-                    </div>
-
-                    {!selectedFile ? (
-                      <div
-                        onDragOver={handleDragOver}
-                        onDragLeave={handleDragLeave}
-                        onDrop={handleDrop}
-                        onClick={() => fileInputRef.current?.click()}
-                        className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 ${
-                          isDragging
-                            ? 'border-emerald-400 bg-emerald-500/10 scale-[1.01]'
-                            : 'border-slate-700/80 hover:border-emerald-500/50 bg-[#0f172a]/60 hover:bg-[#0f172a]'
-                        }`}
-                      >
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept=".pdf,application/pdf"
-                          onChange={(e) => handleFileChange(e.target.files?.[0])}
-                          className="hidden"
-                        />
-
-                        <div className="flex flex-col items-center justify-center space-y-3">
-                          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-lg shadow-emerald-500/10">
-                            <Upload className="w-7 h-7" />
-                          </div>
-
-                          <div className="space-y-1">
-                            <p className="text-sm font-bold text-white">
-                              Drop your PDF resume here <span className="text-slate-400 font-normal">or click to browse</span>
-                            </p>
-                            <p className="text-xs text-slate-400 font-normal">
-                              Supports standard PDF files up to 10 MB
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      /* AFTER UPLOAD FILE CARD */
-                      <div className="bg-[#0f172a] border border-emerald-500/40 rounded-2xl p-4 flex items-center justify-between shadow-xl shadow-emerald-500/5">
-                        <div className="flex items-center space-x-3.5 min-w-0">
-                          <div className="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0">
-                            <FileText className="w-6 h-6 text-emerald-400" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-sm font-bold text-white truncate">
-                              {selectedFile.name}
-                            </p>
-                            <p className="text-xs text-emerald-400 font-medium flex items-center gap-1.5 mt-0.5">
-                              <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[3]" />
-                              <span>PDF Resume Ready • {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB</span>
-                            </p>
-                          </div>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => setSelectedFile(null)}
-                          className="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors flex items-center space-x-1.5 shrink-0 ml-3 border border-slate-700"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          <span>Remove</span>
-                        </button>
-                      </div>
-                    )}
-
-                    {fileError && (
-                      <p className="text-xs text-red-400 font-medium flex items-center gap-1.5">
-                        <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
-                        <span>{fileError}</span>
-                      </p>
                     )}
                   </div>
 
-                  {/* Main Action CTA Button */}
-                  <div className="pt-4">
-                    <button
-                      type="button"
-                      disabled={!canAnalyze}
-                      onClick={handleStartAnalysis}
-                      className={`w-full py-4 px-6 rounded-2xl font-bold text-base flex items-center justify-center space-x-2 transition-all duration-300 shadow-xl ${
-                        canAnalyze
-                          ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 cursor-pointer'
-                          : 'bg-slate-800 text-slate-500 border border-slate-700/60 cursor-not-allowed opacity-60'
-                      }`}
-                    >
-                      <Sparkles className="w-5 h-5" />
-                      <span>Start AI Job Analysis</span>
-                      <ArrowRight className="w-5 h-5 ml-1" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Features Grid */}
-                <div className="pt-6 border-t border-white/10 space-y-4">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Included in this Analysis
-                  </p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="p-4 rounded-2xl bg-[#0f172a]/80 border border-white/5 space-y-2 hover:border-emerald-500/30 transition-all">
-                      <div className="flex items-center space-x-2 text-emerald-400 font-bold text-xs">
-                        <Target className="w-4 h-4" />
-                        <span>ATS Match Score</span>
-                      </div>
-                      <p className="text-xs text-slate-400 leading-relaxed">
-                        Calculates skill overlap, similarity metrics, and missing requirements.
-                      </p>
-                    </div>
-
-                    <div className="p-4 rounded-2xl bg-[#0f172a]/80 border border-white/5 space-y-2 hover:border-emerald-500/30 transition-all">
-                      <div className="flex items-center space-x-2 text-blue-400 font-bold text-xs">
-                        <Search className="w-4 h-4" />
-                        <span>Keyword Gap Finder</span>
-                      </div>
-                      <p className="text-xs text-slate-400 leading-relaxed">
-                        Identifies missing resume keywords to bypass automated screening filters.
-                      </p>
-                    </div>
-
-                    <div className="p-4 rounded-2xl bg-[#0f172a]/80 border border-white/5 space-y-2 hover:border-emerald-500/30 transition-all">
-                      <div className="flex items-center space-x-2 text-purple-400 font-bold text-xs">
-                        <FileCode className="w-4 h-4" />
-                        <span>Tailored Package</span>
-                      </div>
-                      <p className="text-xs text-slate-400 leading-relaxed">
-                        Generates a tailored resume bullet set and custom role cover letter.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ) : (
-              /* DEDICATED PROGRESS & EXECUTION LOG MONITOR */
-              <motion.div
-                key="loading-view"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.35 }}
-                className="max-w-2xl mx-auto py-6 space-y-8"
-              >
-                {/* Central Sparkling Icon */}
-                <div className="text-center space-y-3">
-                  <div className="relative inline-flex items-center justify-center">
-                    <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-emerald-500/20 via-teal-500/20 to-purple-500/20 border border-emerald-500/40 flex items-center justify-center shadow-2xl shadow-emerald-500/20">
-                      <Sparkles className="w-12 h-12 text-emerald-400 animate-pulse" />
-                    </div>
-                    {analysisProgress < 100 && (
-                      <div className="absolute inset-0 rounded-3xl border-2 border-emerald-400/30 border-t-emerald-400 animate-spin"></div>
-                    )}
-                  </div>
-
-                  <div className="space-y-1">
-                    <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                      {analysisProgress < 100 ? 'Analyzing Application Profile...' : 'Analysis Complete!'}
-                    </h2>
-                    <p className="text-xs text-slate-400">
-                      Running AI match algorithms against target job posting...
+                  {showUrlSuccess && (
+                    <p className="text-xs text-emerald-600 font-semibold flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>Valid job posting URL detected</span>
                     </p>
-                  </div>
-                </div>
+                  )}
 
-                {/* Progress Bar & Percentage */}
-                <div className="bg-[#0f172a]/90 border border-white/10 rounded-2xl p-6 space-y-6 shadow-2xl backdrop-blur-xl">
-                  <div className="flex items-center justify-between text-xs font-bold">
-                    <span className="text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                      <BarChart3 className="w-4 h-4 text-emerald-400" />
-                      <span>Pipeline Execution Progress</span>
-                    </span>
-                    <span className="text-emerald-400 font-mono text-sm px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
-                      {analysisProgress}%
-                    </span>
-                  </div>
+                  {showUrlError && (
+                    <p className="text-xs text-red-600 font-semibold flex items-center gap-1.5">
+                      <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                      <span>Please enter a valid public job posting web address (http/https).</span>
+                    </p>
+                  )}
 
-                  <div className="w-full bg-slate-800/80 rounded-full h-3 overflow-hidden p-0.5 border border-white/5">
-                    <motion.div
-                      className="bg-gradient-to-r from-emerald-400 via-teal-400 to-purple-400 h-full rounded-full"
-                      animate={{ width: `${analysisProgress}%` }}
-                      transition={{ duration: 0.3, ease: 'easeOut' }}
-                    />
-                  </div>
-
-                  {/* Multi-stage Animated Steps List */}
-                  <div className="space-y-3 pt-2 border-t border-white/5">
-                    {analysisSteps.map((step, idx) => {
-                      const isCompleted = idx < currentStepIndex || analysisProgress === 100;
-                      const isCurrent = idx === currentStepIndex && analysisProgress < 100;
-
-                      return (
-                        <div
-                          key={step.title}
-                          className={`flex items-center space-x-3.5 p-3 rounded-xl transition-all ${
-                            isCurrent
-                              ? 'bg-emerald-500/15 border border-emerald-500/40 text-white shadow-md'
-                              : isCompleted
-                              ? 'text-slate-300 bg-white/[0.02]'
-                              : 'text-slate-600 opacity-50'
+                  {/* Quick-Fill Preset Pills */}
+                  <div className="pt-2">
+                    <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      Or test with a sample job link:
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {SAMPLE_JOBS.map((sample) => (
+                        <button
+                          key={sample.company}
+                          type="button"
+                          onClick={() => handleSelectSampleJob(sample)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-center space-x-1.5 cursor-pointer ${
+                            jobUrl === sample.url
+                              ? 'bg-purple-50 border-purple-300 text-purple-700 font-bold shadow-xs'
+                              : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-600'
                           }`}
                         >
-                          <div className="shrink-0">
-                            {isCompleted ? (
-                              <div className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400">
-                                <Check className="w-3.5 h-3.5 stroke-[3]" />
-                              </div>
-                            ) : isCurrent ? (
-                              <div className="w-6 h-6 rounded-full bg-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-400/50">
-                                <span className="w-2.5 h-2.5 rounded-full bg-slate-900 animate-ping"></span>
-                              </div>
-                            ) : (
-                              <div className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-slate-600 text-xs">
-                                {idx + 1}
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-bold tracking-wide flex items-center justify-between">
-                              <span>{step.title}</span>
-                              {isCurrent && (
-                                <span className="text-[10px] text-emerald-400 font-normal animate-pulse bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                                  Processing...
-                                </span>
-                              )}
-                            </p>
-                            <p className="text-[11px] text-slate-400 mt-0.5 truncate">{step.desc}</p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Terminal Execution Logs Preview Box */}
-                  <div className="space-y-2 pt-2">
-                    <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
-                      <span className="flex items-center gap-1.5">
-                        <Terminal className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Execution Logs</span>
-                      </span>
-                      <span className="text-[10px] text-slate-500">Live Stream</span>
-                    </div>
-
-                    <div className="bg-black/80 border border-white/10 rounded-xl p-3.5 font-mono text-xs text-emerald-400/90 h-28 overflow-y-auto space-y-1 shadow-inner">
-                      {logs.map((msg, i) => (
-                        <div key={i} className="leading-relaxed">
-                          {msg}
-                        </div>
+                          <span>{sample.icon}</span>
+                          <span>{sample.company} — {sample.title}</span>
+                        </button>
                       ))}
-                      <div className="animate-pulse text-emerald-500 font-bold">_</div>
                     </div>
                   </div>
                 </div>
 
-                {/* Manual override button if needed */}
-                {analysisProgress === 100 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-5 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-center space-y-4 shadow-xl"
-                  >
-                    <p className="text-xs text-emerald-300 font-medium leading-relaxed">
-                      ✓ Job analysis finished! Rendering Analysis Dashboard...
-                    </p>
+                {/* Resume Upload Section */}
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <label className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                      <Briefcase className="w-4 h-4 text-purple-600" />
+                      <span>2. Master PDF Resume</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleUseSampleResume}
+                      className="text-xs font-semibold text-purple-700 hover:text-purple-800 underline flex items-center gap-1 cursor-pointer"
+                    >
+                      <Sparkle className="w-3.5 h-3.5 text-purple-600" />
+                      <span>Use Demo Resume (Alex_Johnson.pdf)</span>
+                    </button>
+                  </div>
 
-                    <div className="flex items-center justify-center gap-3">
+                  {!selectedFile ? (
+                    <div
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                      onClick={() => fileInputRef.current?.click()}
+                      className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 ${
+                        isDragging
+                          ? 'border-purple-500 bg-purple-50 scale-[1.01]'
+                          : 'border-slate-300 hover:border-purple-400 bg-slate-50/50 hover:bg-slate-50'
+                      }`}
+                    >
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".pdf,application/pdf"
+                        onChange={(e) => handleFileChange(e.target.files?.[0])}
+                        className="hidden"
+                      />
+
+                      <div className="flex flex-col items-center justify-center space-y-3">
+                        <div className="w-12 h-12 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600 shadow-xs">
+                          <Upload className="w-6 h-6" />
+                        </div>
+
+                        <div className="space-y-1">
+                          <p className="text-xs font-bold text-slate-900">
+                            Drop your PDF resume here <span className="text-slate-500 font-normal">or click to browse</span>
+                          </p>
+                          <p className="text-[11px] text-slate-400 font-normal">
+                            Supports standard PDF files up to 10 MB
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    /* AFTER UPLOAD FILE CARD */
+                    <div className="bg-purple-50/50 border border-purple-200 rounded-xl p-4 flex items-center justify-between">
+                      <div className="flex items-center space-x-3.5 min-w-0">
+                        <div className="w-10 h-10 rounded-lg bg-purple-600 flex items-center justify-center text-white shrink-0">
+                          <FileText className="w-5 h-5" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-slate-900 truncate">
+                            {selectedFile.name}
+                          </p>
+                          <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1 mt-0.5">
+                            <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
+                            <span>PDF Resume Loaded • {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB</span>
+                          </p>
+                        </div>
+                      </div>
+
                       <button
-                        onClick={() => setShowDashboard(true)}
-                        className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-xs font-bold text-white transition-all shadow-lg flex items-center space-x-2 cursor-pointer"
+                        type="button"
+                        onClick={() => setSelectedFile(null)}
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors flex items-center space-x-1 shrink-0 ml-3 border border-slate-200 cursor-pointer"
                       >
-                        <BarChart3 className="w-4 h-4" />
-                        <span>View Results Dashboard →</span>
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Remove</span>
                       </button>
                     </div>
-                  </motion.div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </main>
-      </div>
+                  )}
+
+                  {fileError && (
+                    <p className="text-xs text-red-600 font-semibold flex items-center gap-1.5">
+                      <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                      <span>{fileError}</span>
+                    </p>
+                  )}
+                </div>
+
+                {/* Main Action CTA Button */}
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    disabled={!canAnalyze}
+                    onClick={handleStartAnalysis}
+                    className={`w-full py-3.5 px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all duration-300 shadow-md ${
+                      canAnalyze
+                        ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-purple-600/20 hover:-translate-y-0.5 cursor-pointer'
+                        : 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
+                    }`}
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>Start AI Job Analysis</span>
+                    <ArrowRight className="w-4 h-4 ml-1" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Features Grid */}
+              <div className="pt-4 border-t border-slate-200 space-y-3">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Included in this Analysis
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-1.5 shadow-xs">
+                    <div className="flex items-center space-x-1.5 text-purple-700 font-bold text-xs">
+                      <Target className="w-4 h-4" />
+                      <span>ATS Match Score</span>
+                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed font-normal">
+                      Calculates skill overlap, similarity metrics, and missing requirements.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-1.5 shadow-xs">
+                    <div className="flex items-center space-x-1.5 text-purple-700 font-bold text-xs">
+                      <Search className="w-4 h-4" />
+                      <span>Keyword Gap Finder</span>
+                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed font-normal">
+                      Identifies missing resume keywords to bypass automated screening filters.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-1.5 shadow-xs">
+                    <div className="flex items-center space-x-1.5 text-purple-700 font-bold text-xs">
+                      <FileCode className="w-4 h-4" />
+                      <span>Tailored Package</span>
+                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed font-normal">
+                      Generates a tailored resume bullet set and custom role cover letter.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            /* PROGRESS MONITOR */
+            <motion.div
+              key="loading-view"
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              transition={{ duration: 0.35 }}
+              className="max-w-2xl mx-auto py-6 space-y-6"
+            >
+              <div className="text-center space-y-3">
+                <div className="relative inline-flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-center shadow-md shadow-purple-600/10">
+                    <Sparkles className="w-10 h-10 text-purple-600 animate-pulse" />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+                    {analysisProgress < 100 ? 'Analyzing Application Profile...' : 'Analysis Complete!'}
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Running AI match algorithms against target job posting...
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-5 shadow-lg">
+                <div className="flex items-center justify-between text-xs font-bold">
+                  <span className="text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                    <BarChart3 className="w-4 h-4 text-purple-600" />
+                    <span>Pipeline Progress</span>
+                  </span>
+                  <span className="text-purple-700 font-mono text-xs px-2.5 py-0.5 rounded-md bg-purple-50 border border-purple-200">
+                    {analysisProgress}%
+                  </span>
+                </div>
+
+                <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden p-0.5">
+                  <motion.div
+                    className="bg-purple-600 h-full rounded-full"
+                    animate={{ width: `${analysisProgress}%` }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                  />
+                </div>
+
+                <div className="space-y-2.5 pt-2 border-t border-slate-100">
+                  {analysisSteps.map((step, idx) => {
+                    const isCompleted = idx < currentStepIndex || analysisProgress === 100;
+                    const isCurrent = idx === currentStepIndex && analysisProgress < 100;
+
+                    return (
+                      <div
+                        key={step.title}
+                        className={`flex items-center space-x-3 p-3 rounded-xl transition-all ${
+                          isCurrent
+                            ? 'bg-purple-50 border border-purple-200 text-slate-900 font-semibold'
+                            : isCompleted
+                            ? 'text-slate-700 bg-slate-50'
+                            : 'text-slate-400 opacity-60'
+                        }`}
+                      >
+                        <div className="shrink-0">
+                          {isCompleted ? (
+                            <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-white">
+                              <Check className="w-3 h-3 stroke-[3]" />
+                            </div>
+                          ) : isCurrent ? (
+                            <div className="w-5 h-5 rounded-full bg-purple-600 flex items-center justify-center">
+                              <span className="w-2 h-2 rounded-full bg-white animate-ping"></span>
+                            </div>
+                          ) : (
+                            <div className="w-5 h-5 rounded-full border border-slate-300 flex items-center justify-center text-slate-400 text-[10px]">
+                              {idx + 1}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold tracking-wide flex items-center justify-between">
+                            <span>{step.title}</span>
+                            {isCurrent && (
+                              <span className="text-[10px] text-purple-700 font-semibold animate-pulse bg-purple-100 px-2 py-0.5 rounded border border-purple-200">
+                                Processing...
+                              </span>
+                            )}
+                          </p>
+                          <p className="text-[11px] text-slate-500 font-normal truncate mt-0.5">
+                            {step.desc}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
     </div>
   );
 }

@@ -48,370 +48,324 @@ export const SettingsView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
-      {/* Top Header */}
-      <header className="h-14 border-b border-white/10 bg-[#0f172a] px-4 lg:px-8 flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center space-x-3">
-          <Link
-            href="/"
-            className="flex items-center space-x-2 text-slate-300 hover:text-white transition-colors group"
-          >
-            <ArrowLeft className="w-4 h-4 text-slate-400 group-hover:-translate-x-0.5 transition-transform" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Home</span>
-          </Link>
-          <span className="text-slate-700">|</span>
-          <div className="flex items-center space-x-2">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center shadow-md shadow-emerald-500/20">
-              <Sparkles className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-bold text-white text-base tracking-tight flex items-center">
-              ApplyAI
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block ml-1"></span>
-            </span>
-          </div>
-        </div>
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-purple-500 selection:text-white pb-20">
+      {/* Top Application Bar */}
+      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Link
+              href="/"
+              className="flex items-center space-x-1.5 text-slate-500 hover:text-slate-900 transition-colors text-xs font-semibold"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Home</span>
+            </Link>
 
-        <div className="flex items-center space-x-3">
-          <Link
-            href="/analyze"
-            className="bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg transition-all flex items-center space-x-1.5 shadow-sm"
-          >
-            <PlusCircle className="w-3.5 h-3.5" />
-            <span>New Analysis</span>
-          </Link>
+            <span className="text-slate-300">|</span>
+
+            <div className="flex items-center space-x-2">
+              <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center shadow-md shadow-purple-600/20">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-bold text-slate-900 text-base tracking-tight">
+                ApplyAI
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <Link
+              href="/analyze"
+              className="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-all flex items-center space-x-1.5 shadow-md shadow-purple-600/20 cursor-pointer"
+            >
+              <PlusCircle className="w-3.5 h-3.5" />
+              <span>New Analysis</span>
+            </Link>
+          </div>
         </div>
       </header>
 
-      {/* Main Layout: 2 Columns */}
-      <div className="flex-1 flex max-w-7xl w-full mx-auto">
-        {/* Left Sidebar */}
-        <aside className="w-64 border-r border-white/10 bg-[#0f172a]/60 p-4 hidden md:flex flex-col justify-between shrink-0">
-          <div className="space-y-6">
+      {/* Main Workspace Container */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-6">
+        <form onSubmit={handleSave} className="space-y-6">
+          {/* Title Header */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5">
             <div>
-              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">
-                Workspace
+              <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-md border border-purple-200/80 uppercase tracking-wider mb-1">
+                <SettingsIcon className="w-3.5 h-3.5 text-purple-600" />
+                <span>Workspace Preferences</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                Settings & Preferences
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
+                Manage your candidate profile, master resume, and AI generation settings.
               </p>
-              <nav className="space-y-1">
-                <Link
-                  href="/"
-                  className="w-full flex items-center space-x-2.5 px-3 py-2 text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
-                >
-                  <Sparkles className="w-4 h-4 text-slate-500" />
-                  <span>Overview</span>
-                </Link>
+            </div>
 
-                <Link
-                  href="/analyze"
-                  className="w-full flex items-center space-x-2.5 px-3 py-2 text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
-                >
-                  <PlusCircle className="w-4 h-4 text-emerald-400" />
-                  <span>New Analysis</span>
-                </Link>
+            <button
+              type="submit"
+              className="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-md shadow-purple-600/20 flex items-center space-x-1.5 shrink-0 cursor-pointer"
+            >
+              {savedSuccess ? (
+                <>
+                  <Check className="w-4 h-4 text-white" />
+                  <span>Saved!</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>Save Settings</span>
+                </>
+              )}
+            </button>
+          </div>
 
-                <Link
-                  href="/history"
-                  className="w-full flex items-center space-x-2.5 px-3 py-2 text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
-                >
-                  <Clock className="w-4 h-4 text-slate-500" />
-                  <span>History</span>
-                </Link>
+          {/* Saved Toast Feedback */}
+          {savedSuccess && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2"
+            >
+              <Check className="w-4 h-4 text-emerald-600 stroke-[3]" />
+              <span>Your settings and candidate preferences have been saved successfully.</span>
+            </motion.div>
+          )}
 
-                <div className="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                  <SettingsIcon className="w-4 h-4 text-emerald-400" />
-                  <span>Settings</span>
-                </div>
-              </nav>
+          {/* Section 1: Candidate Profile */}
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-5 shadow-sm">
+            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+              <User className="w-4 h-4 text-purple-600" />
+              <span>Candidate Profile</span>
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-300 focus:border-purple-600 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Target Job Title
+                </label>
+                <input
+                  type="text"
+                  value={targetTitle}
+                  onChange={(e) => setTargetTitle(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-300 focus:border-purple-600 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-300 focus:border-purple-600 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-300 focus:border-purple-600 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-300 focus:border-purple-600 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  LinkedIn URL
+                </label>
+                <input
+                  type="text"
+                  value={linkedin}
+                  onChange={(e) => setLinkedin(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-300 focus:border-purple-600 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none"
+                />
+              </div>
             </div>
           </div>
 
-          <div className="p-3 rounded-xl bg-[#1e293b]/40 border border-white/5 text-[11px] text-slate-400 flex items-center justify-between">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              FastAPI Agent
-            </span>
-            <span className="text-slate-500 font-mono">v1.0</span>
-          </div>
-        </aside>
+          {/* Section 2: Default Resume */}
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-sm">
+            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+              <FileText className="w-4 h-4 text-purple-600" />
+              <span>Default Master Resume</span>
+            </h2>
 
-        {/* Main Content Area */}
-        <main className="flex-1 p-6 lg:p-10 bg-slate-900 overflow-y-auto">
-          <form onSubmit={handleSave} className="max-w-3xl mx-auto space-y-8">
-            {/* Title Header */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-5">
-              <div className="space-y-1">
-                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-2">
-                  Settings & Preferences
-                  <SettingsIcon className="w-5 h-5 text-emerald-400 inline" />
-                </h1>
-                <p className="text-sm text-slate-400 font-normal">
-                  Manage your candidate profile, default resume, and AI tailoring preferences.
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-9 h-9 rounded-lg bg-purple-100 border border-purple-200 flex items-center justify-center text-purple-700">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-900">Anurag_Chaudhary_Resume.pdf</p>
+                  <p className="text-[11px] text-slate-500 font-medium">2.4 MB • Active Master Resume</p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors flex items-center space-x-1 cursor-pointer"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                <span>Replace</span>
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between pt-1">
+              <div>
+                <p className="text-xs font-semibold text-slate-900">Auto-use Default Resume</p>
+                <p className="text-[11px] text-slate-500">Automatically select default resume when launching new job analysis</p>
+              </div>
+
+              <input
+                type="checkbox"
+                checked={autoUseDefaultResume}
+                onChange={(e) => setAutoUseDefaultResume(e.target.checked)}
+                className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+              />
+            </div>
+          </div>
+
+          {/* Section 3: AI & Application Preferences */}
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-5 shadow-sm">
+            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+              <Sliders className="w-4 h-4 text-purple-600" />
+              <span>AI & Generation Preferences</span>
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Default Cover Letter Tone
+                </label>
+                <div className="grid grid-cols-3 gap-1.5 text-xs font-semibold">
+                  {(['Confident', 'Professional', 'Concise'] as const).map((t) => (
+                    <button
+                      type="button"
+                      key={t}
+                      onClick={() => setDefaultTone(t)}
+                      className={`py-2 rounded-xl border text-center transition-all cursor-pointer ${
+                        defaultTone === t
+                          ? 'bg-purple-50 text-purple-700 border-purple-300 font-bold shadow-xs'
+                          : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Default Cover Letter Length
+                </label>
+                <div className="grid grid-cols-3 gap-1.5 text-xs font-semibold">
+                  {(['Short', 'Medium', 'Detailed'] as const).map((l) => (
+                    <button
+                      type="button"
+                      key={l}
+                      onClick={() => setDefaultLength(l)}
+                      className={`py-2 rounded-xl border text-center transition-all cursor-pointer ${
+                        defaultLength === l
+                          ? 'bg-purple-50 text-purple-700 border-purple-300 font-bold shadow-xs'
+                          : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      {l}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Strict Grounded Check */}
+            <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+              <div>
+                <p className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  Strict Grounded AI Check
+                </p>
+                <p className="text-[11px] text-slate-500">
+                  Prevent AI engine from hallucinating or generating skills not grounded in your master resume
                 </p>
               </div>
 
-              <button
-                type="submit"
-                className="bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center space-x-1.5 shrink-0"
-              >
-                {savedSuccess ? (
-                  <>
-                    <Check className="w-4 h-4 text-white" />
-                    <span>Saved!</span>
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-4 h-4" />
-                    <span>Save Settings</span>
-                  </>
-                )}
-              </button>
+              <input
+                type="checkbox"
+                checked={strictGroundedAI}
+                onChange={(e) => setStrictGroundedAI(e.target.checked)}
+                className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500"
+              />
+            </div>
+          </div>
+
+          {/* Section 4: API & Engine Status */}
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-3 shadow-sm">
+            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+              <Server className="w-4 h-4 text-purple-600" />
+              <span>Engine & API Connection</span>
+            </h2>
+
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-slate-500 font-medium">Backend API URL</span>
+              <span className="font-mono text-slate-900 bg-slate-100 px-2.5 py-1 rounded border border-slate-200 font-semibold">
+                http://localhost:8000
+              </span>
             </div>
 
-            {/* Saved Toast Feedback */}
-            {savedSuccess && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-2"
-              >
-                <Check className="w-4 h-4 text-emerald-400" />
-                <span>Your settings and candidate preferences have been saved successfully.</span>
-              </motion.div>
-            )}
-
-            {/* Section 1: Candidate Profile */}
-            <div className="p-6 rounded-2xl bg-[#0f172a] border border-white/10 space-y-5 shadow-lg">
-              <h2 className="text-base font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-                <User className="w-4 h-4 text-emerald-400" />
-                <span>Candidate Profile</span>
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                    Target Job Title
-                  </label>
-                  <input
-                    type="text"
-                    value={targetTitle}
-                    onChange={(e) => setTargetTitle(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                    Phone Number
-                  </label>
-                  <input
-                    type="text"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                    Location
-                  </label>
-                  <input
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                    LinkedIn URL
-                  </label>
-                  <input
-                    type="text"
-                    value={linkedin}
-                    onChange={(e) => setLinkedin(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none"
-                  />
-                </div>
-              </div>
+            <div className="flex items-center justify-between text-xs pt-1">
+              <span className="text-slate-500 font-medium">Connection Status</span>
+              <span className="text-emerald-700 font-bold flex items-center gap-1.5 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Connected to FastAPI Engine
+              </span>
             </div>
+          </div>
 
-            {/* Section 2: Default Resume */}
-            <div className="p-6 rounded-2xl bg-[#0f172a] border border-white/10 space-y-4 shadow-lg">
-              <h2 className="text-base font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-                <FileText className="w-4 h-4 text-emerald-400" />
-                <span>Default Master Resume</span>
-              </h2>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-9 h-9 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                    <FileText className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-white">Anurag_Chaudhary_Resume.pdf</p>
-                    <p className="text-[11px] text-slate-400">2.4 MB • Active Default Master Resume</p>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  className="px-3 py-1.5 rounded-lg border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition-colors flex items-center space-x-1"
-                >
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>Replace</span>
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between pt-1">
-                <div>
-                  <p className="text-xs font-semibold text-white">Auto-use Default Resume</p>
-                  <p className="text-[11px] text-slate-400">Automatically select default resume when launching new job analysis</p>
-                </div>
-
-                <input
-                  type="checkbox"
-                  checked={autoUseDefaultResume}
-                  onChange={(e) => setAutoUseDefaultResume(e.target.checked)}
-                  className="w-4 h-4 rounded text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900"
-                />
-              </div>
-            </div>
-
-            {/* Section 3: AI & Application Preferences */}
-            <div className="p-6 rounded-2xl bg-[#0f172a] border border-white/10 space-y-5 shadow-lg">
-              <h2 className="text-base font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-                <Sliders className="w-4 h-4 text-emerald-400" />
-                <span>AI & Generation Preferences</span>
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                    Default Cover Letter Tone
-                  </label>
-                  <div className="grid grid-cols-3 gap-1.5 text-xs font-semibold">
-                    {(['Confident', 'Professional', 'Concise'] as const).map((t) => (
-                      <button
-                        type="button"
-                        key={t}
-                        onClick={() => setDefaultTone(t)}
-                        className={`py-2 rounded-xl border text-center transition-all ${
-                          defaultTone === t
-                            ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 font-bold'
-                            : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'
-                        }`}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                    Default Cover Letter Length
-                  </label>
-                  <div className="grid grid-cols-3 gap-1.5 text-xs font-semibold">
-                    {(['Short', 'Medium', 'Detailed'] as const).map((l) => (
-                      <button
-                        type="button"
-                        key={l}
-                        onClick={() => setDefaultLength(l)}
-                        className={`py-2 rounded-xl border text-center transition-all ${
-                          defaultLength === l
-                            ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 font-bold'
-                            : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'
-                        }`}
-                      >
-                        {l}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Strict Grounded Check */}
-              <div className="flex items-center justify-between pt-3 border-t border-slate-800">
-                <div>
-                  <p className="text-xs font-semibold text-white flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                    Strict Grounded AI Check
-                  </p>
-                  <p className="text-[11px] text-slate-400">
-                    Prevent AI engine from hallucinating or generating skills not grounded in your master resume
-                  </p>
-                </div>
-
-                <input
-                  type="checkbox"
-                  checked={strictGroundedAI}
-                  onChange={(e) => setStrictGroundedAI(e.target.checked)}
-                  className="w-4 h-4 rounded text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900"
-                />
-              </div>
-            </div>
-
-            {/* Section 4: API & Engine Status */}
-            <div className="p-6 rounded-2xl bg-[#0f172a] border border-white/10 space-y-3 shadow-lg">
-              <h2 className="text-base font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-                <Server className="w-4 h-4 text-emerald-400" />
-                <span>Engine & API Connection</span>
-              </h2>
-
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-400">Backend API URL</span>
-                <span className="font-mono text-white bg-slate-900 px-2.5 py-1 rounded border border-slate-700">
-                  http://localhost:8000
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between text-xs pt-1">
-                <span className="text-slate-400">Connection Status</span>
-                <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  Connected to FastAPI Agent Engine
-                </span>
-              </div>
-            </div>
-
-            {/* Submit Bar */}
-            <div className="flex justify-end pt-2">
-              <button
-                type="submit"
-                className="bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs px-6 py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/25 flex items-center space-x-2 cursor-pointer"
-              >
-                <Save className="w-4 h-4" />
-                <span>Save All Settings</span>
-              </button>
-            </div>
-          </form>
-        </main>
-      </div>
+          {/* Submit Bar */}
+          <div className="flex justify-end pt-2">
+            <button
+              type="submit"
+              className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-6 py-3 rounded-xl transition-all shadow-md shadow-purple-600/20 flex items-center space-x-2 cursor-pointer"
+            >
+              <Save className="w-4 h-4" />
+              <span>Save All Settings</span>
+            </button>
+          </div>
+        </form>
+      </main>
     </div>
   );
 };

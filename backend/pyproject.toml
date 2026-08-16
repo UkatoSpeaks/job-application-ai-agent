@@ -1,8 +1,9 @@
 [project]
 name = "job-application-ai-agent"
 version = "0.1.0"
-description = "AI Job Application Agent Backend"
-requires-python = ">=3.12"
+description = "AI Job Application AI Agent Backend"
+requires-python = ">=3.12,<3.13"
+
 dependencies = [
     "alembic>=1.18.5",
     "chromadb>=1.5.9",
