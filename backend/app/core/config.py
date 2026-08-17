@@ -21,6 +21,8 @@ class Settings(BaseSettings):
 
     LOG_LEVEL: str
 
+    CORS_ORIGINS: str = "https://job-application-ai-agent-nine.vercel.app,http://localhost:3000,http://127.0.0.1:3000"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=True,

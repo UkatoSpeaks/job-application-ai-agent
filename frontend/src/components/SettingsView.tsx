@@ -36,8 +36,16 @@ export const SettingsView: React.FC = () => {
   const [defaultLength, setDefaultLength] = useState<'Medium' | 'Short' | 'Detailed'>('Medium');
   const [autoUseDefaultResume, setAutoUseDefaultResume] = useState(true);
   const [strictGroundedAI, setStrictGroundedAI] = useState(true);
-
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  const apiUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/+$/, '');
+  const [connectionStatus, setConnectionStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking');
+
+  React.useEffect(() => {
+    fetch(`${apiUrl}/`)
+      .then((res) => res.ok ? setConnectionStatus('connected') : setConnectionStatus('disconnected'))
+      .catch(() => setConnectionStatus('disconnected'));
+  }, [apiUrl]);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -340,17 +348,29 @@ export const SettingsView: React.FC = () => {
 
             <div className="flex items-center justify-between text-xs">
               <span className="text-slate-500 font-medium">Backend API URL</span>
-              <span className="font-mono text-slate-900 bg-slate-100 px-2.5 py-1 rounded border border-slate-200 font-semibold">
-                http://localhost:8000
+              <span className="font-mono text-slate-900 bg-slate-100 px-2.5 py-1 rounded border border-slate-200 font-semibold max-w-[280px] truncate" title={apiUrl}>
+                {apiUrl}
               </span>
             </div>
 
             <div className="flex items-center justify-between text-xs pt-1">
               <span className="text-slate-500 font-medium">Connection Status</span>
-              <span className="text-emerald-700 font-bold flex items-center gap-1.5 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Connected to FastAPI Engine
-              </span>
+              {connectionStatus === 'connected' ? (
+                <span className="text-emerald-700 font-bold flex items-center gap-1.5 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Connected to FastAPI Engine
+                </span>
+              ) : connectionStatus === 'checking' ? (
+                <span className="text-amber-700 font-bold flex items-center gap-1.5 bg-amber-50 px-2.5 py-0.5 rounded border border-amber-200">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                  Checking / Waking Up Engine...
+                </span>
+              ) : (
+                <span className="text-rose-700 font-bold flex items-center gap-1.5 bg-rose-50 px-2.5 py-0.5 rounded border border-rose-200">
+                  <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+                  Disconnected (Check Backend URL)
+                </span>
+              )}
             </div>
           </div>
 
