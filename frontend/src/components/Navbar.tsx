@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { ActiveTab } from '@/types';
-import { Sparkles, Sun, ChevronDown, ArrowRight } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { Sparkles, Sun, ChevronDown, ArrowRight, LayoutDashboard, LogOut, User as UserIcon } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: ActiveTab;
@@ -11,6 +13,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenApp }) => {
+  const { user, isAuthenticated, logout } = useAuth();
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -31,7 +34,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 lg:px-8 h-[56px]">
         
         {/* Logo */}
-        <div
+        <Link
+          href="/"
           className="flex items-center space-x-2.5 cursor-pointer shrink-0"
           onClick={() => setActiveTab('job-agent')}
         >
@@ -42,7 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
             Joblist
             <span className="relative -top-1 ml-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
           </span>
-        </div>
+        </Link>
 
         {/* Center Navigation Links */}
         <nav className="hidden lg:flex items-center space-x-8 text-[14px] font-medium">
@@ -118,17 +122,44 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
             <Sun className="w-[18px] h-[18px]" />
           </button>
 
-          <button className="text-[14px] font-medium text-slate-300 hover:text-white px-3 py-2 transition-colors hidden sm:block">
-            Sign in
-          </button>
-
-          <a
-            href="/analyze"
-            className="bg-emerald-500 hover:bg-emerald-400 text-white text-[13px] font-semibold px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-1.5 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-400/30"
-          >
-            <span>Get Started Free</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </a>
+          {isAuthenticated ? (
+            <div className="flex items-center space-x-3">
+              <span className="hidden md:flex items-center space-x-1.5 text-[13px] text-slate-300 font-medium px-2 py-1 bg-slate-800/80 rounded-lg border border-slate-700/50">
+                <UserIcon className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="max-w-[100px] truncate">{user?.name}</span>
+              </span>
+              <Link
+                href="/dashboard"
+                className="bg-emerald-500 hover:bg-emerald-400 text-white text-[13px] font-semibold px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-1.5 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-400/30"
+              >
+                <LayoutDashboard className="w-3.5 h-3.5" />
+                <span>Go to Dashboard</span>
+              </Link>
+              <button
+                onClick={logout}
+                title="Sign Out"
+                className="p-2 rounded-lg text-slate-400 hover:text-red-400 hover:bg-white/[0.06] transition-all duration-200"
+              >
+                <LogOut className="w-[18px] h-[18px]" />
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link
+                href="/signin"
+                className="text-[14px] font-medium text-slate-300 hover:text-white px-3 py-2 transition-colors hidden sm:block"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/signup"
+                className="bg-emerald-500 hover:bg-emerald-400 text-white text-[13px] font-semibold px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-1.5 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-400/30"
+              >
+                <span>Get Started Free</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </>
+          )}
 
           {/* Mobile menu toggle */}
           <button
@@ -148,24 +179,52 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-white/[0.06] bg-[#0f172a] px-4 py-4 space-y-1">
+        <div className="lg:hidden border-t border-white/[0.06] bg-[#0f172a] px-4 py-4 space-y-2">
+          {isAuthenticated ? (
+            <>
+              <div className="px-3 py-2 text-xs font-semibold text-emerald-400">
+                Signed in as {user?.name} ({user?.email})
+              </div>
+              <Link
+                href="/dashboard"
+                className="flex items-center space-x-2 px-3 py-2.5 text-[14px] text-white bg-emerald-600 rounded-lg font-medium"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span>Go to Dashboard</span>
+              </Link>
+              <button
+                onClick={logout}
+                className="w-full text-left flex items-center space-x-2 px-3 py-2.5 text-[14px] text-red-400 hover:bg-white/[0.06] rounded-lg font-medium transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Sign Out</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/signin"
+                className="block px-3 py-2.5 text-[14px] text-slate-300 hover:text-white hover:bg-white/[0.06] rounded-lg font-medium transition-colors"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/signup"
+                className="block px-3 py-2.5 text-[14px] text-emerald-400 hover:bg-white/[0.06] rounded-lg font-medium transition-colors"
+              >
+                Sign Up Free
+              </Link>
+            </>
+          )}
           <a href="#features" className="block px-3 py-2.5 text-[14px] text-slate-300 hover:text-white hover:bg-white/[0.06] rounded-lg font-medium transition-colors">
             Features
           </a>
           <a href="#how-it-works" className="block px-3 py-2.5 text-[14px] text-slate-300 hover:text-white hover:bg-white/[0.06] rounded-lg font-medium transition-colors">
             How it Works
           </a>
-          <a href="#tools" className="block px-3 py-2.5 text-[14px] text-slate-300 hover:text-white hover:bg-white/[0.06] rounded-lg font-medium transition-colors">
-            Pricing
-          </a>
-          <a href="#tools" className="block px-3 py-2.5 text-[14px] text-slate-300 hover:text-white hover:bg-white/[0.06] rounded-lg font-medium transition-colors">
-            Blog
-          </a>
-          <a href="#tools" className="block px-3 py-2.5 text-[14px] text-slate-300 hover:text-white hover:bg-white/[0.06] rounded-lg font-medium transition-colors">
-            Resources
-          </a>
         </div>
       )}
     </header>
   );
 };
+

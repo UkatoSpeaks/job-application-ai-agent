@@ -6,9 +6,15 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
 from app.core.config import settings
+from app.db.base import Base
+from app.db.session import engine
+import app.models  # Register models with Base
+
+Base.metadata.create_all(bind=engine)
 
 
 if sys.platform == "win32":
+
     asyncio.set_event_loop_policy(
         asyncio.WindowsProactorEventLoopPolicy()
     )

@@ -123,3 +123,18 @@ export interface JobAgentResponse {
 }
 
 export type ActiveTab = 'job-agent' | 'resume-analyzer' | 'job-matcher' | 'resume-tailor' | 'cover-letter';
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+  user: User;
+}
+

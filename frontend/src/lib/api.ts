@@ -3,6 +3,8 @@ import {
   JobMatchResponse,
   ResumeTailorResponse,
   JobAgentResponse,
+  AuthResponse,
+  User,
 } from '@/types';
 
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -241,3 +243,59 @@ export function downloadBlob(blob: Blob, filename: string) {
   window.URL.revokeObjectURL(url);
   document.body.removeChild(a);
 }
+
+/**
+ * Sign up a new user account
+ */
+export async function signUpApi(name: string, email: string, password: string): Promise<AuthResponse> {
+  const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, password }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ detail: 'Sign up failed' }));
+    throw new Error(errorData.detail || 'Sign up failed');
+  }
+
+  return response.json();
+}
+
+/**
+ * Sign in existing user account
+ */
+export async function signInApi(email: string, password: string): Promise<AuthResponse> {
+  const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ detail: 'Sign in failed' }));
+    throw new Error(errorData.detail || 'Incorrect email or password');
+  }
+
+  return response.json();
+}
+
+/**
+ * Fetch current user profile using JWT token
+ */
+export async function getMeApi(token: string): Promise<User> {
+  const response = await fetch(`${API_BASE_URL}/auth/me`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ detail: 'Authentication failed' }));
+    throw new Error(errorData.detail || 'Failed to authenticate user');
+  }
+
+  return response.json();
+}
+
