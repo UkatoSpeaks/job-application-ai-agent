@@ -13,15 +13,78 @@ interface Props {
   onBackToDashboard?: () => void;
 }
 
-const fallback: ParsedResume = {
-  contact_info: { name: 'Anurag Chaudhary', email: 'anurag@example.com', phone: '+91 98765 43210', linkedin: 'linkedin.com/in/anurag', github: 'github.com/anurag', location: 'Bengaluru, India' },
-  summary: 'Results-driven software engineer with 4+ years of experience building scalable web applications, REST APIs, and AI integrations.',
-  skills: ['Python', 'JavaScript', 'React', 'FastAPI', 'Docker', 'SQL', 'Git'],
-  work_experience: [{ job_title: 'Software Developer', company: 'Tech Solutions', start_date: '2022', end_date: 'Present', location: 'Bengaluru, India', responsibilities: ['Architected core Next.js frontend applications, improving page load speeds.', 'Collaborated with cross-functional teams to deliver product features.'] }],
-  education: [{ degree: 'Bachelor of Technology in Computer Science', institution: 'University Name', graduation_year: '2022' }],
-  projects: [],
-  certifications: [],
-};
+interface SkillCategory {
+  category: string;
+  skills: string[];
+}
+
+export function categorizeSkills(rawSkills: string[] | Record<string, string[]> | any): SkillCategory[] {
+  if (!rawSkills) return [];
+
+  if (typeof rawSkills === 'object' && !Array.isArray(rawSkills)) {
+    return Object.entries(rawSkills)
+      .map(([cat, list]) => ({
+        category: cat,
+        skills: Array.isArray(list) ? list : [String(list)],
+      }))
+      .filter((item) => item.skills.length > 0);
+  }
+
+  const skillList: string[] = Array.isArray(rawSkills) ? rawSkills : [String(rawSkills)];
+  if (skillList.length === 0) return [];
+
+  const categoryMap: { name: string; matchers: string[] }[] = [
+    {
+      name: 'Languages',
+      matchers: ['c++', 'cpp', 'c#', 'c', 'python', 'javascript', 'typescript', 'java', 'sql', 'html', 'css', 'go', 'rust', 'ruby', 'php', 'kotlin', 'swift'],
+    },
+    {
+      name: 'Frontend',
+      matchers: ['react', 'react.js', 'reactjs', 'next.js', 'nextjs', 'vue', 'vue.js', 'angular', 'tailwind css', 'tailwind', 'bootstrap', 'html5', 'css3', 'redux', 'web vitals'],
+    },
+    {
+      name: 'Backend',
+      matchers: ['node.js', 'nodejs', 'express', 'express.js', 'fastapi', 'flask', 'django', 'spring boot', 'rest api', 'rest apis', 'restful apis', 'graphql', 'microservices'],
+    },
+    {
+      name: 'AI / GenAI',
+      matchers: ['langchain', 'langgraph', 'rag', 'mistral ai', 'groq', 'openai', 'llama', 'vector databases', 'chromadb', 'pinecone', 'hugging face', 'prompt engineering'],
+    },
+    {
+      name: 'Databases',
+      matchers: ['mongodb', 'postgresql', 'postgres', 'mysql', 'sqlite', 'firebase', 'chromadb', 'redis', 'dynamodb', 'supabase'],
+    },
+    {
+      name: 'Tools & Platforms',
+      matchers: ['git', 'github', 'docker', 'kubernetes', 'postman', 'render', 'vercel', 'aws', 'gcp', 'azure', 'linux', 'ci/cd', 'jest', 'cypress'],
+    },
+  ];
+
+  const result: SkillCategory[] = [];
+  const assigned = new Set<string>();
+
+  for (const cat of categoryMap) {
+    const matchedSkills: string[] = [];
+    for (const skill of skillList) {
+      if (assigned.has(skill)) continue;
+      const lower = skill.toLowerCase().trim();
+      if (cat.matchers.some((m) => lower === m || lower.startsWith(m + ' ') || lower.endsWith(' ' + m))) {
+        matchedSkills.push(skill);
+        assigned.add(skill);
+      }
+    }
+    if (matchedSkills.length > 0) {
+      result.push({ category: cat.name, skills: matchedSkills });
+    }
+  }
+
+  const remaining = skillList.filter((s) => !assigned.has(s));
+  if (remaining.length > 0) {
+    result.push({ category: 'Other Skills', skills: remaining });
+  }
+
+  return result;
+}
 
 function getResumeToDisplay(data?: JobAgentResponse | null, mode: 'tailored' | 'original' = 'tailored'): ParsedResume | null {
   if (!data) return null;
@@ -349,34 +412,59 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
             <div className="rounded-2xl border border-slate-200 bg-white p-8 sm:p-12 shadow-lg shadow-slate-200/50">
               <article id="jake-resume" className="jake-resume mx-auto max-w-3xl text-[11px] leading-[1.35] text-black font-sans">
                 <header className="border-b-2 border-black pb-2 text-center">
-                  <h2 className="text-[26px] font-bold leading-none tracking-tight">{resume.contact_info?.name || 'Candidate Name'}</h2>
-                  <p className="mt-1.5 text-[10px] text-slate-700">
-                    {[resume.contact_info?.phone, resume.contact_info?.email, resume.contact_info?.location, resume.contact_info?.linkedin, resume.contact_info?.github].filter(Boolean).join(' | ')}
+                  <h2 className="text-[24px] font-bold leading-none tracking-tight">{resume.contact_info?.name || 'Candidate Name'}</h2>
+                  <p className="mt-1.5 text-[9.5px] text-slate-700">
+                    {[
+                      resume.contact_info?.phone,
+                      resume.contact_info?.email,
+                      resume.contact_info?.location,
+                      resume.contact_info?.linkedin,
+                      resume.contact_info?.github,
+                      resume.contact_info?.portfolio,
+                    ].filter(Boolean).join(' | ')}
                   </p>
                 </header>
 
+                {/* 1. SUMMARY */}
                 {resume.summary && (
                   <JakeSection title="Summary">
-                    <p className="text-slate-800 leading-relaxed">{resume.summary}</p>
+                    <p className="text-slate-800 leading-relaxed text-[10.5px]">{resume.summary}</p>
                   </JakeSection>
                 )}
 
+                {/* 2. TECHNICAL SKILLS */}
+                {resume.skills?.length > 0 && (() => {
+                  const categorized = categorizeSkills(resume.skills);
+                  return (
+                    <JakeSection title="Technical Skills">
+                      <div className="space-y-0.5 text-slate-800 text-[10.5px]">
+                        {categorized.map((item, idx) => (
+                          <p key={idx} className="leading-snug">
+                            <strong className="font-bold text-slate-900">{item.category}:</strong> {item.skills.join(', ')}
+                          </p>
+                        ))}
+                      </div>
+                    </JakeSection>
+                  );
+                })()}
+
+                {/* 3. EXPERIENCE */}
                 {resume.work_experience?.length > 0 && (
                   <JakeSection title="Experience">
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                       {resume.work_experience.map((item: any, index: number) => (
                         <div key={index}>
-                          <div className="flex justify-between gap-3 font-bold text-slate-900">
+                          <div className="flex justify-between gap-3 font-bold text-slate-900 text-[11px]">
                             <span>{item.company}</span>
-                            <span className="whitespace-nowrap font-semibold">{[item.start_date, item.end_date].filter(Boolean).join(' - ')}</span>
+                            <span className="whitespace-nowrap font-semibold">{[item.start_date, item.end_date].filter(Boolean).join(' – ')}</span>
                           </div>
-                          <div className="flex justify-between gap-3 italic text-slate-700">
+                          <div className="flex justify-between gap-3 italic text-slate-700 text-[10px]">
                             <span>{item.job_title}</span>
                             <span>{item.location}</span>
                           </div>
-                          <ul className="mt-1 list-disc pl-4 space-y-0.5 text-slate-800">
+                          <ul className="mt-1 list-disc pl-4 space-y-0.5 text-slate-800 text-[10.5px]">
                             {(item.responsibilities || []).map((bullet: string, bulletIndex: number) => (
-                              <li key={bulletIndex}>{bullet}</li>
+                              <li key={bulletIndex} className="leading-snug">{bullet}</li>
                             ))}
                           </ul>
                         </div>
@@ -385,25 +473,27 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
                   </JakeSection>
                 )}
 
+                {/* 4. PROJECTS */}
                 {resume.projects?.length > 0 && (
                   <JakeSection title="Projects">
                     <div className="space-y-2">
                       {resume.projects.map((item: any, index: number) => (
                         <div key={index}>
-                          <p className="font-bold text-slate-900">
+                          <p className="font-bold text-slate-900 text-[11px]">
                             {item.title}
-                            {item.technologies?.length ? <span className="font-normal italic text-slate-700"> | {item.technologies.join(', ')}</span> : null}
+                            {item.technologies?.length ? <span className="font-normal italic text-slate-700 text-[10px]"> | {item.technologies.join(', ')}</span> : null}
                           </p>
-                          <p className="text-slate-800">{item.description}</p>
+                          <p className="text-slate-800 text-[10.5px] leading-snug">{item.description}</p>
                         </div>
                       ))}
                     </div>
                   </JakeSection>
                 )}
 
+                {/* 5. EDUCATION */}
                 {resume.education?.length > 0 && (
                   <JakeSection title="Education">
-                    <div className="space-y-1">
+                    <div className="space-y-1 text-[10.5px]">
                       {resume.education.map((item: any, index: number) => (
                         <div key={index} className="flex justify-between gap-3 text-slate-900">
                           <span><strong>{item.institution}</strong>{item.degree ? ` — ${item.degree}` : ''}</span>
@@ -414,9 +504,12 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
                   </JakeSection>
                 )}
 
-                {resume.skills?.length > 0 && (
-                  <JakeSection title="Technical Skills">
-                    <p className="text-slate-800"><strong>Languages & Technologies:</strong> {(resume.skills || []).join(', ')}</p>
+                {/* 6. CERTIFICATIONS (If present) */}
+                {resume.certifications?.length > 0 && (
+                  <JakeSection title="Certifications">
+                    <p className="text-slate-800 text-[10.5px]">
+                      {resume.certifications.join(' | ')}
+                    </p>
                   </JakeSection>
                 )}
               </article>

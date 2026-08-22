@@ -164,30 +164,33 @@ BAD:
 Do NOT claim that the candidate already implemented a feature merely
 because it would improve the project.
 
-EXPERIENCE RULES:
+EXPERIENCE & BULLET POINT FORMATTING RULES:
 
 "experience_improvements" may ONLY reference companies that already
 exist in the resume.
 
 "company" MUST exactly match the existing company name.
 
-Suggestions must be based on the candidate's actual responsibilities
-and technologies.
+All bullet points MUST follow the ATS Action-Impact structure:
+[Strong Action Verb] + [What was built/accomplished] + [Technologies Used] + [Result/Impact]
+
+Use strong action verbs: Developed, Built, Implemented, Designed, Optimized, Integrated, Automated, Deployed, Improved.
+
+Keep bullet points concise, punchy, and high-density so the resume strictly fits onto 1 PAGE.
+
+Do NOT fabricate metrics. Quantify achievements ONLY if supported by the candidate's original resume.
 
 GOOD:
-"Highlight the existing FastAPI and PostgreSQL backend work more
-prominently."
+"Optimized API query latency by integrating PostgreSQL indexing and FastAPI async handlers, improving response times across high-traffic endpoints."
 
 GOOD:
-"Emphasize the existing LangGraph and LangChain workflow experience."
+"Built responsive frontend interfaces using Next.js and Tailwind CSS, delivering seamless UI workflows aligned with target role requirements."
 
 BAD:
-"Add Java Spring Boot development experience."
+"Responsible for handling backend tasks."
 
 BAD:
-"Highlight AWS production deployments."
-
-unless explicitly supported by the resume.
+"Add Java Spring Boot development experience." (if not in candidate resume)
 
 MISSING TECHNOLOGY RULE:
 
