@@ -241,6 +241,11 @@ export default function AnalyzeJobPage() {
         ? 'Amazon'
         : 'Tech Innovations Inc.';
 
+      const candidateName = selectedFile ? selectedFile.name.replace(/\.[^/.]+$/, '').replace(/_/g, ' ') : 'Candidate';
+      const candidateEmail = 'candidate@example.com';
+      const candidatePhone = '+1 (555) 234-5678';
+      const candidateLocation = 'San Francisco, CA';
+
       const fallbackData: JobAgentResponse = {
         success: true,
         job: {
@@ -269,28 +274,81 @@ export default function AnalyzeJobPage() {
             'Incorporate GraphQL or API integration experience if available.',
           ],
         },
-        tailored_resume: {
-          title: extractedTitle,
-          tailored_summary: `Results-oriented ${extractedTitle} with over 6 years of experience building scalable, accessible, and high-performance web applications using React, Next.js, and TypeScript. Proven track record of boosting conversion rates and team velocity at scale.`,
-          tailored_experience: [
+        original_resume: {
+          contact_info: {
+            name: candidateName,
+            email: candidateEmail,
+            phone: candidatePhone,
+            location: candidateLocation,
+            linkedin: 'linkedin.com/in/candidate',
+            github: 'github.com/candidate',
+          },
+          summary: `Experienced software developer with a strong foundation in frontend engineering, web applications, and API integrations.`,
+          skills: ['React', 'Next.js', 'TypeScript', 'Node.js', 'REST APIs', 'Git'],
+          work_experience: [
             {
-              company: 'TechCorp Solutions',
-              role: extractedTitle,
-              duration: '2022 - Present',
-              bullet_points: [
-                `Architected core Next.js frontend applications, cutting page load latency by 42% and raising Core Web Vitals scores.`,
-                `Implemented robust TypeScript component libraries adopted across 4 major product teams.`,
+              job_title: extractedTitle,
+              company: extractedCompany,
+              location: candidateLocation,
+              start_date: '2022',
+              end_date: 'Present',
+              responsibilities: [
+                'Developed responsive web interfaces using React and TypeScript.',
+                'Integrated RESTful APIs and optimized state management.',
+                'Collaborated with cross-functional product teams to deliver features.',
+              ],
+            },
+          ],
+          education: [
+            {
+              degree: 'Bachelor of Science in Computer Science',
+              institution: 'University of California',
+              graduation_year: '2022',
+            },
+          ],
+          projects: [],
+          certifications: [],
+        },
+        tailored_resume: {
+          contact_info: {
+            name: candidateName,
+            email: candidateEmail,
+            phone: candidatePhone,
+            location: candidateLocation,
+            linkedin: 'linkedin.com/in/candidate',
+            github: 'github.com/candidate',
+          },
+          summary: `Results-oriented ${extractedTitle} with experience building scalable, accessible, and high-performance applications for ${extractedCompany}. Proven track record of boosting system performance and team velocity at scale.`,
+          skills: ['React', 'Next.js', 'TypeScript', 'Node.js', 'REST APIs', 'System Design', 'CI/CD', 'GraphQL'],
+          work_experience: [
+            {
+              job_title: extractedTitle,
+              company: extractedCompany,
+              location: candidateLocation,
+              start_date: '2022',
+              end_date: 'Present',
+              responsibilities: [
+                `Architected core Next.js frontend applications for ${extractedCompany}, cutting page load latency by 42% and raising Core Web Vitals scores.`,
+                `Implemented robust TypeScript component libraries adopted across major product teams.`,
                 `Streamlined REST API integrations and state management to increase mobile web conversion by 18%.`,
               ],
             },
           ],
-          keywords_added: ['Next.js 14', 'TypeScript', 'State Management', 'Core Web Vitals', 'CI/CD'],
+          education: [
+            {
+              degree: 'Bachelor of Science in Computer Science',
+              institution: 'University of California',
+              graduation_year: '2022',
+            },
+          ],
+          projects: [],
+          certifications: [],
         },
         cover_letter: {
           recipient: 'Hiring Committee',
           company: extractedCompany,
           role: extractedTitle,
-          content: `Dear Hiring Team,\n\nI am thrilled to apply for the ${extractedTitle} position at ${extractedCompany}. With extensive experience developing high-scale web platforms using React, Next.js, and TypeScript, I am confident in my ability to deliver immediate value to your engineering team.\n\nIn my recent roles, I have consistently driven technical excellence by building intuitive UI components, optimizing frontend performance, and collaborating closely with design and backend teams. I am particularly impressed by ${extractedCompany}'s focus on innovation and user satisfaction.\n\nThank you for considering my application. I look forward to discussing how my technical background aligns with your team's goals.\n\nSincerely,\nAlex Johnson`,
+          content: `Dear Hiring Team,\n\nI am thrilled to apply for the ${extractedTitle} position at ${extractedCompany}. With extensive experience developing high-scale web platforms using React, Next.js, and TypeScript, I am confident in my ability to deliver immediate value to your engineering team.\n\nIn my recent roles, I have consistently driven technical excellence by building intuitive UI components, optimizing frontend performance, and collaborating closely with design and backend teams. I am particularly impressed by ${extractedCompany}'s focus on innovation and user satisfaction.\n\nThank you for considering my application. I look forward to discussing how my technical background aligns with your team's goals.\n\nSincerely,\n${candidateName}`,
         },
       };
 

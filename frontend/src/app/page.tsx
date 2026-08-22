@@ -150,7 +150,7 @@ export default function Home() {
                     <div className="w-6 h-6 rounded-md bg-emerald-500 flex items-center justify-center">
                       <Sparkles className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <span className="font-bold text-slate-900 text-sm">Joblist App</span>
+                    <span className="font-bold text-slate-900 text-sm">ApplyAI App</span>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -263,7 +263,7 @@ export default function Home() {
           >
             <span className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider">
               <Zap className="w-3.5 h-3.5 text-slate-500" />
-              <span>Why Joblist?</span>
+              <span>Why ApplyAI?</span>
             </span>
             <h2 className="font-heading text-3xl sm:text-4xl lg:text-[44px] font-bold text-slate-900 tracking-[-0.03em] leading-tight">
               Everything you need to apply smarter
@@ -827,7 +827,7 @@ export default function Home() {
               <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">in minutes, not hours</span>
             </h2>
             <p className="text-slate-400 text-[15px] leading-relaxed max-w-lg mx-auto">
-              Join thousands of job seekers who've already used Joblist to land interviews at top companies. No credit card, no signup — try it free right now.
+              Join thousands of job seekers who've already used ApplyAI to land interviews at top companies. No credit card, no signup — try it free right now.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
               <a
@@ -854,7 +854,7 @@ export default function Home() {
                 <img className="w-7 h-7 rounded-full border-2 border-slate-800 object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="User" />
               </div>
               <span className="text-xs text-slate-400">
-                <span className="font-semibold text-white">10,000+</span> job seekers already using Joblist
+                <span className="font-semibold text-white">10,000+</span> job seekers already using ApplyAI
               </span>
             </div>
           </motion.div>
@@ -934,7 +934,7 @@ export default function Home() {
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <span className="text-base font-bold text-slate-900 flex items-center">
-                Joblist
+                ApplyAI
                 <span className="relative -top-0.5 ml-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
               </span>
             </div>
@@ -949,7 +949,7 @@ export default function Home() {
 
             {/* Copyright */}
             <p className="text-[13px] text-slate-400">
-              © 2026 Joblist. Built with Next.js & FastAPI.
+              © 2026 ApplyAI. Built with Next.js & FastAPI.
             </p>
           </div>
         </div>

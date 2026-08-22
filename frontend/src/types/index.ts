@@ -4,6 +4,7 @@ export interface ContactInfo {
   phone?: string;
   linkedin?: string;
   github?: string;
+  portfolio?: string;
   location?: string;
 }
 
@@ -20,6 +21,7 @@ export interface Education {
   degree: string;
   field_of_study?: string;
   institution: string;
+  location?: string;
   graduation_year?: string;
 }
 
@@ -27,6 +29,7 @@ export interface Project {
   title: string;
   description: string;
   technologies?: string[];
+  links?: string[];
 }
 
 export interface ParsedResume {
@@ -137,4 +140,3 @@ export interface AuthResponse {
   token_type: string;
   user: User;
 }
-

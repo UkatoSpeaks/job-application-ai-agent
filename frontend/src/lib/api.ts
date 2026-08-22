@@ -11,38 +11,46 @@ const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const API_BASE_URL = rawApiUrl.replace(/\/+$/, '');
 
 function normalizeResume(resume: any) {
+  if (!resume) return null;
   const skills = Array.isArray(resume.skills)
     ? resume.skills
     : Object.values(resume.skills || {}).flat() as string[];
 
+  const contact = resume.contact_info || {};
+
   return {
     contact_info: {
-      name: resume.name,
-      email: resume.email,
-      phone: resume.phone,
-      linkedin: resume.linkedin,
-      github: resume.github,
+      name: resume.name || contact.name || '',
+      email: resume.email || contact.email || '',
+      phone: resume.phone || contact.phone || '',
+      linkedin: resume.linkedin || contact.linkedin || '',
+      github: resume.github || contact.github || '',
+      portfolio: resume.portfolio || contact.portfolio || '',
+      location: resume.location || contact.location || '',
     },
     summary: resume.summary || '',
-    skills,
-    work_experience: (resume.experience || []).map((item: any) => ({
-      job_title: item.role || '',
+    skills: skills || [],
+    work_experience: (resume.experience || resume.work_experience || []).map((item: any) => ({
+      job_title: item.role || item.job_title || '',
       company: item.company || '',
-      location: item.location,
-      start_date: item.duration,
-      responsibilities: item.responsibilities || [],
+      location: item.location || '',
+      start_date: item.duration || item.start_date || '',
+      end_date: item.end_date || '',
+      responsibilities: item.responsibilities || item.bullet_points || [],
     })),
     education: (resume.education || []).map((item: any) => ({
       degree: item.degree || '',
       institution: item.institution || '',
-      graduation_year: item.duration,
+      location: item.location || '',
+      graduation_year: item.duration || item.graduation_year || '',
     })),
     projects: (resume.projects || []).map((item: any) => ({
       title: item.title || '',
-      description: (item.description || []).join(' '),
-      technologies: item.tech_stack || [],
+      description: Array.isArray(item.description) ? item.description.join(' ') : (item.description || ''),
+      technologies: item.tech_stack || item.technologies || [],
+      links: item.links || [],
     })),
-    certifications: (resume.certifications || []).map((item: any) => item.title).filter(Boolean),
+    certifications: (resume.certifications || []).map((item: any) => typeof item === 'string' ? item : item.title).filter(Boolean),
   };
 }
 

@@ -43,7 +43,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
             <Sparkles className="w-[18px] h-[18px] text-white" />
           </div>
           <span className="text-[18px] font-bold tracking-tight text-white flex items-center">
-            Joblist
+            ApplyAI
             <span className="relative -top-1 ml-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
           </span>
         </Link>

@@ -25,7 +25,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Joblist - AI Co-Pilot for Smarter Job Applications",
+  title: "ApplyAI - AI Co-Pilot for Smarter Job Applications",
   description: "Analyze any job posting, match it with your resume, identify skill gaps, tailor your resume, and generate a personalized cover letter — all in one place.",
 };
 

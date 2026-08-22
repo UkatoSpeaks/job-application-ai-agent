@@ -1,3 +1,6 @@
+import sys
+import asyncio
+import subprocess
 from playwright.async_api import (
     async_playwright,
     Browser,
@@ -19,11 +22,20 @@ class PlaywrightClient:
             await async_playwright().start()
         )
 
-        self.browser = (
-            await self.playwright.chromium.launch(
-                headless=True
+        try:
+            self.browser = (
+                await self.playwright.chromium.launch(
+                    headless=True
+                )
             )
-        )
+        except Exception as e:
+            print(f"Playwright chromium launch error: {e}. Attempting auto-install of chromium...")
+            subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], check=True)
+            self.browser = (
+                await self.playwright.chromium.launch(
+                    headless=True
+                )
+            )
 
         print("Browser started.")
 

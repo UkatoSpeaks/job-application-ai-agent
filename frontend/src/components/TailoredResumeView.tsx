@@ -23,12 +23,184 @@ const fallback: ParsedResume = {
   certifications: [],
 };
 
+function getResumeToDisplay(data?: JobAgentResponse | null, mode: 'tailored' | 'original' = 'tailored'): ParsedResume | null {
+  if (!data) return null;
+
+  const orig = data.original_resume;
+  const tail = data.tailored_resume;
+  const job = data.job;
+
+  if (mode === 'original' && orig) {
+    return {
+      contact_info: {
+        name: orig.contact_info?.name || '',
+        email: orig.contact_info?.email || '',
+        phone: orig.contact_info?.phone || '',
+        location: orig.contact_info?.location || '',
+        linkedin: orig.contact_info?.linkedin || '',
+        github: orig.contact_info?.github || '',
+        portfolio: orig.contact_info?.portfolio || '',
+      },
+      summary: orig.summary || '',
+      skills: orig.skills || [],
+      work_experience: orig.work_experience || [],
+      education: orig.education || [],
+      projects: orig.projects || [],
+      certifications: orig.certifications || [],
+    };
+  }
+
+  // mode === 'tailored'
+  const contactInfo = {
+    name: tail?.contact_info?.name || orig?.contact_info?.name || '',
+    email: tail?.contact_info?.email || orig?.contact_info?.email || '',
+    phone: tail?.contact_info?.phone || orig?.contact_info?.phone || '',
+    location: tail?.contact_info?.location || orig?.contact_info?.location || '',
+    linkedin: tail?.contact_info?.linkedin || orig?.contact_info?.linkedin || '',
+    github: tail?.contact_info?.github || orig?.contact_info?.github || '',
+    portfolio: tail?.contact_info?.portfolio || orig?.contact_info?.portfolio || '',
+  };
+
+  const summary = tail?.summary
+    || tail?.improved_summary
+    || tail?.tailored_summary
+    || orig?.summary
+    || (job?.title ? `Results-driven software developer with experience in building web applications and full-stack features, tailored for the ${job.title} position at ${job.company || 'target company'}.` : '');
+
+  const skills = (tail?.skills && tail.skills.length > 0)
+    ? tail.skills
+    : (tail?.improved_skills && tail.improved_skills.length > 0)
+    ? tail.improved_skills
+    : (orig?.skills && orig.skills.length > 0)
+    ? orig.skills
+    : (data.match?.matched_skills || []);
+
+  // Work experience mapping - STRICTLY preserve candidate's real companies, titles, dates, locations
+  let workExperience: ParsedResume['work_experience'] = [];
+  const baseExperiences = orig?.work_experience?.length
+    ? orig.work_experience
+    : tail?.work_experience?.length
+    ? tail.work_experience
+    : [];
+
+  const experienceImprovements = tail?.experience_improvements || [];
+
+  if (baseExperiences.length > 0) {
+    workExperience = baseExperiences.map((exp: any, idx: number) => {
+      // Find LLM tailored bullet improvements matching company or index
+      const matchingImp = Array.isArray(experienceImprovements)
+        ? experienceImprovements.find((imp: any) =>
+            imp.company && exp.company && imp.company.toLowerCase().includes(exp.company.toLowerCase())
+          ) || experienceImprovements[idx]
+        : null;
+
+      const tailoredBullets = (matchingImp?.improvements && matchingImp.improvements.length > 0)
+        ? matchingImp.improvements
+        : (exp.responsibilities && exp.responsibilities.length > 0)
+        ? exp.responsibilities
+        : (exp.bullet_points && exp.bullet_points.length > 0)
+        ? exp.bullet_points
+        : [];
+
+      return {
+        job_title: exp.job_title || exp.role || '',
+        company: exp.company || '',
+        location: exp.location || '',
+        start_date: exp.start_date || exp.duration || '',
+        end_date: exp.end_date || '',
+        responsibilities: tailoredBullets,
+      };
+    });
+  }
+
+  // Projects mapping - STRICTLY preserve candidate's real projects
+  let projects: ParsedResume['projects'] = [];
+  const baseProjects = orig?.projects?.length
+    ? orig.projects
+    : tail?.projects?.length
+    ? tail.projects
+    : [];
+
+  const projectImprovements = tail?.project_improvements || [];
+
+  if (baseProjects.length > 0) {
+    projects = baseProjects.map((proj: any, idx: number) => {
+      const matchingImp = Array.isArray(projectImprovements)
+        ? projectImprovements.find((imp: any) =>
+            imp.title && proj.title && imp.title.toLowerCase().includes(proj.title.toLowerCase())
+          ) || projectImprovements[idx]
+        : null;
+
+      const improvedDesc = (matchingImp?.improvements && matchingImp.improvements.length > 0)
+        ? matchingImp.improvements.join(' ')
+        : proj.description || '';
+
+      return {
+        title: proj.title || '',
+        description: improvedDesc,
+        technologies: proj.technologies || proj.tech_stack || [],
+        links: proj.links || [],
+      };
+    });
+  }
+
+  const education = (orig?.education && orig.education.length > 0)
+    ? orig.education
+    : (tail?.education || []);
+
+  const certifications = orig?.certifications || tail?.certifications || [];
+
+  return {
+    contact_info: contactInfo,
+    summary,
+    skills,
+    work_experience: workExperience,
+    education,
+    projects,
+    certifications,
+  };
+}
+
 export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, onBackToDashboard }) => {
   const [mode, setMode] = useState<'tailored' | 'original'>('tailored');
   const [copied, setCopied] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
-  const resume = (mode === 'tailored' ? data?.tailored_resume : data?.original_resume) || fallback;
+  const resume = getResumeToDisplay(data, mode);
+
+  if (!resume) {
+    return (
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6">
+          <div className="flex items-center space-x-2">
+            <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center shadow-md">
+              <Sparkles className="w-4 h-4 text-white" />
+            </div>
+            <span className="font-bold text-slate-900 text-base">ApplyAI</span>
+          </div>
+        </header>
+        <main className="max-w-3xl mx-auto px-4 py-16 text-center space-y-6">
+          <div className="w-16 h-16 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-center mx-auto text-purple-600 shadow-sm">
+            <FileText className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold text-slate-900">No Resume Analysis Session Active</h2>
+            <p className="text-slate-500 text-sm max-w-md mx-auto">
+              Upload your PDF resume and target job posting URL to extract your actual background and generate a tailored resume tailored to your target position.
+            </p>
+          </div>
+          <Link
+            href="/analyze"
+            className="inline-flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-6 py-3 rounded-xl shadow-md transition-all cursor-pointer"
+          >
+            <span>Analyze Job & Tailor Resume</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </main>
+      </div>
+    );
+  }
+
   const job = data?.job;
   const missingSkills = data?.match?.missing_skills || [];
   const keywords = data?.match?.matched_keywords?.length ? data.match.matched_keywords : (resume.skills || []).slice(0, 6);

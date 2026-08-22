@@ -14,7 +14,7 @@ An autonomous AI Co-Pilot for job seekers that analyzes job postings, calculates
 │
 └── frontend/           # Next.js App Router UI (Tailwind CSS, Framer Motion)
     ├── src/
-    │   ├── app/        # Next.js Pages & Joblist Design System
+    │   ├── app/        # Next.js Pages & ApplyAI Design System
     │   ├── components/ # UI Components, Navbar & Tab Views
     │   └── lib/        # API Client Services
     └── package.json

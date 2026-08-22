@@ -33,11 +33,12 @@ def serialize_resume(resume):
 
     return {
         "contact_info": {
-            "name": resume.name,
-            "email": resume.email,
-            "phone": resume.phone,
-            "linkedin": resume.linkedin,
-            "github": resume.github,
+            "name": resume.name or "",
+            "email": resume.email or "",
+            "phone": resume.phone or "",
+            "linkedin": resume.linkedin or "",
+            "github": resume.github or "",
+            "portfolio": getattr(resume, "portfolio", None) or "",
         },
         "summary": resume.summary or "",
         "skills": skills or [],
@@ -45,9 +46,10 @@ def serialize_resume(resume):
             {
                 "job_title": item.role or "",
                 "company": item.company or "",
-                "location": item.location,
-                "start_date": item.duration,
-                "responsibilities": item.responsibilities,
+                "location": item.location or "",
+                "start_date": item.duration or "",
+                "end_date": "",
+                "responsibilities": item.responsibilities or [],
             }
             for item in resume.experience
         ],
@@ -55,15 +57,17 @@ def serialize_resume(resume):
             {
                 "degree": item.degree or "",
                 "institution": item.institution or "",
-                "graduation_year": item.duration,
+                "location": getattr(item, "location", None) or "",
+                "graduation_year": item.duration or "",
             }
             for item in resume.education
         ],
         "projects": [
             {
                 "title": item.title or "",
-                "description": " ".join(item.description),
-                "technologies": item.tech_stack,
+                "description": " ".join(item.description) if isinstance(item.description, list) else (item.description or ""),
+                "technologies": item.tech_stack or [],
+                "links": getattr(item, "links", []) or [],
             }
             for item in resume.projects
         ],
@@ -74,23 +78,41 @@ def serialize_resume(resume):
 
 
 def serialize_tailored_resume(resume, tailored_resume):
-    """Apply grounded tailoring suggestions without changing resume identity data."""
+    """Apply grounded tailoring suggestions without changing candidate identity data."""
     client_resume = serialize_resume(resume)
-    client_resume["summary"] = (
-        tailored_resume.improved_summary or client_resume["summary"]
-    )
-    client_resume["skills"] = (
-        tailored_resume.improved_skills or client_resume["skills"]
-    )
+    if tailored_resume:
+        if getattr(tailored_resume, "improved_summary", None):
+            client_resume["summary"] = tailored_resume.improved_summary
+        if getattr(tailored_resume, "improved_skills", None) and len(tailored_resume.improved_skills) > 0:
+            client_resume["skills"] = tailored_resume.improved_skills
 
-    improvements_by_company = {
-        item.company: item.improvements
-        for item in tailored_resume.experience_improvements
-    }
-    for experience in client_resume["work_experience"]:
-        improvements = improvements_by_company.get(experience["company"])
-        if improvements:
-            experience["responsibilities"] = improvements
+        # Work experience improvements
+        improvements_by_company = {
+            (item.company or "").strip().lower(): item.improvements
+            for item in (getattr(tailored_resume, "experience_improvements", []) or [])
+        }
+        for idx, experience in enumerate(client_resume.get("work_experience", [])):
+            comp_key = (experience.get("company") or "").strip().lower()
+            improvements = improvements_by_company.get(comp_key)
+            exp_improvements = getattr(tailored_resume, "experience_improvements", []) or []
+            if not improvements and idx < len(exp_improvements):
+                improvements = exp_improvements[idx].improvements
+            if improvements:
+                experience["responsibilities"] = improvements
+
+        # Project improvements
+        improvements_by_project = {
+            (item.title or "").strip().lower(): item.improvements
+            for item in (getattr(tailored_resume, "project_improvements", []) or [])
+        }
+        for idx, project in enumerate(client_resume.get("projects", [])):
+            proj_key = (project.get("title") or "").strip().lower()
+            improvements = improvements_by_project.get(proj_key)
+            proj_improvements = getattr(tailored_resume, "project_improvements", []) or []
+            if not improvements and idx < len(proj_improvements):
+                improvements = proj_improvements[idx].improvements
+            if improvements and len(improvements) > 0:
+                project["description"] = " ".join(improvements)
 
     return client_resume
 

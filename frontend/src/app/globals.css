@@ -53,7 +53,8 @@
   background-size: 100% 100%, 100% 100%, 20px 20px;
 }
 
-/* Card Styling matching Joblist Design */
+/* Card Styling matching ApplyAI Design */
+.applyai-card,
 .joblist-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -61,10 +62,12 @@
   border-radius: 1.25rem;
 }
 
+.applyai-card-hover,
 .joblist-card-hover {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.applyai-card-hover:hover,
 .joblist-card-hover:hover {
   border-color: #10b981;
   box-shadow: 0 20px 30px -10px rgba(16, 185, 129, 0.12);
@@ -72,6 +75,7 @@
 }
 
 /* Custom Input Styles */
+.applyai-input,
 .joblist-input {
   background: #ffffff;
   border: 1px solid #cbd5e1;
@@ -79,6 +83,7 @@
   transition: all 0.2s ease;
 }
 
+.applyai-input:focus,
 .joblist-input:focus {
   outline: none;
   border-color: #10b981;

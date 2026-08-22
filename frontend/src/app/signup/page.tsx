@@ -89,7 +89,7 @@ export default function SignUpPage() {
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <span className="text-2xl font-bold tracking-tight text-white flex items-center">
-            Joblist
+            ApplyAI
             <span className="relative -top-1 ml-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
           </span>
         </Link>
