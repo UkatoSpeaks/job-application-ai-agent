@@ -87,6 +87,8 @@ class CoverLetterPDFGenerator:
             job_title = ""
             subject = "Job Application"
         else:
+            if cover_letter_data.get('candidate_name'):
+                candidate_name = cover_letter_data['candidate_name']
             content = (
                 cover_letter_data.get('cover_letter')
                 or cover_letter_data.get('content')
@@ -95,7 +97,7 @@ class CoverLetterPDFGenerator:
             )
             company = cover_letter_data.get('company') or "Hiring Team"
             job_title = cover_letter_data.get('job_title') or cover_letter_data.get('role') or ""
-            subject = cover_letter_data.get('email_subject') or f"Application for {job_title}" if job_title else "Job Application"
+            subject = cover_letter_data.get('email_subject') or (f"Application for {job_title}" if job_title else "Job Application")
             if cover_letter_data.get('recipient'):
                 company = f"{cover_letter_data['recipient']} - {company}"
 

@@ -42,44 +42,70 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
   const [copied, setCopied] = useState(false);
 
   // Job Context Info
-  const jobTitle = data?.job?.title || 'Senior Developer';
-  const company = data?.job?.company || 'HCLTech';
-  const location = data?.job?.location || 'Bengaluru, India';
-  const candidateName = 'Anurag Chaudhary';
+  const jobTitle = data?.job?.title || 'Target Position';
+  const company = data?.job?.company || 'Target Company';
+  const location = data?.job?.location || '';
+
+  // Extract Candidate Info
+  const contact = data?.original_resume?.contact_info || data?.tailored_resume?.contact_info;
+  const candidateName = contact?.name || 'Candidate Name';
+  const candidateEmail = contact?.email || '';
+  const candidatePhone = contact?.phone || '';
+  const candidateLocation = contact?.location || location || '';
+  const candidateLinkedin = contact?.linkedin || '';
+  const candidateGithub = contact?.github || '';
+
   const generatedCoverLetter = data?.cover_letter;
-  const apiLetterBody = typeof generatedCoverLetter === 'string'
+  const isObj = typeof generatedCoverLetter === 'object' && generatedCoverLetter !== null;
+
+  const letterBodyText = isObj
+    ? generatedCoverLetter.cover_letter
+    : typeof generatedCoverLetter === 'string'
     ? generatedCoverLetter
-    : generatedCoverLetter?.cover_letter;
+    : '';
 
-  // Fallback content shown before an application has been analyzed.
-  const letterBodyText = apiLetterBody || `Dear Hiring Team,
+  const emailSubject = isObj
+    ? generatedCoverLetter.email_subject
+    : `Application for ${jobTitle} — ${candidateName}`;
 
-I am writing to express my enthusiastic interest in the Senior Developer position at HCLTech. With over four years of hands-on experience building scalable web applications, robust REST APIs, and microservices in Python, FastAPI, and React, I am confident in my ability to immediately contribute to your engineering team in Bengaluru.
-
-In my recent projects, I have led backend architecture improvements using FastAPI and Docker, optimizing API throughput and streamlining containerized deployment workflows. My technical toolkit includes Python, RESTful microservices, Docker, SQL database tuning, and AI integrations with LangChain.
-
-What excites me about HCLTech is your commitment to delivering high-availability software solutions at global scale. I thrive in agile engineering environments where clean code, system performance, and cross-functional collaboration are prioritized.
-
-I would welcome the opportunity to discuss how my technical experience and problem-solving mindset align with your goals for this role. Thank you for your time and consideration.
-
-Best regards,
-${candidateName}`;
-
-  const emailSubject = `Application for ${jobTitle} — ${candidateName}`;
   const emailRecipient = `Hiring Team (${company})`;
 
-  const emailBodyText = `Dear Hiring Team,
+  const emailBodyText = isObj
+    ? generatedCoverLetter.email_body
+    : '';
 
-I am applying for the Senior Developer role at HCLTech. 
-
-I bring 4+ years of experience building high-performance web applications, scalable REST APIs, and microservices using Python, FastAPI, Docker, and React. In my recent work, I've engineered containerized services handling 50k+ daily requests and integrated LLM workflows with LangChain.
-
-I've attached my tailored resume and would love the chance to discuss how my background fits your team's goals.
-
-Best regards,
-${candidateName}
-Phone: +91 98765 43210
-LinkedIn: linkedin.com/in/anurag`;
+  if (!data || (!letterBodyText && !emailBodyText)) {
+    return (
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6">
+          <div className="flex items-center space-x-2">
+            <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center shadow-md">
+              <Sparkles className="w-4 h-4 text-white" />
+            </div>
+            <span className="font-bold text-slate-900 text-base">ApplyAI</span>
+          </div>
+        </header>
+        <main className="max-w-3xl mx-auto px-4 py-16 text-center space-y-6">
+          <div className="w-16 h-16 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-center mx-auto text-purple-600 shadow-sm">
+            <FileText className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold text-slate-900">No Cover Letter Session Active</h2>
+            <p className="text-slate-500 text-sm max-w-md mx-auto">
+              Upload your PDF resume and target job posting URL to generate your personalized cover letter and job application email.
+            </p>
+          </div>
+          <Link
+            href="/analyze"
+            className="inline-flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-6 py-3 rounded-xl shadow-md transition-all cursor-pointer"
+          >
+            <span>Analyze Job & Generate Cover Letter</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </main>
+      </div>
+    );
+  }
 
   // Regenerate handler
   const handleRegenerate = () => {
@@ -91,7 +117,7 @@ LinkedIn: linkedin.com/in/anurag`;
 
   // Copy handler
   const handleCopy = () => {
-    const textToCopy = docType === 'letter' ? letterBodyText : `Subject: ${emailSubject}\nTo: ${emailRecipient}\n\n${emailBodyText}`;
+    const textToCopy = docType === 'letter' ? (letterBodyText || '') : `Subject: ${emailSubject || ''}\nTo: ${emailRecipient}\n\n${emailBodyText || ''}`;
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -102,11 +128,11 @@ LinkedIn: linkedin.com/in/anurag`;
     setIsExporting(true);
     try {
       const payload = {
-        cover_letter: letterBodyText,
-        company: company,
-        job_title: jobTitle,
-        candidate_name: candidateName,
-        email_subject: emailSubject,
+        cover_letter: letterBodyText || '',
+        company: company || 'Company',
+        job_title: jobTitle || 'Position',
+        candidate_name: candidateName || 'Candidate',
+        email_subject: emailSubject || 'Job Application',
       };
       const blob = await exportCoverLetterPdf(payload);
       const companyClean = company.replace(/\s+/g, '_');
@@ -249,20 +275,22 @@ LinkedIn: linkedin.com/in/anurag`;
                   <div className="border-b border-slate-100 pb-4">
                     <h2 className="text-xl font-bold text-slate-900">{candidateName}</h2>
                     <p className="text-xs text-slate-500 font-medium">
-                      Bengaluru, India • anurag@example.com • +91 98765 43210
+                      {[candidateLocation, candidateEmail, candidatePhone, candidateLinkedin, candidateGithub].filter(Boolean).join(' • ')}
                     </p>
-                    <p className="text-xs text-slate-400 mt-2">August 15, 2026</p>
+                    <p className="text-xs text-slate-400 mt-2">
+                      {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </p>
                   </div>
 
                   {/* Recipient */}
                   <div className="text-xs text-slate-600 space-y-0.5 font-medium">
-                    <p className="font-bold text-slate-900">Hiring Team</p>
-                    <p>{company}</p>
-                    <p>{location}</p>
+                    <p className="font-bold text-slate-900">Hiring Manager / Recruitment Team</p>
+                    <p className="font-semibold text-slate-800">{company}</p>
+                    {location && <p>{location}</p>}
                   </div>
 
                   {/* Body Paragraphs */}
-                  <div className="space-y-4 whitespace-pre-line font-normal text-slate-800">
+                  <div className="space-y-4 whitespace-pre-line font-normal text-slate-800 leading-relaxed">
                     {letterBodyText}
                   </div>
                 </div>
@@ -271,17 +299,25 @@ LinkedIn: linkedin.com/in/anurag`;
                 <div className="space-y-5 max-w-2xl mx-auto">
                   <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <div className="flex items-center space-x-2 text-xs font-semibold text-slate-700">
-                      <span className="text-slate-400 w-16 uppercase">Subject:</span>
+                      <span className="text-slate-400 w-16 uppercase shrink-0">Subject:</span>
                       <span className="font-bold text-slate-900">{emailSubject}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-xs font-semibold text-slate-700 border-t border-slate-200/80 pt-2">
-                      <span className="text-slate-400 w-16 uppercase">To:</span>
+                      <span className="text-slate-400 w-16 uppercase shrink-0">To:</span>
                       <span className="text-purple-700 font-bold">{emailRecipient}</span>
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-xl border border-slate-200 bg-white font-sans text-[15px] leading-[1.6] text-slate-800 whitespace-pre-line">
+                  <div className="p-6 rounded-xl border border-slate-200 bg-white font-sans text-[14.5px] leading-[1.6] text-slate-800 whitespace-pre-line shadow-xs">
                     {emailBodyText}
+                    {(!emailBodyText?.includes(candidateName) && (candidatePhone || candidateEmail)) && (
+                      <div className="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600 space-y-0.5">
+                        <p className="font-bold text-slate-900">{candidateName}</p>
+                        {candidateEmail && <p>Email: {candidateEmail}</p>}
+                        {candidatePhone && <p>Phone: {candidatePhone}</p>}
+                        {candidateLinkedin && <p>LinkedIn: {candidateLinkedin}</p>}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
