@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import { ApplyAiLogo } from '@/components/ApplyAiLogo';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -29,13 +31,13 @@ import {
   Sparkle,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { runJobAgentPipeline } from '@/lib/api';
+import { runJobAgentPipeline, getErrorMessage } from '@/lib/api';
 import { JobAgentResponse } from '@/types';
 import { JobAnalysisDashboard } from '@/components/JobAnalysisDashboard';
 import { saveApplicationResult } from '@/lib/application-result';
 
 // URL validation helper function
-function isValidJobUrl(urlString: string): boolean {
+export function isValidJobUrl(urlString: string): boolean {
   if (!urlString || urlString.trim() === '') return false;
   try {
     const url = new URL(urlString);
@@ -47,34 +49,36 @@ function isValidJobUrl(urlString: string): boolean {
   }
 }
 
-// Preset Sample Jobs for 1-click testing
+// Preset sample jobs for 1-click testing. These point at placeholder
+// example.com URLs (not real company career pages) since they are only
+// meant to illustrate the input format, not to be live, scrapeable postings.
 const SAMPLE_JOBS = [
   {
-    company: 'Google',
+    company: 'Nimbus Cloud',
     title: 'Senior Frontend Engineer',
-    url: 'https://careers.google.com/jobs/results/123456-senior-frontend-engineer/',
-    badge: 'Popular',
+    url: 'https://example.com/careers/senior-frontend-engineer',
+    badge: 'Sample',
     icon: '🚀',
   },
   {
-    company: 'Stripe',
+    company: 'Horizon Payments',
     title: 'Staff Full Stack Engineer',
-    url: 'https://stripe.com/jobs/listing/staff-full-stack-engineer/54321',
-    badge: 'High Match',
+    url: 'https://example.com/careers/staff-full-stack-engineer',
+    badge: 'Sample',
     icon: '💳',
   },
   {
-    company: 'OpenAI',
+    company: 'Northwind AI',
     title: 'AI Applications Engineer',
-    url: 'https://openai.com/careers/ai-applications-engineer/98765',
-    badge: 'Trending',
+    url: 'https://example.com/careers/ai-applications-engineer',
+    badge: 'Sample',
     icon: '🤖',
   },
   {
-    company: 'Amazon',
+    company: 'Anchor Logistics',
     title: 'Senior Software Engineer',
-    url: 'https://amazon.jobs/en/jobs/234567/senior-software-engineer',
-    badge: 'Remote',
+    url: 'https://example.com/careers/senior-software-engineer',
+    badge: 'Sample',
     icon: '📦',
   },
 ];
@@ -96,6 +100,7 @@ export default function AnalyzeJobPage() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [analysisResult, setAnalysisResult] = useState<JobAgentResponse | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -173,6 +178,7 @@ export default function AnalyzeJobPage() {
 
     setIsAnalyzing(true);
     setShowDashboard(false);
+    setAnalysisError(null);
     setAnalysisProgress(5);
     setCurrentStepIndex(0);
     setLogs(['[0.1s] 🚀 Analysis pipeline initiated...']);
@@ -219,147 +225,15 @@ export default function AnalyzeJobPage() {
       setTimeout(() => {
         setShowDashboard(true);
       }, 600);
-    } catch (err: any) {
-      console.warn('API connection fallback activated:', err);
+    } catch (err) {
       clearInterval(stepInterval);
-
-      const extractedTitle = jobUrl.toLowerCase().includes('frontend')
-        ? 'Senior Frontend Engineer'
-        : jobUrl.toLowerCase().includes('full-stack') || jobUrl.toLowerCase().includes('fullstack')
-        ? 'Staff Full Stack Engineer'
-        : jobUrl.toLowerCase().includes('ai')
-        ? 'AI Applications Engineer'
-        : 'Senior Software Engineer';
-
-      const extractedCompany = jobUrl.toLowerCase().includes('google')
-        ? 'Google'
-        : jobUrl.toLowerCase().includes('stripe')
-        ? 'Stripe'
-        : jobUrl.toLowerCase().includes('openai')
-        ? 'OpenAI'
-        : jobUrl.toLowerCase().includes('amazon')
-        ? 'Amazon'
-        : 'Tech Innovations Inc.';
-
-      const candidateName = selectedFile ? selectedFile.name.replace(/\.[^/.]+$/, '').replace(/_/g, ' ') : 'Candidate';
-      const candidateEmail = 'candidate@example.com';
-      const candidatePhone = '+1 (555) 234-5678';
-      const candidateLocation = 'San Francisco, CA';
-
-      const fallbackData: JobAgentResponse = {
-        success: true,
-        job: {
-          title: extractedTitle,
-          company: extractedCompany,
-          location: 'San Francisco, CA (Hybrid / Remote)',
-          summary: `As a ${extractedTitle} at ${extractedCompany}, you will architect high-performance frontend systems, scale cloud applications, and work closely with product teams to build world-class user experiences.`,
-          responsibilities: [
-            'Architect, develop, and maintain high-performance web interfaces and applications.',
-            'Collaborate with product management, design, and backend engineering teams.',
-            'Drive code quality, test coverage, and performance optimization across the frontend codebase.',
-            'Mentor junior engineers and champion modern engineering best practices.',
-          ],
-          required_skills: ['React', 'Next.js', 'TypeScript', 'Node.js', 'REST APIs', 'System Design'],
-          preferred_skills: ['GraphQL', 'Tailwind CSS', 'Docker', 'CI/CD', 'Jest / Cypress'],
-        },
-        match: {
-          score: 0.84,
-          similarity: 0.82,
-          matched_skills: ['React', 'Next.js', 'TypeScript', 'Node.js', 'REST APIs'],
-          missing_skills: ['GraphQL', 'CI/CD Pipelines', 'System Design'],
-          matched_keywords: ['React', 'TypeScript', 'Next.js', 'REST API', 'Web Performance'],
-          missing_keywords: ['GraphQL', 'CI/CD', 'Docker', 'Kubernetes'],
-          recommendations: [
-            'Highlight your Next.js and TypeScript project achievements prominently.',
-            'Incorporate GraphQL or API integration experience if available.',
-          ],
-        },
-        original_resume: {
-          contact_info: {
-            name: candidateName,
-            email: candidateEmail,
-            phone: candidatePhone,
-            location: candidateLocation,
-            linkedin: 'linkedin.com/in/candidate',
-            github: 'github.com/candidate',
-          },
-          summary: `Experienced software developer with a strong foundation in frontend engineering, web applications, and API integrations.`,
-          skills: ['React', 'Next.js', 'TypeScript', 'Node.js', 'REST APIs', 'Git'],
-          work_experience: [
-            {
-              job_title: extractedTitle,
-              company: extractedCompany,
-              location: candidateLocation,
-              start_date: '2022',
-              end_date: 'Present',
-              responsibilities: [
-                'Developed responsive web interfaces using React and TypeScript.',
-                'Integrated RESTful APIs and optimized state management.',
-                'Collaborated with cross-functional product teams to deliver features.',
-              ],
-            },
-          ],
-          education: [
-            {
-              degree: 'Bachelor of Science in Computer Science',
-              institution: 'University of California',
-              graduation_year: '2022',
-            },
-          ],
-          projects: [],
-          certifications: [],
-        },
-        tailored_resume: {
-          contact_info: {
-            name: candidateName,
-            email: candidateEmail,
-            phone: candidatePhone,
-            location: candidateLocation,
-            linkedin: 'linkedin.com/in/candidate',
-            github: 'github.com/candidate',
-          },
-          summary: `Results-oriented ${extractedTitle} with experience building scalable, accessible, and high-performance applications for ${extractedCompany}. Proven track record of boosting system performance and team velocity at scale.`,
-          skills: ['React', 'Next.js', 'TypeScript', 'Node.js', 'REST APIs', 'System Design', 'CI/CD', 'GraphQL'],
-          work_experience: [
-            {
-              job_title: extractedTitle,
-              company: extractedCompany,
-              location: candidateLocation,
-              start_date: '2022',
-              end_date: 'Present',
-              responsibilities: [
-                `Architected core Next.js frontend applications for ${extractedCompany}, cutting page load latency by 42% and raising Core Web Vitals scores.`,
-                `Implemented robust TypeScript component libraries adopted across major product teams.`,
-                `Streamlined REST API integrations and state management to increase mobile web conversion by 18%.`,
-              ],
-            },
-          ],
-          education: [
-            {
-              degree: 'Bachelor of Science in Computer Science',
-              institution: 'University of California',
-              graduation_year: '2022',
-            },
-          ],
-          projects: [],
-          certifications: [],
-        },
-        cover_letter: {
-          recipient: 'Hiring Committee',
-          company: extractedCompany,
-          role: extractedTitle,
-          content: `Dear Hiring Team,\n\nI am thrilled to apply for the ${extractedTitle} position at ${extractedCompany}. With extensive experience developing high-scale web platforms using React, Next.js, and TypeScript, I am confident in my ability to deliver immediate value to your engineering team.\n\nIn my recent roles, I have consistently driven technical excellence by building intuitive UI components, optimizing frontend performance, and collaborating closely with design and backend teams. I am particularly impressed by ${extractedCompany}'s focus on innovation and user satisfaction.\n\nThank you for considering my application. I look forward to discussing how my technical background aligns with your team's goals.\n\nSincerely,\n${candidateName}`,
-        },
-      };
-
-      setLogs((l) => [...l, '[5.5s] ✨ Analysis compiled successfully!']);
-      setAnalysisProgress(100);
-      setCurrentStepIndex(analysisSteps.length - 1);
-      setAnalysisResult(fallbackData);
-
-      setTimeout(() => {
-        setShowDashboard(true);
-      }, 600);
+      setIsAnalyzing(false);
+      setAnalysisProgress(0);
+      setCurrentStepIndex(0);
+      setLogs([]);
+      setAnalysisError(
+        getErrorMessage(err, 'We could not analyze this job posting. Please check the URL and try again.')
+      );
     }
   };
 
@@ -369,6 +243,7 @@ export default function AnalyzeJobPage() {
     setAnalysisProgress(0);
     setCurrentStepIndex(0);
     setAnalysisResult(null);
+    setAnalysisError(null);
     setLogs([]);
   };
 
@@ -402,14 +277,8 @@ export default function AnalyzeJobPage() {
 
             <span className="text-slate-300">|</span>
 
-            <div className="flex items-center space-x-2">
-              <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center shadow-md shadow-purple-600/20">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-slate-900 text-base tracking-tight">
-                ApplyAI
-              </span>
-            </div>
+            <ApplyAiLogo size="sm" withText textClassName="text-slate-900 text-base" />
+
           </div>
 
           <div className="flex items-center space-x-3">
@@ -614,6 +483,17 @@ export default function AnalyzeJobPage() {
                     </p>
                   )}
                 </div>
+
+                {/* Analysis Error Banner */}
+                {analysisError && (
+                  <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-start gap-3">
+                    <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-bold text-red-700">Analysis failed</p>
+                      <p className="text-xs text-red-600 mt-0.5">{analysisError}</p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Main Action CTA Button */}
                 <div className="pt-2">

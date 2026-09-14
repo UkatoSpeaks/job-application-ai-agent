@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { FileUpload } from '@/components/ui/FileUpload';
-import { tailorResume } from '@/lib/api';
+import { tailorResume, getErrorMessage } from '@/lib/api';
 import { ResumeTailorResponse } from '@/types';
 import { Sparkles, ArrowRight, AlertTriangle, CheckCircle2, Copy, Check, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -33,8 +33,8 @@ export const ResumeTailorTab: React.FC = () => {
     try {
       const data = await tailorResume(file, jobDescription.trim());
       setResult(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to tailor resume.');
+    } catch (err) {
+      setError(getErrorMessage(err, 'Failed to tailor resume.'));
     } finally {
       setLoading(false);
     }

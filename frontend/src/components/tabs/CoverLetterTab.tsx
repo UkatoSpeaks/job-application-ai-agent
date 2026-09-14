@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { FileUpload } from '@/components/ui/FileUpload';
-import { generateCoverLetter, exportCoverLetterPdf, downloadBlob } from '@/lib/api';
+import { generateCoverLetter, exportCoverLetterPdf, downloadBlob, getErrorMessage } from '@/lib/api';
 import { FileText, ArrowRight, AlertTriangle, Copy, Check, Download, Sparkles, Sliders } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -35,8 +35,8 @@ export const CoverLetterTab: React.FC = () => {
       const data = await generateCoverLetter(file, jobDescription.trim(), tone);
       const text = typeof data === 'string' ? data : (data.cover_letter || JSON.stringify(data, null, 2));
       setCoverLetter(text);
-    } catch (err: any) {
-      setError(err.message || 'Failed to generate cover letter.');
+    } catch (err) {
+      setError(getErrorMessage(err, 'Failed to generate cover letter.'));
     } finally {
       setLoading(false);
     }

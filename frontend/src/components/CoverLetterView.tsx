@@ -2,8 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { ApplyAiLogo } from '@/components/ApplyAiLogo';
 import {
   Sparkles,
+
   ArrowRight,
   Download,
   Copy,
@@ -171,14 +173,8 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
 
             <span className="text-slate-300">|</span>
 
-            <div className="flex items-center space-x-2">
-              <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center shadow-md shadow-purple-600/20">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-slate-900 text-base tracking-tight">
-                ApplyAI
-              </span>
-            </div>
+            <ApplyAiLogo size="sm" withText textClassName="text-slate-900 text-base" />
+
           </div>
 
           <div className="flex items-center space-x-3">
@@ -414,7 +410,7 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
                   <span>AI Safety Assurance</span>
                 </div>
                 <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
-                  This letter does not claim experience that wasn't found in your resume.
+                  This letter does not claim experience that wasn&apos;t found in your resume.
                 </p>
               </div>
             </motion.div>

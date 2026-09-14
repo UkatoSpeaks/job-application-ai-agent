@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, AuthResponse } from '@/types';
 import { signInApi, signUpApi, getMeApi } from '@/lib/api';
+import { clearApplicationResult } from '@/lib/application-result';
+
 
 interface AuthContextType {
   user: User | null;
@@ -58,9 +60,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     localStorage.removeItem('auth_token');
+    clearApplicationResult();
     setToken(null);
     setUser(null);
   };
+
 
   return (
     <AuthContext.Provider

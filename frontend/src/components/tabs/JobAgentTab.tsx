@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { FileUpload } from '@/components/ui/FileUpload';
 import { ScoreGauge } from '@/components/ui/ScoreGauge';
-import { runJobAgentPipeline } from '@/lib/api';
+import { runJobAgentPipeline, getErrorMessage } from '@/lib/api';
 import { JobAgentResponse } from '@/types';
 import { Bot, Globe, ArrowRight, CheckCircle2, AlertCircle, Sparkles, Copy, Check, Building, MapPin, Briefcase } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -35,8 +35,8 @@ export const JobAgentTab: React.FC = () => {
     try {
       const data = await runJobAgentPipeline(file, jobUrl.trim());
       setResult(data);
-    } catch (err: any) {
-      setError(err.message || 'An error occurred while running the AI Job Agent pipeline.');
+    } catch (err) {
+      setError(getErrorMessage(err, 'An error occurred while running the AI Job Agent pipeline.'));
     } finally {
       setLoading(false);
     }

@@ -1,14 +1,22 @@
 import os
 import traceback
+from typing import Optional
 from urllib.parse import urlparse
 
 from fastapi import (
     APIRouter,
+    Depends,
     File,
     Form,
     HTTPException,
     UploadFile,
 )
+from sqlalchemy.orm import Session
+
+from app.db.session import get_db
+from app.models.user import User
+from app.models.job_analysis import JobAnalysis
+from app.api.v1.auth import get_current_user, get_current_user_optional
 
 from app.services.job_agent.pipeline import (
     JobApplicationPipeline,
@@ -121,23 +129,15 @@ def serialize_tailored_resume(resume, tailored_resume):
 async def analyze_job(
     resume: UploadFile = File(...),
     job_url: str = Form(...),
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
 ):
-
-    print(
-        "\n========================================"
-    )
-    print(
-        "JOB AGENT API REQUEST"
-    )
-    print(
-        "========================================"
-    )
-
-    # =========================================
-    # Normalize Job URL
-    # =========================================
+    print("\n========================================")
+    print("JOB AGENT API REQUEST")
+    print("========================================")
 
     job_url = job_url.strip()
+
 
     print(
         f"Job URL received: {repr(job_url)}"
@@ -436,29 +436,33 @@ async def analyze_job(
             f"Job: {job.title}"
         )
 
-        print(
-            f"Company: {job.company}"
-        )
 
-        print(
-            f"Match Score: "
-            f"{agent_result.get('match_score')}"
-        )
+        print(f"Company: {job.company}")
+        print(f"Match Score: {agent_result.get('match_score')}")
+        print(f"Similarity: {agent_result.get('similarity')}")
 
-        print(
-            f"Similarity: "
-            f"{agent_result.get('similarity')}"
-        )
+        if current_user:
+            m_score = agent_result.get("match_score") or 0.0
+            s_score = agent_result.get("similarity") or 0.0
+            matched_cnt = len(match.matched_skills) if match and hasattr(match, "matched_skills") and match.matched_skills else 0
+            missing_cnt = len(match.missing_skills) if match and hasattr(match, "missing_skills") and match.missing_skills else 0
 
-        print(
-            f"Tailored Resume Validated: "
-            f"{agent_result.get('tailored_resume_validated')}"
-        )
-
-        print(
-            f"Cover Letter Validated: "
-            f"{agent_result.get('cover_letter_validated')}"
-        )
+            analysis_record = JobAnalysis(
+                user_id=current_user.id,
+                job_title=job.title or "Target Position",
+                company=job.company or "Target Company",
+                location=job.location or "",
+                job_url=job_url,
+                match_score=float(m_score),
+                similarity_score=float(s_score),
+                matched_skills_count=matched_cnt,
+                missing_skills_count=missing_cnt,
+                result_data=response,
+            )
+            db.add(analysis_record)
+            db.commit()
+            db.refresh(analysis_record)
+            response["id"] = str(analysis_record.id)
 
         return response
 
@@ -466,64 +470,85 @@ async def analyze_job(
         raise
 
     except ValueError as e:
-
-        print(
-            "\n========================================"
-        )
-
-        print(
-            "JOB AGENT VALIDATION ERROR"
-        )
-
-        print(
-            "========================================"
-        )
-
-        print(
-            f"{type(e).__name__}: {e}"
-        )
-
+        print("\n========================================")
+        print("JOB AGENT VALIDATION ERROR")
+        print("========================================")
+        print(f"{type(e).__name__}: {e}")
         raise HTTPException(
             status_code=400,
             detail=str(e),
         )
 
     except Exception as e:
-
-        print(
-            "\n========================================"
-        )
-
-        print(
-            "JOB AGENT ERROR"
-        )
-
-        print(
-            "========================================"
-        )
-
-        print(
-            f"Error type: "
-            f"{type(e).__name__}"
-        )
-
-        print(
-            f"Error: {e}"
-        )
-
-        print(
-            "\n========== TRACEBACK =========="
-        )
-
+        print("\n========================================")
+        print("JOB AGENT ERROR")
+        print("========================================")
+        print(f"Error type: {type(e).__name__}")
+        print(f"Error: {e}")
+        print("\n========== TRACEBACK ==========")
         traceback.print_exc()
-
-        print(
-            "========================================"
-        )
-
+        print("========================================")
         raise HTTPException(
             status_code=500,
-            detail=(
-                f"{type(e).__name__}: {str(e)}"
-            ),
+            detail=f"{type(e).__name__}: {str(e)}",
         )
+
+
+@router.get("/history")
+def get_analysis_history(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    analyses = (
+        db.query(JobAnalysis)
+        .filter(JobAnalysis.user_id == current_user.id)
+        .order_by(JobAnalysis.created_at.desc())
+        .all()
+    )
+    return [
+        {
+            "id": str(a.id),
+            "jobTitle": a.job_title,
+            "company": a.company,
+            "location": a.location or "Location not specified",
+            "matchScore": int(round(a.match_score * 100 if a.match_score <= 1 else a.match_score)),
+            "dateAnalyzed": a.created_at.strftime("%b %d, %Y") if a.created_at else "",
+            "status": "Analyzed",
+            "matchedSkillsCount": a.matched_skills_count,
+            "missingSkillsCount": a.missing_skills_count,
+            "result_data": a.result_data,
+        }
+        for a in analyses
+    ]
+
+
+@router.get("/latest")
+def get_latest_analysis(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    analysis = (
+        db.query(JobAnalysis)
+        .filter(JobAnalysis.user_id == current_user.id)
+        .order_by(JobAnalysis.created_at.desc())
+        .first()
+    )
+    if not analysis:
+        return None
+    return analysis.result_data
+
+
+@router.get("/analysis/{analysis_id}")
+def get_analysis_by_id(
+    analysis_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    analysis = (
+        db.query(JobAnalysis)
+        .filter(JobAnalysis.id == analysis_id, JobAnalysis.user_id == current_user.id)
+        .first()
+    )
+    if not analysis:
+        raise HTTPException(status_code=404, detail="Analysis not found")
+    return analysis.result_data

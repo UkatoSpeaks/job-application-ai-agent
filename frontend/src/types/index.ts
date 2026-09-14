@@ -109,20 +109,43 @@ export interface JobAgentResponse {
   job: ParsedJobDescription;
   match: MatchDetails;
   original_resume?: ParsedResume | null;
-  tailored_resume?: ParsedResume | any;
-  cover_letter?: string | {
-    cover_letter?: string;
-    email_subject?: string;
-    email_body?: string;
-    recipient?: string;
-    company?: string;
-    role?: string;
-    content?: string;
-  };
+  tailored_resume?: ParsedResume | null;
+  cover_letter?: string | CoverLetterDetails;
   validation?: {
-    tailored_resume?: any;
-    cover_letter?: any;
+    tailored_resume?: ResumeValidationIssue;
+    cover_letter?: ResumeValidationIssue;
   };
+}
+
+export interface CoverLetterDetails {
+  cover_letter?: string;
+  email_subject?: string;
+  email_body?: string;
+  recipient?: string;
+  company?: string;
+  role?: string;
+  content?: string;
+}
+
+export interface ResumeValidationIssue {
+  is_valid?: boolean;
+  score?: number;
+  issues?: string[];
+  suggestions?: string[];
+}
+
+/** Row shape returned by GET /job-agent/history (distinct from JobAgentResponse). */
+export interface HistoryItem {
+  id: string;
+  jobTitle: string;
+  company: string;
+  location: string;
+  matchScore: number;
+  dateAnalyzed: string;
+  status: string;
+  missingSkillsCount: number;
+  matchedSkillsCount: number;
+  result_data?: JobAgentResponse;
 }
 
 export type ActiveTab = 'job-agent' | 'resume-analyzer' | 'job-matcher' | 'resume-tailor' | 'cover-letter';

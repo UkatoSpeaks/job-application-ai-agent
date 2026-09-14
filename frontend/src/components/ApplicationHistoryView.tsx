@@ -1,7 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { ApplyAiLogo } from '@/components/ApplyAiLogo';
+
 import {
   Sparkles,
   Search,
@@ -17,84 +21,48 @@ import {
   ArrowLeft,
   ChevronRight,
   ShieldCheck,
+  Loader2,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
-export interface HistoryItem {
-  id: string;
-  jobTitle: string;
-  company: string;
-  location: string;
-  matchScore: number;
-  dateAnalyzed: string;
-  status: string;
-  missingSkillsCount: number;
-  matchedSkillsCount: number;
-}
+import { motion } from 'framer-motion';
+import { useAuth } from '@/context/AuthContext';
+import { getJobAnalysisHistoryApi } from '@/lib/api';
+import { saveApplicationResult } from '@/lib/application-result';
+import { HistoryItem } from '@/types';
 
 export const ApplicationHistoryView: React.FC = () => {
+  const router = useRouter();
+  const { token } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState<'all' | 'strong' | 'moderate' | 'low'>('all');
+  const [historyItems, setHistoryItems] = useState<HistoryItem[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState<boolean>(true);
 
-  const initialHistory: HistoryItem[] = [
-    {
-      id: 'app-1',
-      jobTitle: 'Senior Developer',
-      company: 'HCLTech',
-      location: 'Bengaluru, India',
-      matchScore: 84,
-      dateAnalyzed: 'Aug 15, 2026',
-      status: 'Analyzed',
-      matchedSkillsCount: 6,
-      missingSkillsCount: 3,
-    },
-    {
-      id: 'app-2',
-      jobTitle: 'Software Engineer',
-      company: 'Stripe',
-      location: 'Remote',
-      matchScore: 76,
-      dateAnalyzed: 'Aug 14, 2026',
-      status: 'Analyzed',
-      matchedSkillsCount: 8,
-      missingSkillsCount: 2,
-    },
-    {
-      id: 'app-3',
-      jobTitle: 'AI Applications Engineer',
-      company: 'OpenAI',
-      location: 'Hybrid • SF, CA',
-      matchScore: 81,
-      dateAnalyzed: 'Aug 13, 2026',
-      status: 'Analyzed',
-      matchedSkillsCount: 9,
-      missingSkillsCount: 1,
-    },
-    {
-      id: 'app-4',
-      jobTitle: 'Full Stack Developer',
-      company: 'DataScale Inc',
-      location: 'Remote',
-      matchScore: 68,
-      dateAnalyzed: 'Aug 11, 2026',
-      status: 'Analyzed',
-      matchedSkillsCount: 7,
-      missingSkillsCount: 3,
-    },
-    {
-      id: 'app-5',
-      jobTitle: 'Frontend Engineer',
-      company: 'CloudFlow Tech',
-      location: 'Austin, TX',
-      matchScore: 42,
-      dateAnalyzed: 'Aug 08, 2026',
-      status: 'Analyzed',
-      matchedSkillsCount: 4,
-      missingSkillsCount: 7,
-    },
-  ];
+  useEffect(() => {
+    const fetchHistory = async () => {
+      setIsLoadingHistory(true);
+      try {
+        const items = await getJobAnalysisHistoryApi(token || undefined);
+        setHistoryItems(items || []);
+      } catch (err) {
+        console.warn('Failed to fetch user analysis history:', err);
+        setHistoryItems([]);
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    };
 
-  const filteredItems = initialHistory.filter((item) => {
+    fetchHistory();
+  }, [token]);
+
+  const handleSelectAnalysis = (item: HistoryItem) => {
+    if (item.result_data) {
+      saveApplicationResult(item.result_data);
+    }
+    router.push('/dashboard');
+  };
+
+  const filteredItems = historyItems.filter((item) => {
     const query = searchQuery.toLowerCase().trim();
     const matchesSearch =
       query === '' ||
@@ -110,6 +78,8 @@ export const ApplicationHistoryView: React.FC = () => {
 
     return true;
   });
+
+
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-purple-500 selection:text-white pb-20">
@@ -127,14 +97,8 @@ export const ApplicationHistoryView: React.FC = () => {
 
             <span className="text-slate-300">|</span>
 
-            <div className="flex items-center space-x-2">
-              <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center shadow-md shadow-purple-600/20">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-slate-900 text-base tracking-tight">
-                ApplyAI
-              </span>
-            </div>
+            <ApplyAiLogo size="sm" withText textClassName="text-slate-900 text-base" />
+
           </div>
 
           <div className="flex items-center space-x-3">
@@ -194,7 +158,7 @@ export const ApplicationHistoryView: React.FC = () => {
                   : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
               }`}
             >
-              All ({initialHistory.length})
+              All ({historyItems.length})
             </button>
 
             <button
@@ -233,7 +197,12 @@ export const ApplicationHistoryView: React.FC = () => {
         </div>
 
         {/* Applications List */}
-        {filteredItems.length > 0 ? (
+        {isLoadingHistory ? (
+          <div className="p-12 rounded-2xl bg-white border border-slate-200 text-center space-y-3 shadow-sm">
+            <Loader2 className="w-6 h-6 text-purple-600 animate-spin mx-auto" />
+            <p className="text-xs text-slate-500 font-medium">Loading your application history...</p>
+          </div>
+        ) : filteredItems.length > 0 ? (
           <div className="space-y-4">
             {filteredItems.map((item, idx) => {
               const isStrong = item.matchScore >= 70;
@@ -290,19 +259,20 @@ export const ApplicationHistoryView: React.FC = () => {
                       </span>
                     </div>
 
-                    <Link
-                      href="/dashboard"
-                      className="px-4 py-2 rounded-xl bg-purple-50 hover:bg-purple-600 hover:text-white text-purple-700 text-xs font-bold transition-all flex items-center space-x-1 border border-purple-200 shadow-xs"
+                    <button
+                      onClick={() => handleSelectAnalysis(item)}
+                      className="px-4 py-2 rounded-xl bg-purple-50 hover:bg-purple-600 hover:text-white text-purple-700 text-xs font-bold transition-all flex items-center space-x-1 border border-purple-200 shadow-xs cursor-pointer"
                     >
                       <span>View Analysis</span>
                       <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
+                    </button>
                   </div>
                 </motion.div>
               );
             })}
           </div>
         ) : (
+
           /* EMPTY STATE */
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}

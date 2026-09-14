@@ -4,7 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { Sparkles, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+import { getErrorMessage } from '@/lib/api';
+import { ApplyAiLogo } from '@/components/ApplyAiLogo';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+
 
 export default function SignInPage() {
   const router = useRouter();
@@ -47,8 +50,8 @@ export default function SignInPage() {
       setIsSubmitting(true);
       await login(cleanEmail, password);
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Failed to sign in. Please check your credentials.');
+    } catch (err) {
+      setError(getErrorMessage(err, 'Failed to sign in. Please check your credentials.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -73,15 +76,10 @@ export default function SignInPage() {
 
       {/* Header / Brand Logo */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center z-10">
-        <Link href="/" className="inline-flex items-center space-x-2.5 group">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/25 group-hover:scale-105 transition-transform">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-2xl font-bold tracking-tight text-white flex items-center">
-            ApplyAI
-            <span className="relative -top-1 ml-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
-          </span>
+        <Link href="/" className="inline-flex items-center group">
+          <ApplyAiLogo size="lg" withText textClassName="text-white text-2xl" />
         </Link>
+
         <h2 className="mt-6 text-3xl font-extrabold text-white tracking-tight">
           Welcome back
         </h2>
@@ -108,7 +106,7 @@ export default function SignInPage() {
               </label>
               <div className="relative rounded-xl shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <Mail className="h-4 h-4" />
+                  <Mail className="h-4 w-4" />
                 </div>
                 <input
                   id="email"
@@ -132,7 +130,7 @@ export default function SignInPage() {
               </div>
               <div className="relative rounded-xl shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <Lock className="h-4 h-4" />
+                  <Lock className="h-4 w-4" />
                 </div>
                 <input
                   id="password"
@@ -149,7 +147,7 @@ export default function SignInPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-200 transition-colors"
                 >
-                  {showPassword ? <EyeOff className="h-4 h-4" /> : <Eye className="h-4 h-4" />}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { FileUpload } from '@/components/ui/FileUpload';
 import { ScoreGauge } from '@/components/ui/ScoreGauge';
-import { uploadResume } from '@/lib/api';
+import { uploadResume, getErrorMessage } from '@/lib/api';
 import { ResumeUploadResponse } from '@/types';
 import { FileSearch, CheckCircle2, AlertTriangle, ArrowRight, User, Mail, Phone, Globe, Code2, MapPin, Briefcase, GraduationCap, Award, ShieldAlert, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -27,8 +27,8 @@ export const ResumeAnalyzerTab: React.FC = () => {
     try {
       const data = await uploadResume(file);
       setResult(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to parse and analyze resume.');
+    } catch (err) {
+      setError(getErrorMessage(err, 'Failed to parse and analyze resume.'));
     } finally {
       setLoading(false);
     }

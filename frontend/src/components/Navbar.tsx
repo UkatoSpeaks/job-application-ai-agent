@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { ActiveTab } from '@/types';
 import { useAuth } from '@/context/AuthContext';
-import { Sparkles, Sun, ChevronDown, ArrowRight, LayoutDashboard, LogOut, User as UserIcon } from 'lucide-react';
+import { ApplyAiLogo } from '@/components/ApplyAiLogo';
+import { ArrowRight, LayoutDashboard, LogOut, User as UserIcon } from 'lucide-react';
+
 
 interface NavbarProps {
   activeTab: ActiveTab;
@@ -14,20 +16,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenApp }) => {
   const { user, isAuthenticated, logout } = useAuth();
-  const [resourcesOpen, setResourcesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Close resources dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setResourcesOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-[#0f172a] border-b border-white/[0.06]">
@@ -36,17 +25,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center space-x-2.5 cursor-pointer shrink-0"
+          className="cursor-pointer shrink-0"
           onClick={() => setActiveTab('job-agent')}
         >
-          <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <Sparkles className="w-[18px] h-[18px] text-white" />
-          </div>
-          <span className="text-[18px] font-bold tracking-tight text-white flex items-center">
-            ApplyAI
-            <span className="relative -top-1 ml-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
-          </span>
+          <ApplyAiLogo size="md" withText textClassName="text-white text-[18px]" />
         </Link>
+
 
         {/* Center Navigation Links */}
         <nav className="hidden lg:flex items-center space-x-8 text-[14px] font-medium">
@@ -62,66 +46,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
           >
             How it Works
           </a>
-          <a
-            href="#tools"
-            className="text-slate-300 hover:text-white transition-colors duration-200"
-          >
-            Pricing
-          </a>
-          <a
-            href="#tools"
-            className="text-slate-300 hover:text-white transition-colors duration-200"
-          >
-            Blog
-          </a>
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setResourcesOpen(!resourcesOpen)}
-              className="flex items-center space-x-1 text-slate-300 hover:text-white transition-colors duration-200 focus:outline-none font-medium"
-            >
-              <span>Resources</span>
-              <ChevronDown
-                className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                  resourcesOpen ? 'rotate-180 text-white' : 'text-slate-400'
-                }`}
-              />
-            </button>
-
-            {/* Resources Dropdown */}
-            {resourcesOpen && (
-              <div className="absolute top-full mt-3 w-52 bg-[#1e293b] border border-white/10 rounded-xl shadow-2xl shadow-black/40 py-1.5 z-50 text-[13px] overflow-hidden backdrop-blur-xl">
-                <a
-                  href="#tools"
-                  className="block px-4 py-2.5 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors font-medium"
-                >
-                  Resume Templates
-                </a>
-                <a
-                  href="#tools"
-                  className="block px-4 py-2.5 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors font-medium"
-                >
-                  Cover Letter Guide
-                </a>
-                <a
-                  href="#tools"
-                  className="block px-4 py-2.5 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors font-medium"
-                >
-                  ATS Optimization
-                </a>
-              </div>
-            )}
-          </div>
         </nav>
 
         {/* Right CTA Actions */}
         <div className="flex items-center space-x-2">
-          <button
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-all duration-200"
-            title="Toggle Theme"
-          >
-            <Sun className="w-[18px] h-[18px]" />
-          </button>
-
           {isAuthenticated ? (
             <div className="flex items-center space-x-3">
               <span className="hidden md:flex items-center space-x-1.5 text-[13px] text-slate-300 font-medium px-2 py-1 bg-slate-800/80 rounded-lg border border-slate-700/50">

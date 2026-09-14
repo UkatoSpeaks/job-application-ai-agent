@@ -3,15 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import { JobAnalysisDashboard } from '@/components/JobAnalysisDashboard';
 import { useRouter } from 'next/navigation';
-import { getApplicationResult } from '@/lib/application-result';
+import { getApplicationResult, saveApplicationResult } from '@/lib/application-result';
+import { getLatestJobAnalysisApi } from '@/lib/api';
 import { JobAgentResponse } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 import { Loader2 } from 'lucide-react';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { user, token, isAuthenticated, isLoading } = useAuth();
   const [data, setData] = useState<JobAgentResponse | null>(null);
+  const [isFetchingData, setIsFetchingData] = useState<boolean>(true);
 
   // Protected Route logic: Redirect unauthenticated users to Sign In page
   useEffect(() => {
@@ -21,8 +23,38 @@ export default function DashboardPage() {
   }, [isAuthenticated, isLoading, router]);
 
   useEffect(() => {
-    setData(getApplicationResult());
-  }, []);
+    const loadDashboardData = async () => {
+      if (!isAuthenticated) return;
+      setIsFetchingData(true);
+
+      // Check session storage first for instant rendering
+      const sessionResult = getApplicationResult();
+      if (sessionResult) {
+        setData(sessionResult);
+        setIsFetchingData(false);
+      }
+
+      // Fetch latest user analysis from database backend
+      try {
+        const latestFromDb = await getLatestJobAnalysisApi(token || undefined);
+        if (latestFromDb) {
+          setData(latestFromDb);
+          saveApplicationResult(latestFromDb);
+        } else if (!sessionResult) {
+          setData(null);
+        }
+      } catch (err) {
+        console.warn('Failed to load user dashboard from API:', err);
+      } finally {
+        setIsFetchingData(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      loadDashboardData();
+    }
+  }, [isAuthenticated, token]);
+
 
   if (isLoading || !isAuthenticated) {
     return (

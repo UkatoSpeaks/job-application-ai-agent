@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { ApplyAiLogo } from '@/components/ApplyAiLogo';
 import { ArrowRight, BriefcaseBusiness, Check, CheckCircle2, ChevronDown, ChevronUp, Gauge, Lightbulb, Mail, MapPin, PenTool, RefreshCw, Sparkles, Target, TrendingUp, TriangleAlert, WandSparkles, ShieldCheck } from 'lucide-react';
+
 import { motion } from 'framer-motion';
 import { JobAgentResponse } from '@/types';
 
@@ -24,16 +26,92 @@ export const JobAnalysisDashboard: React.FC<JobAnalysisDashboardProps> = ({
   onGenerateCoverLetter,
 }) => {
   const [showResponsibilities, setShowResponsibilities] = useState(false);
-  const job = data?.job;
-  const match = data?.match;
-  const matchScore = percentage(match?.score, 84);
-  const similarityScore = percentage(match?.similarity, 82);
+
+  // Fresh Empty Dashboard state for new users with no prior activity
+  if (!data || !data.job) {
+    return (
+      <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-purple-500 selection:text-white pb-20">
+        <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+            <ApplyAiLogo size="sm" withText textClassName="text-slate-900 text-base" />
+
+            </div>
+
+            <div className="flex items-center space-x-3">
+              {onReset && (
+                <button
+                  onClick={onReset}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer shadow-xs"
+                >
+                  <RefreshCw className="h-3.5 w-3.5 text-slate-500" />
+                  <span>New Analysis</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </header>
+
+        <main className="relative z-10 mx-auto max-w-4xl px-5 pb-16 pt-12 space-y-8">
+          <div className="text-center space-y-4 max-w-lg mx-auto">
+            <div className="w-16 h-16 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-center mx-auto text-purple-600 shadow-sm">
+              <Sparkles className="w-8 h-8" />
+            </div>
+            <div className="space-y-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                Welcome to your Dashboard
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed">
+                You don&apos;t have any saved job analyses yet. Run your first AI match report by pasting a job URL and uploading your master PDF resume.
+              </p>
+            </div>
+            <div className="pt-2">
+              <button
+                onClick={onReset}
+                className="inline-flex items-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 text-xs font-bold shadow-md shadow-purple-600/20 transition cursor-pointer"
+              >
+                <Sparkles className="h-4 w-4" />
+                <span>Start Your First Job Analysis</span>
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </button>
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-3 pt-6 border-t border-slate-200">
+            <div className="p-5 rounded-2xl border border-slate-200 bg-white shadow-xs space-y-2 text-center">
+              <div className="text-2xl font-extrabold text-slate-900 font-heading">0</div>
+              <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">Analyses Saved</p>
+              <p className="text-[11px] text-slate-400">All your analyses will be saved automatically</p>
+            </div>
+
+            <div className="p-5 rounded-2xl border border-slate-200 bg-white shadow-xs space-y-2 text-center">
+              <div className="text-2xl font-extrabold text-slate-900 font-heading">0%</div>
+              <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">Average Match</p>
+              <p className="text-[11px] text-slate-400">Calculated across your target jobs</p>
+            </div>
+
+            <div className="p-5 rounded-2xl border border-slate-200 bg-white shadow-xs space-y-2 text-center">
+              <div className="text-2xl font-extrabold text-purple-600 font-heading">Ready</div>
+              <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">AI Tailoring</p>
+              <p className="text-[11px] text-slate-400">Instant resume & cover letter generation</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  const job = data.job;
+  const match = data.match;
+  const matchScore = percentage(match?.score, 0);
+  const similarityScore = percentage(match?.similarity, 0);
   const keywordScore = Math.min(100, Math.round(matchScore * 1.06));
-  const matchedSkills = match?.matched_skills?.length ? match.matched_skills : ['React', 'Next.js', 'TypeScript', 'Node.js', 'REST APIs'];
-  const missingSkills = match?.missing_skills?.length ? match.missing_skills : ['GraphQL', 'CI/CD Pipelines', 'System Design'];
-  const recommendations = match?.recommendations?.length ? match.recommendations : [`Make ${matchedSkills.slice(0, 3).join(', ')} prominent in your summary.`, `Only add ${missingSkills.slice(0, 2).join(' or ')} where you have genuine experience.`];
+  const matchedSkills = match?.matched_skills || [];
+  const missingSkills = match?.missing_skills || [];
+  const recommendations = match?.recommendations || [];
   const scoreColor = matchScore >= 75 ? '#059669' : matchScore >= 50 ? '#d97706' : '#dc2626';
   const alignment = matchScore >= 75 ? 'Strong alignment' : matchScore >= 50 ? 'Promising alignment' : 'Needs tailoring';
+
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-purple-500 selection:text-white pb-20">
@@ -41,14 +119,8 @@ export const JobAnalysisDashboard: React.FC<JobAnalysisDashboardProps> = ({
       <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2">
-              <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center shadow-md shadow-purple-600/20">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-slate-900 text-base tracking-tight">
-                ApplyAI
-              </span>
-            </div>
+            <ApplyAiLogo size="sm" withText textClassName="text-slate-900 text-base" />
+
           </div>
 
           <div className="flex items-center space-x-3">

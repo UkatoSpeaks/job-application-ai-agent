@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { ApplyAiLogo } from '@/components/ApplyAiLogo';
+
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Check, CheckCircle2, Copy, Download, Eye, FileText, Mail, PenTool, ShieldCheck, Sparkles, TriangleAlert } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -18,7 +20,7 @@ interface SkillCategory {
   skills: string[];
 }
 
-export function categorizeSkills(rawSkills: string[] | Record<string, string[]> | any): SkillCategory[] {
+export function categorizeSkills(rawSkills: string[] | Record<string, string[]> | undefined | null): SkillCategory[] {
   if (!rawSkills) return [];
 
   if (typeof rawSkills === 'object' && !Array.isArray(rawSkills)) {
@@ -86,141 +88,34 @@ export function categorizeSkills(rawSkills: string[] | Record<string, string[]> 
   return result;
 }
 
+/**
+ * The backend always returns both original_resume and tailored_resume
+ * pre-normalized into the ParsedResume shape (see serialize_tailored_resume
+ * in job_agent.py) with tailoring improvements already merged server-side,
+ * so no client-side field-guessing/merging is needed here.
+ */
 function getResumeToDisplay(data?: JobAgentResponse | null, mode: 'tailored' | 'original' = 'tailored'): ParsedResume | null {
   if (!data) return null;
 
-  const orig = data.original_resume;
-  const tail = data.tailored_resume;
-  const job = data.job;
-
-  if (mode === 'original' && orig) {
-    return {
-      contact_info: {
-        name: orig.contact_info?.name || '',
-        email: orig.contact_info?.email || '',
-        phone: orig.contact_info?.phone || '',
-        location: orig.contact_info?.location || '',
-        linkedin: orig.contact_info?.linkedin || '',
-        github: orig.contact_info?.github || '',
-        portfolio: orig.contact_info?.portfolio || '',
-      },
-      summary: orig.summary || '',
-      skills: orig.skills || [],
-      work_experience: orig.work_experience || [],
-      education: orig.education || [],
-      projects: orig.projects || [],
-      certifications: orig.certifications || [],
-    };
-  }
-
-  // mode === 'tailored'
-  const contactInfo = {
-    name: tail?.contact_info?.name || orig?.contact_info?.name || '',
-    email: tail?.contact_info?.email || orig?.contact_info?.email || '',
-    phone: tail?.contact_info?.phone || orig?.contact_info?.phone || '',
-    location: tail?.contact_info?.location || orig?.contact_info?.location || '',
-    linkedin: tail?.contact_info?.linkedin || orig?.contact_info?.linkedin || '',
-    github: tail?.contact_info?.github || orig?.contact_info?.github || '',
-    portfolio: tail?.contact_info?.portfolio || orig?.contact_info?.portfolio || '',
-  };
-
-  const summary = tail?.summary
-    || tail?.improved_summary
-    || tail?.tailored_summary
-    || orig?.summary
-    || (job?.title ? `Results-driven software developer with experience in building web applications and full-stack features, tailored for the ${job.title} position at ${job.company || 'target company'}.` : '');
-
-  const skills = (tail?.skills && tail.skills.length > 0)
-    ? tail.skills
-    : (tail?.improved_skills && tail.improved_skills.length > 0)
-    ? tail.improved_skills
-    : (orig?.skills && orig.skills.length > 0)
-    ? orig.skills
-    : (data.match?.matched_skills || []);
-
-  // Work experience mapping - STRICTLY preserve candidate's real companies, titles, dates, locations
-  let workExperience: ParsedResume['work_experience'] = [];
-  const baseExperiences = orig?.work_experience?.length
-    ? orig.work_experience
-    : tail?.work_experience?.length
-    ? tail.work_experience
-    : [];
-
-  const experienceImprovements = tail?.experience_improvements || [];
-
-  if (baseExperiences.length > 0) {
-    workExperience = baseExperiences.map((exp: any, idx: number) => {
-      // Find LLM tailored bullet improvements matching company or index
-      const matchingImp = Array.isArray(experienceImprovements)
-        ? experienceImprovements.find((imp: any) =>
-            imp.company && exp.company && imp.company.toLowerCase().includes(exp.company.toLowerCase())
-          ) || experienceImprovements[idx]
-        : null;
-
-      const tailoredBullets = (matchingImp?.improvements && matchingImp.improvements.length > 0)
-        ? matchingImp.improvements
-        : (exp.responsibilities && exp.responsibilities.length > 0)
-        ? exp.responsibilities
-        : (exp.bullet_points && exp.bullet_points.length > 0)
-        ? exp.bullet_points
-        : [];
-
-      return {
-        job_title: exp.job_title || exp.role || '',
-        company: exp.company || '',
-        location: exp.location || '',
-        start_date: exp.start_date || exp.duration || '',
-        end_date: exp.end_date || '',
-        responsibilities: tailoredBullets,
-      };
-    });
-  }
-
-  // Projects mapping - STRICTLY preserve candidate's real projects
-  let projects: ParsedResume['projects'] = [];
-  const baseProjects = orig?.projects?.length
-    ? orig.projects
-    : tail?.projects?.length
-    ? tail.projects
-    : [];
-
-  const projectImprovements = tail?.project_improvements || [];
-
-  if (baseProjects.length > 0) {
-    projects = baseProjects.map((proj: any, idx: number) => {
-      const matchingImp = Array.isArray(projectImprovements)
-        ? projectImprovements.find((imp: any) =>
-            imp.title && proj.title && imp.title.toLowerCase().includes(proj.title.toLowerCase())
-          ) || projectImprovements[idx]
-        : null;
-
-      const improvedDesc = (matchingImp?.improvements && matchingImp.improvements.length > 0)
-        ? matchingImp.improvements.join(' ')
-        : proj.description || '';
-
-      return {
-        title: proj.title || '',
-        description: improvedDesc,
-        technologies: proj.technologies || proj.tech_stack || [],
-        links: proj.links || [],
-      };
-    });
-  }
-
-  const education = (orig?.education && orig.education.length > 0)
-    ? orig.education
-    : (tail?.education || []);
-
-  const certifications = orig?.certifications || tail?.certifications || [];
+  const source = mode === 'original' ? data.original_resume : data.tailored_resume || data.original_resume;
+  if (!source) return null;
 
   return {
-    contact_info: contactInfo,
-    summary,
-    skills,
-    work_experience: workExperience,
-    education,
-    projects,
-    certifications,
+    contact_info: {
+      name: source.contact_info?.name || '',
+      email: source.contact_info?.email || '',
+      phone: source.contact_info?.phone || '',
+      location: source.contact_info?.location || '',
+      linkedin: source.contact_info?.linkedin || '',
+      github: source.contact_info?.github || '',
+      portfolio: source.contact_info?.portfolio || '',
+    },
+    summary: source.summary || '',
+    skills: (source.skills && source.skills.length > 0) ? source.skills : (data.match?.matched_skills || []),
+    work_experience: source.work_experience || [],
+    education: source.education || [],
+    projects: source.projects || [],
+    certifications: source.certifications || [],
   };
 }
 
@@ -332,14 +227,8 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
 
             <span className="text-slate-300">|</span>
 
-            <div className="flex items-center space-x-2">
-              <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center shadow-md shadow-purple-600/20">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-slate-900 text-base tracking-tight">
-                ApplyAI
-              </span>
-            </div>
+            <ApplyAiLogo size="sm" withText textClassName="text-slate-900 text-base" />
+
           </div>
 
           <div className="flex items-center space-x-3">
@@ -452,7 +341,7 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
                 {resume.work_experience?.length > 0 && (
                   <JakeSection title="Experience">
                     <div className="space-y-2.5">
-                      {resume.work_experience.map((item: any, index: number) => (
+                      {resume.work_experience.map((item, index) => (
                         <div key={index}>
                           <div className="flex justify-between gap-3 font-bold text-slate-900 text-[11px]">
                             <span>{item.company}</span>
@@ -477,7 +366,7 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
                 {resume.projects?.length > 0 && (
                   <JakeSection title="Projects">
                     <div className="space-y-2">
-                      {resume.projects.map((item: any, index: number) => (
+                      {resume.projects.map((item, index) => (
                         <div key={index}>
                           <p className="font-bold text-slate-900 text-[11px]">
                             {item.title}
@@ -494,7 +383,7 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
                 {resume.education?.length > 0 && (
                   <JakeSection title="Education">
                     <div className="space-y-1 text-[10.5px]">
-                      {resume.education.map((item: any, index: number) => (
+                      {resume.education.map((item, index) => (
                         <div key={index} className="flex justify-between gap-3 text-slate-900">
                           <span><strong>{item.institution}</strong>{item.degree ? ` — ${item.degree}` : ''}</span>
                           <span className="whitespace-nowrap text-slate-700">{item.graduation_year}</span>

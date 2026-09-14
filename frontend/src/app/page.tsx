@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { ApplyAiLogo } from '@/components/ApplyAiLogo';
+
 import { Navbar } from '@/components/Navbar';
 import { JobAgentTab } from '@/components/tabs/JobAgentTab';
 import { ResumeAnalyzerTab } from '@/components/tabs/ResumeAnalyzerTab';
@@ -12,7 +14,7 @@ import {
   Sparkles,
   ArrowRight,
   Play,
-  Star,
+  ShieldCheck,
   LayoutDashboard,
   FileText,
   UserCheck,
@@ -110,23 +112,10 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Social Proof */}
-            <div className="flex items-center justify-center space-x-3 pt-4">
-              <div className="flex -space-x-2">
-                <img className="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="User" />
-                <img className="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="User" />
-                <img className="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="User" />
-                <img className="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" alt="User" />
-              </div>
-              <div className="text-xs text-slate-600 font-medium flex items-center space-x-1.5">
-                <span className="font-bold text-slate-900">4.9/5</span>
-                <div className="flex text-amber-400">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
-                  ))}
-                </div>
-                <span className="text-slate-400 font-normal">Trusted by 10,000+ job seekers</span>
-              </div>
+            {/* Value Proposition */}
+            <div className="flex items-center justify-center space-x-2 pt-4 text-xs text-slate-500 font-medium">
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              <span>No credit card required &middot; Your data is never used to train models</span>
             </div>
           </motion.div>
 
@@ -146,19 +135,15 @@ export default function Home() {
                     <span className="w-3 h-3 rounded-full bg-amber-400"></span>
                     <span className="w-3 h-3 rounded-full bg-emerald-400"></span>
                   </div>
-                  <div className="ml-3 flex items-center space-x-2">
-                    <div className="w-6 h-6 rounded-md bg-emerald-500 flex items-center justify-center">
-                      <Sparkles className="w-3.5 h-3.5 text-white" />
-                    </div>
-                    <span className="font-bold text-slate-900 text-sm">ApplyAI App</span>
-                  </div>
+                    <ApplyAiLogo size="xs" withText textClassName="font-bold text-slate-900 text-sm" />
+
                 </div>
                 <div className="flex items-center space-x-2">
                   <button onClick={() => handleOpenTool()} className="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow-sm transition-colors">
                     <Plus className="w-3.5 h-3.5" />
                     <span>New Analysis</span>
                   </button>
-                  <img className="w-7 h-7 rounded-full border border-slate-200 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="User" />
+                  <div className="w-7 h-7 rounded-full border border-slate-200 bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">A</div>
                 </div>
               </div>
 
@@ -452,7 +437,7 @@ export default function Home() {
                 <span className="bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">stand</span>
               </h2>
               <p className="text-slate-500 text-[15px] leading-relaxed max-w-md">
-                Our AI compares your resume against the job description and surfaces a detailed match breakdown — skills you have, skills you're missing, and what to add.
+                Our AI compares your resume against the job description and surfaces a detailed match breakdown — skills you have, skills you&apos;re missing, and what to add.
               </p>
               <ul className="space-y-3">
                 {[
@@ -486,10 +471,10 @@ export default function Home() {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs font-bold">G</div>
+                    <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs font-bold">N</div>
                     <div>
                       <h5 className="text-sm font-bold text-slate-900">Senior Frontend Engineer</h5>
-                      <p className="text-[11px] text-slate-400">Google · Mountain View, CA</p>
+                      <p className="text-[11px] text-slate-400">Nimbus Cloud · Mountain View, CA</p>
                     </div>
                   </div>
                   <span className="text-xs font-semibold text-slate-400">Just now</span>
@@ -607,7 +592,7 @@ export default function Home() {
                   <h4 className="text-lg font-bold text-slate-900">Alex Johnson</h4>
                   <p className="text-xs text-slate-500 mt-0.5">Senior Frontend Engineer • San Francisco, CA</p>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 font-semibold border border-purple-200">Tailored for: Google</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 font-semibold border border-purple-200">Tailored for: Nimbus Cloud</span>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-semibold border border-emerald-200">+12 keywords added</span>
                   </div>
                 </div>
@@ -687,20 +672,20 @@ export default function Home() {
                 <div className="space-y-3 text-xs text-slate-600 leading-relaxed">
                   <p>Dear Hiring Manager,</p>
                   <p>
-                    I'm writing to express my strong interest in the{' '}
+                    I&apos;m writing to express my strong interest in the{' '}
                     <span className="text-amber-700 font-semibold bg-amber-50 px-1 rounded">Senior Frontend Engineer</span>{' '}
-                    position at <span className="text-amber-700 font-semibold bg-amber-50 px-1 rounded">Google</span>. With over six years of experience building production-grade applications with React and TypeScript, I'm excited by the opportunity to contribute to your team.
+                    position at <span className="text-amber-700 font-semibold bg-amber-50 px-1 rounded">Nimbus Cloud</span>. With over six years of experience building production-grade applications with React and TypeScript, I&apos;m excited by the opportunity to contribute to your team.
                   </p>
                   <p>
                     In my current role at TechCorp, I led the migration of our flagship product to{' '}
                     <span className="text-amber-700 font-semibold bg-amber-50 px-1 rounded">Next.js</span>, resulting in a{' '}
-                    <span className="text-emerald-600 font-semibold">40% improvement</span> in page load performance and significantly improved Core Web Vitals scores. I've also architected and maintained a shared component library that serves multiple product teams.
+                    <span className="text-emerald-600 font-semibold">40% improvement</span> in page load performance and significantly improved Core Web Vitals scores. I&apos;ve also architected and maintained a shared component library that serves multiple product teams.
                   </p>
                   <p>
-                    I'm particularly drawn to Google's commitment to building user-first experiences at scale, and I believe my track record of shipping performant, accessible frontends aligns well with your team's mission.
+                    I&apos;m particularly drawn to Nimbus Cloud&apos;s commitment to building user-first experiences at scale, and I believe my track record of shipping performant, accessible frontends aligns well with your team&apos;s mission.
                   </p>
                   <p className="text-slate-500">
-                    I'd love the opportunity to discuss how my experience can contribute to your team's goals.
+                    I&apos;d love the opportunity to discuss how my experience can contribute to your team&apos;s goals.
                   </p>
                   <p className="font-medium text-slate-700">
                     Best regards,<br />
@@ -771,7 +756,7 @@ export default function Home() {
               <span>Responsible AI</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-slate-900 tracking-tight leading-tight">
-              We don't invent. We highlight what you{' '}
+              We don&apos;t invent. We highlight what you{' '}
               <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">genuinely know.</span>
             </h2>
             <p className="text-slate-500 text-[15px] sm:text-base leading-relaxed max-w-2xl mx-auto">
@@ -827,7 +812,7 @@ export default function Home() {
               <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">in minutes, not hours</span>
             </h2>
             <p className="text-slate-400 text-[15px] leading-relaxed max-w-lg mx-auto">
-              Join thousands of job seekers who've already used ApplyAI to land interviews at top companies. No credit card, no signup — try it free right now.
+              Analyze a job posting, get a tailored resume and cover letter, and see exactly where you stand — no credit card, no signup required to try it.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
               <a
@@ -846,16 +831,10 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Social proof mini */}
-            <div className="flex items-center justify-center space-x-3 pt-4">
-              <div className="flex -space-x-2">
-                <img className="w-7 h-7 rounded-full border-2 border-slate-800 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="User" />
-                <img className="w-7 h-7 rounded-full border-2 border-slate-800 object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="User" />
-                <img className="w-7 h-7 rounded-full border-2 border-slate-800 object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="User" />
-              </div>
-              <span className="text-xs text-slate-400">
-                <span className="font-semibold text-white">10,000+</span> job seekers already using ApplyAI
-              </span>
+            {/* Trust note */}
+            <div className="flex items-center justify-center space-x-2 pt-4 text-xs text-slate-400">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>We never fabricate skills or experience you don&apos;t have</span>
             </div>
           </motion.div>
         </div>
@@ -943,8 +922,6 @@ export default function Home() {
             <nav className="flex items-center space-x-6 text-[13px] font-medium text-slate-500">
               <a href="#features" className="hover:text-slate-900 transition-colors">Features</a>
               <a href="#how-it-works" className="hover:text-slate-900 transition-colors">How it Works</a>
-              <a href="#" className="hover:text-slate-900 transition-colors">Privacy</a>
-              <a href="#" className="hover:text-slate-900 transition-colors">Terms</a>
             </nav>
 
             {/* Copyright */}

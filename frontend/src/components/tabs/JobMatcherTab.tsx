@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { FileUpload } from '@/components/ui/FileUpload';
 import { ScoreGauge } from '@/components/ui/ScoreGauge';
-import { matchResume } from '@/lib/api';
+import { matchResume, getErrorMessage } from '@/lib/api';
 import { JobMatchResponse } from '@/types';
 import { Target, ArrowRight, AlertTriangle, CheckCircle2, AlertCircle, Sparkles, Building, Briefcase } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -33,8 +33,8 @@ export const JobMatcherTab: React.FC = () => {
     try {
       const data = await matchResume(file, jobDescription.trim());
       setResult(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to match resume with job description.');
+    } catch (err) {
+      setError(getErrorMessage(err, 'Failed to match resume with job description.'));
     } finally {
       setLoading(false);
     }
