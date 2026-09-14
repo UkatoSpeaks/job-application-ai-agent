@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { ApplyAiLogo } from '@/components/ApplyAiLogo';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Check, CheckCircle2, Copy, Download, Eye, FileText, Mail, PenTool, ShieldCheck, Sparkles, TriangleAlert } from 'lucide-react';
@@ -128,13 +129,13 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
 
   if (!resume) {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
-        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6">
+      <div className="min-h-screen bg-canvas text-ink flex flex-col font-sans">
+        <header className="bg-surface border-b border-line-soft h-16 flex items-center justify-between px-6">
           <div className="flex items-center space-x-2">
             <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center shadow-md">
               <Sparkles className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold text-slate-900 text-base">ApplyAI</span>
+            <span className="font-bold text-ink text-base">ApplyAI</span>
           </div>
         </header>
         <main className="max-w-3xl mx-auto px-4 py-16 text-center space-y-6">
@@ -142,8 +143,8 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
             <FileText className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-slate-900">No Resume Analysis Session Active</h2>
-            <p className="text-slate-500 text-sm max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-ink">No Resume Analysis Session Active</h2>
+            <p className="text-muted text-sm max-w-md mx-auto">
               Upload your PDF resume and target job posting URL to extract your actual background and generate a tailored resume tailored to your target position.
             </p>
           </div>
@@ -202,15 +203,15 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-purple-500 selection:text-white pb-20">
+    <div className="min-h-screen bg-canvas text-ink font-sans selection:bg-purple-500 selection:text-white pb-20">
       {/* Top Application Bar */}
-      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
+      <header className="sticky top-0 z-40 bg-surface border-b border-line-soft shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             {onBackToDashboard ? (
               <button
                 onClick={onBackToDashboard}
-                className="flex items-center space-x-1.5 text-slate-500 hover:text-slate-900 transition-colors text-xs font-semibold"
+                className="flex items-center space-x-1.5 text-muted hover:text-ink transition-colors text-xs font-semibold"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Analysis</span>
@@ -218,20 +219,21 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
             ) : (
               <Link
                 href="/dashboard"
-                className="flex items-center space-x-1.5 text-slate-500 hover:text-slate-900 transition-colors text-xs font-semibold"
+                className="flex items-center space-x-1.5 text-muted hover:text-ink transition-colors text-xs font-semibold"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Analysis</span>
               </Link>
             )}
 
-            <span className="text-slate-300">|</span>
+            <span className="text-muted-2">|</span>
 
-            <ApplyAiLogo size="sm" withText textClassName="text-slate-900 text-base" />
+            <ApplyAiLogo size="sm" withText textClassName="text-ink text-base" />
 
           </div>
 
           <div className="flex items-center space-x-3">
+            <ThemeToggle />
             <span className="hidden sm:inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               <span>Grounded Tailoring</span>
@@ -241,30 +243,30 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
       </header>
 
       <main className="relative z-10 mx-auto max-w-7xl px-5 pt-8 lg:px-8 space-y-6">
-        <section className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <section className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line-soft pb-5">
           <div>
             <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-md border border-purple-200/80 uppercase tracking-wider mb-1">
               <span>Step 4 of 5 • Jake&apos;s Resume Template</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight">
               Tailored Resume
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
-              Structured for <strong className="font-semibold text-slate-800">{job?.title || 'your target role'} · {job?.company || 'your target company'}</strong>
+            <p className="text-xs sm:text-sm text-muted font-normal mt-0.5">
+              Structured for <strong className="font-semibold text-ink">{job?.title || 'your target role'} · {job?.company || 'your target company'}</strong>
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex rounded-xl border border-slate-200 bg-slate-100 p-1 text-xs font-semibold">
+            <div className="flex rounded-xl border border-line-soft bg-surface-2 p-1 text-xs font-semibold">
               <button
                 onClick={() => setMode('tailored')}
-                className={`rounded-lg px-3 py-1.5 transition-all ${mode === 'tailored' ? 'bg-white text-purple-700 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`rounded-lg px-3 py-1.5 transition-all ${mode === 'tailored' ? 'bg-surface text-purple-700 shadow-xs font-bold' : 'text-ink hover:text-ink'}`}
               >
                 Tailored
               </button>
               <button
                 onClick={() => setMode('original')}
-                className={`rounded-lg px-3 py-1.5 transition-all ${mode === 'original' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`rounded-lg px-3 py-1.5 transition-all ${mode === 'original' ? 'bg-surface text-ink shadow-xs font-bold' : 'text-ink hover:text-ink'}`}
               >
                 Original
               </button>
@@ -272,9 +274,9 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
 
             <button
               onClick={copyResume}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-xs cursor-pointer transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-line-soft bg-surface px-3.5 py-2 text-xs font-bold text-ink hover:bg-canvas shadow-xs cursor-pointer transition-colors"
             >
-              {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-slate-500" />}
+              {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-muted" />}
               {copied ? 'Copied!' : 'Copy'}
             </button>
 
@@ -291,18 +293,18 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
 
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-            <div className="flex items-center justify-between px-1 text-xs font-semibold text-slate-500">
+            <div className="flex items-center justify-between px-1 text-xs font-semibold text-muted">
               <span>Jake&apos;s Resume document preview</span>
-              <span className="rounded-full border border-slate-200 bg-white px-3 py-0.5 text-[11px] font-bold text-slate-600 shadow-xs">
+              <span className="rounded-full border border-line-soft bg-surface px-3 py-0.5 text-[11px] font-bold text-ink shadow-xs">
                 ATS-Friendly
               </span>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-8 sm:p-12 shadow-lg shadow-slate-200/50">
+            <div className="rounded-2xl border border-line-soft bg-surface p-8 sm:p-12 shadow-lg shadow-slate-200/50">
               <article id="jake-resume" className="jake-resume mx-auto max-w-3xl text-[11px] leading-[1.35] text-black font-sans">
                 <header className="border-b-2 border-black pb-2 text-center">
                   <h2 className="text-[24px] font-bold leading-none tracking-tight">{resume.contact_info?.name || 'Candidate Name'}</h2>
-                  <p className="mt-1.5 text-[9.5px] text-slate-700">
+                  <p className="mt-1.5 text-[9.5px] text-ink">
                     {[
                       resume.contact_info?.phone,
                       resume.contact_info?.email,
@@ -317,7 +319,7 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
                 {/* 1. SUMMARY */}
                 {resume.summary && (
                   <JakeSection title="Summary">
-                    <p className="text-slate-800 leading-relaxed text-[10.5px]">{resume.summary}</p>
+                    <p className="text-ink leading-relaxed text-[10.5px]">{resume.summary}</p>
                   </JakeSection>
                 )}
 
@@ -326,10 +328,10 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
                   const categorized = categorizeSkills(resume.skills);
                   return (
                     <JakeSection title="Technical Skills">
-                      <div className="space-y-0.5 text-slate-800 text-[10.5px]">
+                      <div className="space-y-0.5 text-ink text-[10.5px]">
                         {categorized.map((item, idx) => (
                           <p key={idx} className="leading-snug">
-                            <strong className="font-bold text-slate-900">{item.category}:</strong> {item.skills.join(', ')}
+                            <strong className="font-bold text-ink">{item.category}:</strong> {item.skills.join(', ')}
                           </p>
                         ))}
                       </div>
@@ -343,15 +345,15 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
                     <div className="space-y-2.5">
                       {resume.work_experience.map((item, index) => (
                         <div key={index}>
-                          <div className="flex justify-between gap-3 font-bold text-slate-900 text-[11px]">
+                          <div className="flex justify-between gap-3 font-bold text-ink text-[11px]">
                             <span>{item.company}</span>
                             <span className="whitespace-nowrap font-semibold">{[item.start_date, item.end_date].filter(Boolean).join(' – ')}</span>
                           </div>
-                          <div className="flex justify-between gap-3 italic text-slate-700 text-[10px]">
+                          <div className="flex justify-between gap-3 italic text-ink text-[10px]">
                             <span>{item.job_title}</span>
                             <span>{item.location}</span>
                           </div>
-                          <ul className="mt-1 list-disc pl-4 space-y-0.5 text-slate-800 text-[10.5px]">
+                          <ul className="mt-1 list-disc pl-4 space-y-0.5 text-ink text-[10.5px]">
                             {(item.responsibilities || []).map((bullet: string, bulletIndex: number) => (
                               <li key={bulletIndex} className="leading-snug">{bullet}</li>
                             ))}
@@ -368,11 +370,11 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
                     <div className="space-y-2">
                       {resume.projects.map((item, index) => (
                         <div key={index}>
-                          <p className="font-bold text-slate-900 text-[11px]">
+                          <p className="font-bold text-ink text-[11px]">
                             {item.title}
-                            {item.technologies?.length ? <span className="font-normal italic text-slate-700 text-[10px]"> | {item.technologies.join(', ')}</span> : null}
+                            {item.technologies?.length ? <span className="font-normal italic text-ink text-[10px]"> | {item.technologies.join(', ')}</span> : null}
                           </p>
-                          <p className="text-slate-800 text-[10.5px] leading-snug">{item.description}</p>
+                          <p className="text-ink text-[10.5px] leading-snug">{item.description}</p>
                         </div>
                       ))}
                     </div>
@@ -384,9 +386,9 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
                   <JakeSection title="Education">
                     <div className="space-y-1 text-[10.5px]">
                       {resume.education.map((item, index) => (
-                        <div key={index} className="flex justify-between gap-3 text-slate-900">
+                        <div key={index} className="flex justify-between gap-3 text-ink">
                           <span><strong>{item.institution}</strong>{item.degree ? ` — ${item.degree}` : ''}</span>
-                          <span className="whitespace-nowrap text-slate-700">{item.graduation_year}</span>
+                          <span className="whitespace-nowrap text-ink">{item.graduation_year}</span>
                         </div>
                       ))}
                     </div>
@@ -396,7 +398,7 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
                 {/* 6. CERTIFICATIONS (If present) */}
                 {resume.certifications?.length > 0 && (
                   <JakeSection title="Certifications">
-                    <p className="text-slate-800 text-[10.5px]">
+                    <p className="text-ink text-[10.5px]">
                       {resume.certifications.join(' | ')}
                     </p>
                   </JakeSection>
@@ -408,7 +410,7 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
           <aside className="space-y-5">
             <InfoCard icon={<CheckCircle2 className="h-4 w-4" />} title="Jake&apos;s Resume format" color="text-purple-600">
               <p>Compact, recruiter-friendly structure with clear section rules, aligned dates, and focused technical content.</p>
-              <div className="mt-3 space-y-1.5 text-xs text-slate-600">
+              <div className="mt-3 space-y-1.5 text-xs text-ink">
                 <p className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" />Centered contact header</p>
                 <p className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" />Concise experience bullets</p>
                 <p className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-emerald-600 stroke-[3]" />Scannable skills section</p>
@@ -440,15 +442,15 @@ export const TailoredResumeView: React.FC<Props> = ({ data, onGoToCoverLetter, o
           </aside>
         </div>
 
-        <section className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl bg-slate-900 p-6 text-white shadow-xl">
+        <section className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border-[2.5px] border-line bg-ink p-6 text-canvas shadow-brutal-md">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[.14em] text-purple-300">Application package</p>
-            <h2 className="mt-1 text-xl font-bold">Your Jake-formatted resume is ready.</h2>
-            <p className="mt-0.5 text-xs text-slate-300">Complete the application with a targeted cover letter.</p>
+            <p className="text-xs font-bold uppercase tracking-[.14em] text-purple-400">Application package</p>
+            <h2 className="mt-1 text-xl font-bold font-heading">Your Jake-formatted resume is ready.</h2>
+            <p className="mt-0.5 text-xs text-canvas/70">Complete the application with a targeted cover letter.</p>
           </div>
           <button
             onClick={onGoToCoverLetter}
-            className="inline-flex items-center gap-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white px-4 py-2.5 text-xs font-bold shadow-md shadow-purple-600/30 transition cursor-pointer shrink-0"
+            className="inline-flex items-center gap-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-white px-4 py-2.5 text-xs font-bold shadow-md shadow-purple-600/30 transition cursor-pointer shrink-0"
           >
             <Mail className="h-4 w-4" />
             Generate cover letter
@@ -471,8 +473,8 @@ function JakeSection({ title, children }: { title: string; children: React.React
 
 function InfoCard({ icon, title, color, children }: { icon: React.ReactNode; title: string; color: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 text-xs leading-5 text-slate-600 shadow-sm space-y-2">
-      <div className="flex items-center gap-2 font-bold text-slate-900 border-b border-slate-100 pb-2">
+    <div className="rounded-2xl border border-line-soft bg-surface p-5 text-xs leading-5 text-ink shadow-sm space-y-2">
+      <div className="flex items-center gap-2 font-bold text-ink border-b border-line-soft pb-2">
         <span className={color}>{icon}</span>
         {title}
       </div>

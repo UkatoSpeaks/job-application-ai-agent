@@ -70,8 +70,8 @@ export default function SignUpPage() {
 
   if (isLoading || isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center">
-        <div className="flex items-center space-x-3 text-emerald-400 font-medium text-sm">
+      <div className="min-h-screen bg-canvas flex items-center justify-center">
+        <div className="flex items-center space-x-3 text-emerald-500 font-bold text-sm">
           <Loader2 className="w-5 h-5 animate-spin" />
           <span>Loading...</span>
         </div>
@@ -80,43 +80,42 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden font-sans selection:bg-emerald-500 selection:text-white">
-      {/* Background Decorative Glows */}
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-10 right-[15%] w-80 h-80 bg-teal-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+    <div className="min-h-screen bg-canvas text-ink flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden font-sans selection:bg-lime-400 selection:text-[#0B0B0F]">
+      <div className="absolute inset-0 bg-dots pointer-events-none opacity-50"></div>
+      <div className="absolute top-16 left-[12%] w-14 h-14 rounded-full bg-blue-500 border-[3px] border-line hidden sm:block pointer-events-none"></div>
 
       {/* Header / Brand Logo */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center z-10">
         <Link href="/" className="inline-flex items-center group">
-          <ApplyAiLogo size="lg" withText textClassName="text-white text-2xl" />
+          <ApplyAiLogo size="lg" withText textClassName="text-ink text-2xl" />
         </Link>
 
-        <h2 className="mt-6 text-3xl font-extrabold text-white tracking-tight">
+        <h2 className="mt-6 text-3xl font-heading font-bold text-ink tracking-tight">
           Create your account
         </h2>
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-muted font-medium">
           Get started with AI job application tools today
         </p>
       </div>
 
       {/* Form Card */}
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md z-10 px-4">
-        <div className="bg-[#1e293b]/90 backdrop-blur-xl py-8 px-6 sm:px-10 shadow-2xl shadow-black/50 rounded-2xl border border-white/10">
+        <div className="bg-surface py-8 px-6 sm:px-10 rounded-xl border-[2.5px] border-line shadow-brutal-lg">
           {error && (
-            <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-xs flex items-start space-x-3 animate-in fade-in slide-in-from-top-1 duration-200">
-              <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-              <div className="flex-1 font-medium">{error}</div>
+            <div className="mb-6 p-4 rounded-lg bg-red-100 border-2 border-line text-red-700 text-xs flex items-start space-x-3">
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+              <div className="flex-1 font-bold">{error}</div>
             </div>
           )}
 
           <form className="space-y-5" onSubmit={handleSubmit} noValidate>
             {/* Full Name Field */}
             <div>
-              <label htmlFor="name" className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label htmlFor="name" className="block text-xs font-bold uppercase tracking-wider text-ink mb-1.5">
                 Full Name
               </label>
-              <div className="relative rounded-xl shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-2">
                   <UserIcon className="h-4 w-4" />
                 </div>
                 <input
@@ -127,18 +126,18 @@ export default function SignUpPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Jane Doe"
-                  className="block w-full pl-10 pr-4 py-3 bg-[#0f172a]/70 border border-white/10 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-colors"
+                  className="applyai-input block w-full pl-10 pr-4 py-3 text-sm placeholder-muted-2"
                 />
               </div>
             </div>
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label htmlFor="email" className="block text-xs font-bold uppercase tracking-wider text-ink mb-1.5">
                 Email address
               </label>
-              <div className="relative rounded-xl shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-2">
                   <Mail className="h-4 w-4" />
                 </div>
                 <input
@@ -149,18 +148,18 @@ export default function SignUpPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="block w-full pl-10 pr-4 py-3 bg-[#0f172a]/70 border border-white/10 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-colors"
+                  className="applyai-input block w-full pl-10 pr-4 py-3 text-sm placeholder-muted-2"
                 />
               </div>
             </div>
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label htmlFor="password" className="block text-xs font-bold uppercase tracking-wider text-ink mb-1.5">
                 Password
               </label>
-              <div className="relative rounded-xl shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-2">
                   <Lock className="h-4 w-4" />
                 </div>
                 <input
@@ -171,12 +170,12 @@ export default function SignUpPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="At least 6 characters"
-                  className="block w-full pl-10 pr-10 py-3 bg-[#0f172a]/70 border border-white/10 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-colors"
+                  className="applyai-input block w-full pl-10 pr-10 py-3 text-sm placeholder-muted-2"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-200 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-muted-2 hover:text-ink transition-colors"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -188,7 +187,7 @@ export default function SignUpPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-all duration-200 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-400/40 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="brutal-btn w-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-3 px-4 text-sm flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isSubmitting ? (
                   <>
@@ -206,9 +205,9 @@ export default function SignUpPage() {
           </form>
 
           {/* Footer Link to Sign In */}
-          <div className="mt-6 border-t border-white/10 pt-6 text-center text-xs text-slate-400">
+          <div className="mt-6 border-t-2 border-line-soft pt-6 text-center text-xs text-muted font-medium">
             Already have an account?{' '}
-            <Link href="/signin" className="font-semibold text-emerald-400 hover:text-emerald-300 transition-colors">
+            <Link href="/signin" className="font-bold text-emerald-600 hover:text-emerald-500 transition-colors">
               Sign In
             </Link>
           </div>

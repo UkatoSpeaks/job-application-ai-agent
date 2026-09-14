@@ -54,16 +54,15 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-canvas text-ink flex flex-col font-sans selection:bg-lime-400 selection:text-[#0B0B0F]">
       {/* ═══════════════ NAVBAR ═══════════════ */}
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} onOpenApp={() => setShowToolSection(true)} />
 
       {/* ═══════════════ HERO ═══════════════ */}
       <section className="relative overflow-hidden">
-        {/* Decorative background */}
-        <div className="absolute inset-0 bg-hero-dots pointer-events-none"></div>
-        <div className="absolute top-20 left-[10%] w-96 h-96 bg-emerald-200/20 rounded-full blur-[100px] pointer-events-none"></div>
-        <div className="absolute bottom-10 right-[10%] w-80 h-80 bg-teal-200/15 rounded-full blur-[80px] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-hero-dots pointer-events-none opacity-60"></div>
+        <div className="absolute top-16 right-[8%] w-20 h-20 rounded-lg bg-lime-400 border-[3px] border-line rotate-12 hidden md:block pointer-events-none"></div>
+        <div className="absolute bottom-10 left-[6%] w-14 h-14 rounded-full bg-purple-500 border-[3px] border-line hidden md:block pointer-events-none"></div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 lg:px-8 pt-16 pb-8">
           {/* Hero Copy — centered */}
@@ -74,19 +73,22 @@ export default function Home() {
             className="text-center max-w-3xl mx-auto space-y-6"
           >
             {/* Badge */}
-            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-md bg-lime-400 border-2 border-line text-[#0B0B0F] text-xs font-bold shadow-brutal-xs">
+              <Sparkles className="w-3.5 h-3.5" />
               <span>AI-Powered Job Application Assistant</span>
             </div>
 
             {/* Heading */}
-            <h1 className="font-heading text-4xl sm:text-5xl lg:text-[68px] font-extrabold text-slate-900 tracking-[-0.04em] leading-[1.08]">
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-[68px] font-bold text-ink tracking-[-0.03em] leading-[1.05]">
               Turn every job posting into a{' '}
-              <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">stronger application</span>
+              <span className="relative inline-block">
+                <span className="relative z-10">stronger application</span>
+                <span className="absolute left-0 right-0 bottom-1 h-4 bg-purple-400/70 -z-0 -rotate-1"></span>
+              </span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-base sm:text-lg text-slate-500 font-normal leading-relaxed max-w-xl mx-auto">
+            <p className="text-base sm:text-lg text-muted font-medium leading-relaxed max-w-xl mx-auto">
               Paste a job URL, upload your resume, and let AI analyze, match, tailor, and generate everything you need to land the interview.
             </p>
 
@@ -94,7 +96,7 @@ export default function Home() {
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
               <a
                 href="/analyze"
-                className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-7 py-3.5 rounded-xl text-[15px] transition-all duration-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 flex items-center space-x-2 hover:-translate-y-0.5"
+                className="brutal-btn bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-7 py-3.5 text-[15px] flex items-center space-x-2"
               >
                 <span>Analyze a Job</span>
                 <ArrowRight className="w-4 h-4" />
@@ -105,15 +107,15 @@ export default function Home() {
                   const element = document.getElementById('how-it-works');
                   if (element) element.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-medium px-6 py-3.5 rounded-xl text-[15px] transition-all duration-200 flex items-center space-x-2 shadow-sm"
+                className="brutal-btn bg-surface text-ink font-bold px-6 py-3.5 text-[15px] flex items-center space-x-2"
               >
-                <Play className="w-3.5 h-3.5 text-slate-500 fill-slate-500" />
+                <Play className="w-3.5 h-3.5 fill-current" />
                 <span>How It Works</span>
               </button>
             </div>
 
             {/* Value Proposition */}
-            <div className="flex items-center justify-center space-x-2 pt-4 text-xs text-slate-500 font-medium">
+            <div className="flex items-center justify-center space-x-2 pt-4 text-xs text-muted font-bold">
               <ShieldCheck className="w-4 h-4 text-emerald-500" />
               <span>No credit card required &middot; Your data is never used to train models</span>
             </div>
@@ -126,33 +128,33 @@ export default function Home() {
             transition={{ duration: 0.65, delay: 0.2 }}
             className="mt-12 max-w-5xl mx-auto"
           >
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-2xl shadow-slate-300/30 relative overflow-hidden">
+            <div className="bg-surface border-[2.5px] border-line rounded-xl p-5 shadow-brutal-lg relative overflow-hidden">
               {/* Window Chrome */}
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+              <div className="flex items-center justify-between border-b-2 border-line-soft pb-3 mb-4">
                 <div className="flex items-center space-x-2">
                   <div className="flex space-x-1.5">
-                    <span className="w-3 h-3 rounded-full bg-red-400"></span>
-                    <span className="w-3 h-3 rounded-full bg-amber-400"></span>
-                    <span className="w-3 h-3 rounded-full bg-emerald-400"></span>
+                    <span className="w-3 h-3 rounded-full bg-red-400 border border-line"></span>
+                    <span className="w-3 h-3 rounded-full bg-amber-400 border border-line"></span>
+                    <span className="w-3 h-3 rounded-full bg-emerald-400 border border-line"></span>
                   </div>
-                    <ApplyAiLogo size="xs" withText textClassName="font-bold text-slate-900 text-sm" />
+                    <ApplyAiLogo size="xs" withText textClassName="font-bold text-ink text-sm" />
 
                 </div>
                 <div className="flex items-center space-x-2">
-                  <button onClick={() => handleOpenTool()} className="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow-sm transition-colors">
+                  <button onClick={() => handleOpenTool()} className="brutal-btn bg-lime-400 text-[#0B0B0F] text-xs font-bold px-3 py-1.5 flex items-center space-x-1 shadow-brutal-xs">
                     <Plus className="w-3.5 h-3.5" />
                     <span>New Analysis</span>
                   </button>
-                  <div className="w-7 h-7 rounded-full border border-slate-200 bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">A</div>
+                  <div className="w-7 h-7 rounded-md border-2 border-line bg-purple-400 flex items-center justify-center text-xs font-bold">A</div>
                 </div>
               </div>
 
               {/* Dashboard Content */}
               <div className="grid grid-cols-12 gap-4">
                 {/* Left Mini Sidebar */}
-                <div className="col-span-3 space-y-1 pr-3 border-r border-slate-100 hidden md:block">
-                  <div className="flex items-center space-x-2 p-2 rounded-lg bg-emerald-50 text-emerald-700 font-semibold text-xs">
-                    <LayoutDashboard className="w-3.5 h-3.5 text-emerald-600" />
+                <div className="col-span-3 space-y-1 pr-3 border-r-2 border-line-soft hidden md:block">
+                  <div className="flex items-center space-x-2 p-2 rounded-md bg-emerald-500 text-white font-bold text-xs border-2 border-line">
+                    <LayoutDashboard className="w-3.5 h-3.5" />
                     <span>Overview</span>
                   </div>
                   {[
@@ -162,13 +164,13 @@ export default function Home() {
                     { icon: BarChart3, label: 'Skill Analysis' },
                     { icon: Bookmark, label: 'Saved Jobs' },
                   ].map((item) => (
-                    <div key={item.label} className="flex items-center space-x-2 p-2 rounded-lg text-slate-500 hover:bg-slate-50 text-xs font-medium cursor-pointer transition-colors">
+                    <div key={item.label} className="flex items-center space-x-2 p-2 rounded-md text-muted hover:bg-surface-2 text-xs font-bold cursor-pointer transition-colors">
                       <item.icon className="w-3.5 h-3.5" />
                       <span>{item.label}</span>
                     </div>
                   ))}
                   <div className="pt-6">
-                    <div className="flex items-center space-x-2 p-2 rounded-lg text-slate-400 hover:bg-slate-50 text-xs font-medium cursor-pointer">
+                    <div className="flex items-center space-x-2 p-2 rounded-md text-muted-2 hover:bg-surface-2 text-xs font-bold cursor-pointer">
                       <Settings className="w-3.5 h-3.5" />
                       <span>Settings</span>
                     </div>
@@ -178,54 +180,54 @@ export default function Home() {
                 {/* Right Dashboard */}
                 <div className="col-span-12 md:col-span-9 space-y-4">
                   <div>
-                    <h4 className="text-sm font-bold text-slate-900">Dashboard</h4>
-                    <p className="text-xs text-slate-500">Welcome back, Alex 👋</p>
+                    <h4 className="text-sm font-bold text-ink font-heading">Dashboard</h4>
+                    <p className="text-xs text-muted">Welcome back, Alex 👋</p>
                   </div>
 
                   {/* Metrics Row */}
                   <div className="grid grid-cols-3 gap-3 text-center">
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col items-center justify-center">
+                    <div className="p-3 rounded-lg bg-surface-2 border-2 border-line flex flex-col items-center justify-center">
                       <div className="relative w-14 h-14 flex items-center justify-center">
                         <svg className="w-full h-full transform -rotate-90">
-                          <circle cx="28" cy="28" r="22" stroke="#e2e8f0" strokeWidth="5" fill="none" />
-                          <circle cx="28" cy="28" r="22" stroke="#10b981" strokeWidth="5" fill="none" strokeDasharray="138" strokeDashoffset="20" strokeLinecap="round" />
+                          <circle cx="28" cy="28" r="22" stroke="var(--color-line-soft)" strokeWidth="5" fill="none" />
+                          <circle cx="28" cy="28" r="22" stroke="var(--color-emerald-500)" strokeWidth="5" fill="none" strokeDasharray="138" strokeDashoffset="20" strokeLinecap="round" />
                         </svg>
-                        <span className="absolute font-bold text-xs text-slate-900">85%</span>
+                        <span className="absolute font-bold text-xs text-ink">85%</span>
                       </div>
-                      <span className="text-[10px] font-semibold text-emerald-600 mt-1">Great Match</span>
+                      <span className="text-[10px] font-bold text-emerald-500 mt-1">Great Match</span>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col items-center justify-center">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Applications</span>
-                      <span className="text-xl font-bold text-slate-900 mt-1">24</span>
-                      <span className="text-[9px] font-semibold text-emerald-600">+8 this month</span>
+                    <div className="p-3 rounded-lg bg-surface-2 border-2 border-line flex flex-col items-center justify-center">
+                      <span className="text-[10px] font-bold text-muted-2 uppercase">Applications</span>
+                      <span className="text-xl font-bold text-ink mt-1">24</span>
+                      <span className="text-[9px] font-bold text-emerald-500">+8 this month</span>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col items-center justify-center">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">Interviews</span>
-                      <span className="text-xl font-bold text-slate-900 mt-1">7</span>
-                      <span className="text-[9px] font-semibold text-emerald-600">+2 this month</span>
+                    <div className="p-3 rounded-lg bg-surface-2 border-2 border-line flex flex-col items-center justify-center">
+                      <span className="text-[10px] font-bold text-muted-2 uppercase">Interviews</span>
+                      <span className="text-xl font-bold text-ink mt-1">7</span>
+                      <span className="text-[9px] font-bold text-emerald-500">+2 this month</span>
                     </div>
                   </div>
 
                   {/* Recent Job Card */}
-                  <div className="p-3.5 rounded-xl border border-slate-200 bg-white shadow-xs space-y-2">
+                  <div className="p-3.5 rounded-lg border-2 border-line bg-surface space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-xs">f</div>
+                        <div className="w-8 h-8 rounded-md border-2 border-line bg-blue-500 flex items-center justify-center text-white font-bold text-xs">f</div>
                         <div>
-                          <h5 className="text-xs font-bold text-slate-900">Product Designer</h5>
-                          <p className="text-[10px] text-slate-400">TechFlow</p>
+                          <h5 className="text-xs font-bold text-ink">Product Designer</h5>
+                          <p className="text-[10px] text-muted-2">TechFlow</p>
                         </div>
                       </div>
-                      <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">85% Match</span>
+                      <span className="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-md border-2 border-line">85% Match</span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
-                      <span className="bg-slate-100 px-2 py-0.5 rounded">Remote</span>
-                      <span className="bg-slate-100 px-2 py-0.5 rounded">$70K - $90K</span>
-                      <span className="bg-slate-100 px-2 py-0.5 rounded">Full-time</span>
-                      <span className="ml-auto text-slate-400">Applied 2 days ago</span>
+                    <div className="flex items-center gap-1.5 text-[10px] text-muted font-bold">
+                      <span className="bg-surface-2 px-2 py-0.5 rounded border border-line-soft">Remote</span>
+                      <span className="bg-surface-2 px-2 py-0.5 rounded border border-line-soft">$70K - $90K</span>
+                      <span className="bg-surface-2 px-2 py-0.5 rounded border border-line-soft">Full-time</span>
+                      <span className="ml-auto text-muted-2">Applied 2 days ago</span>
                     </div>
-                    <div className="w-full bg-slate-100 rounded-full h-1.5">
-                      <div className="bg-emerald-500 h-1.5 rounded-full w-[85%]"></div>
+                    <div className="w-full bg-surface-2 rounded-full h-1.5 border border-line-soft">
+                      <div className="bg-emerald-500 h-1 rounded-full w-[85%]"></div>
                     </div>
                   </div>
                 </div>
@@ -236,7 +238,7 @@ export default function Home() {
       </section>
 
       {/* ═══════════════ WHY APPLYAI? ═══════════════ */}
-      <section id="features" className="py-20 bg-white border-y border-slate-100">
+      <section id="features" className="py-20 bg-surface border-y-[2.5px] border-line">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           {/* Section Header */}
           <motion.div
@@ -246,14 +248,14 @@ export default function Home() {
             transition={{ duration: 0.45 }}
             className="text-center space-y-4 mb-14"
           >
-            <span className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider">
-              <Zap className="w-3.5 h-3.5 text-slate-500" />
+            <span className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-md bg-surface-2 border-2 border-line text-ink text-xs font-bold uppercase tracking-wider">
+              <Zap className="w-3.5 h-3.5" />
               <span>Why ApplyAI?</span>
             </span>
-            <h2 className="font-heading text-3xl sm:text-4xl lg:text-[44px] font-bold text-slate-900 tracking-[-0.03em] leading-tight">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-[44px] font-bold text-ink tracking-[-0.02em] leading-tight">
               Everything you need to apply smarter
             </h2>
-            <p className="text-slate-500 text-[15px] max-w-lg mx-auto leading-relaxed">
+            <p className="text-muted text-[15px] max-w-lg mx-auto leading-relaxed font-medium">
               Four AI-powered tools that work together to turn any job posting into a winning application package.
             </p>
           </motion.div>
@@ -290,11 +292,11 @@ export default function Home() {
                 tab: 'cover-letter' as ActiveTab,
               },
             ].map((feature, i) => {
-              const colorMap: Record<string, { bg: string; border: string; icon: string; hoverBorder: string; hoverShadow: string }> = {
-                emerald: { bg: 'bg-emerald-50', border: 'border-emerald-200', icon: 'text-emerald-600', hoverBorder: 'hover:border-emerald-300', hoverShadow: 'hover:shadow-emerald-100/60' },
-                blue: { bg: 'bg-blue-50', border: 'border-blue-200', icon: 'text-blue-600', hoverBorder: 'hover:border-blue-300', hoverShadow: 'hover:shadow-blue-100/60' },
-                purple: { bg: 'bg-purple-50', border: 'border-purple-200', icon: 'text-purple-600', hoverBorder: 'hover:border-purple-300', hoverShadow: 'hover:shadow-purple-100/60' },
-                amber: { bg: 'bg-amber-50', border: 'border-amber-200', icon: 'text-amber-600', hoverBorder: 'hover:border-amber-300', hoverShadow: 'hover:shadow-amber-100/60' },
+              const colorMap: Record<string, { bg: string; icon: string }> = {
+                emerald: { bg: 'bg-emerald-500', icon: 'text-white' },
+                blue: { bg: 'bg-blue-500', icon: 'text-white' },
+                purple: { bg: 'bg-purple-500', icon: 'text-white' },
+                amber: { bg: 'bg-amber-400', icon: 'text-[#0B0B0F]' },
               };
               const c = colorMap[feature.color];
               return (
@@ -304,16 +306,16 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.08 }}
-                  whileHover={{ y: -5 }}
+                  whileHover={{ y: -4, x: -4 }}
                   onClick={() => handleOpenTool(feature.tab)}
-                  className={`group p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-lg ${c.hoverBorder} ${c.hoverShadow} transition-all duration-300 cursor-pointer`}
+                  className="group p-6 rounded-xl bg-canvas border-[2.5px] border-line shadow-brutal-sm hover:shadow-brutal-md transition-shadow duration-200 cursor-pointer"
                 >
-                  <div className={`w-11 h-11 rounded-xl ${c.bg} border ${c.border} flex items-center justify-center ${c.icon} mb-4`}>
+                  <div className={`w-11 h-11 rounded-lg ${c.bg} border-2 border-line flex items-center justify-center ${c.icon} mb-4`}>
                     <feature.icon className="w-5 h-5" />
                   </div>
-                  <h4 className="text-base font-bold text-slate-900 mb-1.5">{feature.title}</h4>
-                  <p className="text-[13px] text-slate-500 leading-relaxed">{feature.description}</p>
-                  <div className="mt-4 flex items-center text-xs font-semibold text-slate-400 group-hover:text-slate-600 transition-colors">
+                  <h4 className="text-base font-bold text-ink mb-1.5 font-heading">{feature.title}</h4>
+                  <p className="text-[13px] text-muted leading-relaxed font-medium">{feature.description}</p>
+                  <div className="mt-4 flex items-center text-xs font-bold text-ink">
                     <span>Try it</span>
                     <ChevronRight className="w-3.5 h-3.5 ml-0.5 group-hover:translate-x-0.5 transition-transform" />
                   </div>
@@ -326,9 +328,7 @@ export default function Home() {
 
       {/* ═══════════════ HOW IT WORKS ═══════════════ */}
       <section id="how-it-works" className="py-20 relative overflow-hidden">
-        {/* BG Blobs */}
-        <div className="absolute top-0 left-[20%] w-72 h-72 bg-emerald-100/30 rounded-full blur-[100px] pointer-events-none"></div>
-        <div className="absolute bottom-0 right-[20%] w-80 h-80 bg-purple-100/20 rounded-full blur-[100px] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-dots pointer-events-none opacity-40"></div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 lg:px-8">
           {/* Header */}
@@ -339,14 +339,14 @@ export default function Home() {
             transition={{ duration: 0.45 }}
             className="text-center space-y-4 mb-14"
           >
-            <span className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+            <span className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-md bg-emerald-500 border-2 border-line text-white text-xs font-bold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5" />
               <span>How It Works</span>
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-slate-900 tracking-tight leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-heading font-bold text-ink tracking-tight leading-tight">
               Three steps to your perfect application
             </h2>
-            <p className="text-slate-500 text-[15px] max-w-lg mx-auto leading-relaxed">
+            <p className="text-muted text-[15px] max-w-lg mx-auto leading-relaxed font-medium">
               Our AI pipeline handles everything — from parsing the job post to delivering a complete, tailored application package.
             </p>
           </motion.div>
@@ -354,30 +354,13 @@ export default function Home() {
           {/* Steps */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 relative max-w-5xl mx-auto">
             {/* Connecting line */}
-            <div className="hidden md:block absolute top-[72px] left-[16%] right-[16%] h-[2px]">
-              <div className="w-full h-full bg-gradient-to-r from-emerald-300 via-purple-300 to-teal-300 rounded-full opacity-50"></div>
-            </div>
+            <div className="hidden md:block absolute top-[72px] left-[16%] right-[16%] h-[3px] bg-line"></div>
 
             {[
-              { step: '01', icon: FileUp, title: 'Upload Your Resume', desc: 'Upload your resume in PDF. Our AI parses your experience, skills, and achievements instantly.', color: 'emerald', tab: 'resume-analyzer' as ActiveTab },
-              { step: '02', icon: LinkIcon, title: 'Paste the Job URL', desc: 'Drop any public job posting URL. We extract the title, requirements, and key qualifications.', color: 'purple', tab: 'job-agent' as ActiveTab },
-              { step: '03', icon: Sparkles, title: 'Get Your Application', desc: 'Receive a tailored resume, personalized cover letter, match score, and actionable insights.', color: 'teal', tab: 'job-agent' as ActiveTab },
+              { step: '01', icon: FileUp, title: 'Upload Your Resume', desc: 'Upload your resume in PDF. Our AI parses your experience, skills, and achievements instantly.', color: 'bg-emerald-500', tab: 'resume-analyzer' as ActiveTab },
+              { step: '02', icon: LinkIcon, title: 'Paste the Job URL', desc: 'Drop any public job posting URL. We extract the title, requirements, and key qualifications.', color: 'bg-purple-500', tab: 'job-agent' as ActiveTab },
+              { step: '03', icon: Sparkles, title: 'Get Your Application', desc: 'Receive a tailored resume, personalized cover letter, match score, and actionable insights.', color: 'bg-blue-500', tab: 'job-agent' as ActiveTab },
             ].map((item, i) => {
-              const gradients: Record<string, string> = {
-                emerald: 'from-emerald-400 to-emerald-600',
-                purple: 'from-purple-400 to-purple-600',
-                teal: 'from-emerald-400 to-teal-600',
-              };
-              const borderColors: Record<string, string> = {
-                emerald: 'border-emerald-400 text-emerald-600',
-                purple: 'border-purple-400 text-purple-600',
-                teal: 'border-teal-400 text-teal-600',
-              };
-              const hoverColors: Record<string, string> = {
-                emerald: 'hover:shadow-emerald-100/60 hover:border-emerald-200/80',
-                purple: 'hover:shadow-purple-100/60 hover:border-purple-200/80',
-                teal: 'hover:shadow-emerald-100/60 hover:border-emerald-200/80',
-              };
               return (
                 <motion.div
                   key={item.step}
@@ -385,26 +368,26 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.12 }}
-                  whileHover={{ y: -6, transition: { duration: 0.25 } }}
+                  whileHover={{ y: -4, x: -4, transition: { duration: 0.15 } }}
                   onClick={() => handleOpenTool(item.tab)}
-                  className={`relative p-7 rounded-[20px] bg-white/80 backdrop-blur-sm border border-slate-200/80 shadow-lg shadow-slate-200/40 hover:shadow-xl ${hoverColors[item.color]} space-y-5 text-center cursor-pointer transition-all duration-300 group`}
+                  className="relative p-7 rounded-xl bg-surface border-[2.5px] border-line shadow-brutal-sm hover:shadow-brutal-md space-y-5 text-center cursor-pointer transition-shadow duration-200 group"
                 >
                   <div className="flex justify-center">
                     <div className="relative">
-                      <div className={`w-[60px] h-[60px] rounded-2xl bg-gradient-to-br ${gradients[item.color]} flex items-center justify-center shadow-lg`}>
+                      <div className={`w-[60px] h-[60px] rounded-xl ${item.color} border-2 border-line flex items-center justify-center`}>
                         <item.icon className="w-7 h-7 text-white" />
                       </div>
-                      <span className={`absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white border-2 ${borderColors[item.color]} text-xs font-bold flex items-center justify-center shadow-sm`}>
+                      <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-lime-400 border-2 border-line text-xs font-bold flex items-center justify-center text-[#0B0B0F]">
                         {i + 1}
                       </span>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-lg font-bold text-slate-900">{item.title}</h3>
-                    <p className="text-[13px] text-slate-500 leading-relaxed">{item.desc}</p>
+                    <h3 className="text-lg font-bold text-ink font-heading">{item.title}</h3>
+                    <p className="text-[13px] text-muted leading-relaxed font-medium">{item.desc}</p>
                   </div>
                   <div className="flex justify-center pt-1">
-                    <span className={`inline-flex items-center text-xs font-semibold ${borderColors[item.color].split(' ')[1]} transition-colors`}>
+                    <span className="inline-flex items-center text-xs font-bold text-ink transition-colors">
                       {i === 0 ? 'Upload now' : i === 1 ? 'Try it' : 'See results'}
                       <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-0.5 transition-transform" />
                     </span>
@@ -417,7 +400,7 @@ export default function Home() {
       </section>
 
       {/* ═══════════════ KNOW YOUR MATCH ═══════════════ */}
-      <section className="py-20 bg-white border-y border-slate-100">
+      <section className="py-20 bg-surface border-y-[2.5px] border-line">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left — Copy */}
@@ -428,15 +411,18 @@ export default function Home() {
               transition={{ duration: 0.5 }}
               className="space-y-6"
             >
-              <span className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold uppercase tracking-wider">
-                <Target className="w-3.5 h-3.5 text-blue-500" />
+              <span className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-md bg-blue-500 border-2 border-line text-white text-xs font-bold uppercase tracking-wider">
+                <Target className="w-3.5 h-3.5" />
                 <span>Know Your Match</span>
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-tight">
+              <h2 className="text-3xl sm:text-4xl font-heading font-bold text-ink tracking-tight leading-tight">
                 See exactly where you{' '}
-                <span className="bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">stand</span>
+                <span className="relative inline-block">
+                  <span className="relative z-10">stand</span>
+                  <span className="absolute left-0 right-0 bottom-1 h-3 bg-blue-300 -z-0 -rotate-1"></span>
+                </span>
               </h2>
-              <p className="text-slate-500 text-[15px] leading-relaxed max-w-md">
+              <p className="text-muted text-[15px] leading-relaxed max-w-md font-medium">
                 Our AI compares your resume against the job description and surfaces a detailed match breakdown — skills you have, skills you&apos;re missing, and what to add.
               </p>
               <ul className="space-y-3">
@@ -445,7 +431,7 @@ export default function Home() {
                   'Keyword gap analysis for ATS optimization',
                   'Actionable recommendations to improve your score',
                 ].map((item, i) => (
-                  <li key={i} className="flex items-start space-x-3 text-sm text-slate-600">
+                  <li key={i} className="flex items-start space-x-3 text-sm text-ink font-medium">
                     <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                     <span>{item}</span>
                   </li>
@@ -453,7 +439,7 @@ export default function Home() {
               </ul>
               <button
                 onClick={() => handleOpenTool('job-matcher')}
-                className="inline-flex items-center space-x-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors group"
+                className="inline-flex items-center space-x-2 text-sm font-bold text-ink hover:text-blue-600 transition-colors group"
               >
                 <span>Analyze your match</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -467,35 +453,29 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl shadow-slate-200/40">
+              <div className="bg-canvas border-[2.5px] border-line rounded-xl p-6 shadow-brutal-lg">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs font-bold">N</div>
+                    <div className="w-8 h-8 rounded-md border-2 border-line bg-blue-500 flex items-center justify-center text-white text-xs font-bold">N</div>
                     <div>
-                      <h5 className="text-sm font-bold text-slate-900">Senior Frontend Engineer</h5>
-                      <p className="text-[11px] text-slate-400">Nimbus Cloud · Mountain View, CA</p>
+                      <h5 className="text-sm font-bold text-ink">Senior Frontend Engineer</h5>
+                      <p className="text-[11px] text-muted-2">Nimbus Cloud · Mountain View, CA</p>
                     </div>
                   </div>
-                  <span className="text-xs font-semibold text-slate-400">Just now</span>
+                  <span className="text-xs font-bold text-muted-2">Just now</span>
                 </div>
 
                 {/* Big Score Circle */}
                 <div className="flex flex-col items-center mb-6">
                   <div className="relative w-32 h-32 flex items-center justify-center">
                     <svg className="w-full h-full transform -rotate-90">
-                      <circle cx="64" cy="64" r="54" stroke="#f1f5f9" strokeWidth="10" fill="none" />
-                      <circle cx="64" cy="64" r="54" stroke="url(#matchGradient)" strokeWidth="10" fill="none" strokeDasharray="339" strokeDashoffset="143" strokeLinecap="round" />
-                      <defs>
-                        <linearGradient id="matchGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#3b82f6" />
-                          <stop offset="100%" stopColor="#10b981" />
-                        </linearGradient>
-                      </defs>
+                      <circle cx="64" cy="64" r="54" stroke="var(--color-line-soft)" strokeWidth="10" fill="none" />
+                      <circle cx="64" cy="64" r="54" stroke="var(--color-blue-500)" strokeWidth="10" fill="none" strokeDasharray="339" strokeDashoffset="143" strokeLinecap="round" />
                     </svg>
                     <div className="absolute flex flex-col items-center">
-                      <span className="text-3xl font-bold text-slate-900">58%</span>
-                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Match</span>
+                      <span className="text-3xl font-bold text-ink">58%</span>
+                      <span className="text-[10px] font-bold text-muted-2 uppercase tracking-wide">Match</span>
                     </div>
                   </div>
                 </div>
@@ -506,25 +486,25 @@ export default function Home() {
                     { skill: 'React / Next.js', score: 95, color: 'bg-emerald-500' },
                     { skill: 'TypeScript', score: 88, color: 'bg-emerald-500' },
                     { skill: 'System Design', score: 45, color: 'bg-amber-500' },
-                    { skill: 'GraphQL', score: 30, color: 'bg-red-400' },
-                    { skill: 'CI/CD Pipelines', score: 20, color: 'bg-red-400' },
+                    { skill: 'GraphQL', score: 30, color: 'bg-red-500' },
+                    { skill: 'CI/CD Pipelines', score: 20, color: 'bg-red-500' },
                   ].map((item) => (
                     <div key={item.skill} className="flex items-center space-x-3">
-                      <span className="text-xs font-medium text-slate-600 w-28 shrink-0 text-right">{item.skill}</span>
-                      <div className="flex-1 bg-slate-100 rounded-full h-2">
-                        <div className={`${item.color} h-2 rounded-full transition-all duration-700`} style={{ width: `${item.score}%` }}></div>
+                      <span className="text-xs font-bold text-ink w-28 shrink-0 text-right">{item.skill}</span>
+                      <div className="flex-1 bg-surface-2 rounded-full h-2 border border-line-soft">
+                        <div className={`${item.color} h-1.5 my-px ml-px rounded-full transition-all duration-700`} style={{ width: `${item.score}%` }}></div>
                       </div>
-                      <span className="text-xs font-bold text-slate-700 w-10">{item.score}%</span>
+                      <span className="text-xs font-bold text-ink w-10">{item.score}%</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Tags */}
-                <div className="mt-5 pt-4 border-t border-slate-100">
-                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Missing Keywords</p>
+                <div className="mt-5 pt-4 border-t-2 border-line-soft">
+                  <p className="text-[10px] font-bold text-muted-2 uppercase tracking-wider mb-2">Missing Keywords</p>
                   <div className="flex flex-wrap gap-1.5">
                     {['GraphQL', 'CI/CD', 'System Design', 'Kubernetes', 'gRPC'].map((tag) => (
-                      <span key={tag} className="text-[11px] font-medium text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-md">{tag}</span>
+                      <span key={tag} className="text-[11px] font-bold text-red-600 bg-red-100 border-2 border-line px-2 py-0.5 rounded-md">{tag}</span>
                     ))}
                   </div>
                 </div>
@@ -536,7 +516,6 @@ export default function Home() {
 
       {/* ═══════════════ TAILORED RESUME ═══════════════ */}
       <section className="py-20 relative overflow-hidden">
-        <div className="absolute top-10 right-[5%] w-72 h-72 bg-purple-100/25 rounded-full blur-[100px] pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left — Copy */}
@@ -547,15 +526,18 @@ export default function Home() {
               transition={{ duration: 0.5 }}
               className="space-y-6"
             >
-              <span className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-purple-50 border border-purple-200 text-purple-700 text-xs font-semibold uppercase tracking-wider">
-                <PenTool className="w-3.5 h-3.5 text-purple-500" />
+              <span className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-md bg-purple-500 border-2 border-line text-white text-xs font-bold uppercase tracking-wider">
+                <PenTool className="w-3.5 h-3.5" />
                 <span>AI Resume Tailoring</span>
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-tight">
+              <h2 className="text-3xl sm:text-4xl font-heading font-bold text-ink tracking-tight leading-tight">
                 Your resume, rewritten for{' '}
-                <span className="bg-gradient-to-r from-purple-500 to-violet-500 bg-clip-text text-transparent">every role</span>
+                <span className="relative inline-block">
+                  <span className="relative z-10">every role</span>
+                  <span className="absolute left-0 right-0 bottom-1 h-3 bg-purple-300 -z-0 -rotate-1"></span>
+                </span>
               </h2>
-              <p className="text-slate-500 text-[15px] leading-relaxed max-w-md">
+              <p className="text-muted text-[15px] leading-relaxed max-w-md font-medium">
                 Our AI restructures your resume to emphasize the skills, experiences, and keywords that matter most for the specific job — without fabricating anything.
               </p>
               <ul className="space-y-3">
@@ -564,7 +546,7 @@ export default function Home() {
                   'Injects missing ATS keywords naturally',
                   'Preserves your authentic voice and real experience',
                 ].map((item, i) => (
-                  <li key={i} className="flex items-start space-x-3 text-sm text-slate-600">
+                  <li key={i} className="flex items-start space-x-3 text-sm text-ink font-medium">
                     <CheckCircle2 className="w-5 h-5 text-purple-500 shrink-0 mt-0.5" />
                     <span>{item}</span>
                   </li>
@@ -572,7 +554,7 @@ export default function Home() {
               </ul>
               <button
                 onClick={() => handleOpenTool('resume-tailor')}
-                className="inline-flex items-center space-x-2 text-sm font-semibold text-purple-600 hover:text-purple-700 transition-colors group"
+                className="inline-flex items-center space-x-2 text-sm font-bold text-ink hover:text-purple-600 transition-colors group"
               >
                 <span>Tailor your resume</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -586,32 +568,32 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl shadow-slate-200/40 space-y-5">
+              <div className="bg-surface border-[2.5px] border-line rounded-xl p-6 shadow-brutal-lg space-y-5">
                 {/* Resume Header */}
-                <div className="border-b border-slate-100 pb-4">
-                  <h4 className="text-lg font-bold text-slate-900">Alex Johnson</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">Senior Frontend Engineer • San Francisco, CA</p>
+                <div className="border-b-2 border-line-soft pb-4">
+                  <h4 className="text-lg font-bold text-ink font-heading">Alex Johnson</h4>
+                  <p className="text-xs text-muted mt-0.5">Senior Frontend Engineer • San Francisco, CA</p>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 font-semibold border border-purple-200">Tailored for: Nimbus Cloud</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-semibold border border-emerald-200">+12 keywords added</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-purple-100 text-purple-700 font-bold border-2 border-line">Tailored for: Nimbus Cloud</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 font-bold border-2 border-line">+12 keywords added</span>
                   </div>
                 </div>
 
                 {/* Summary Section */}
                 <div>
-                  <h5 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1.5">Summary</h5>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Results-driven frontend engineer with <span className="text-purple-600 font-semibold bg-purple-50 px-1 rounded">6+ years</span> building scalable web applications using{' '}
-                    <span className="text-purple-600 font-semibold bg-purple-50 px-1 rounded">React, Next.js, and TypeScript</span>. Proven track record of improving performance and leading cross-functional teams.
+                  <h5 className="text-xs font-bold text-ink uppercase tracking-wider mb-1.5">Summary</h5>
+                  <p className="text-xs text-muted leading-relaxed">
+                    Results-driven frontend engineer with <span className="text-purple-700 font-bold bg-purple-100 px-1 rounded">6+ years</span> building scalable web applications using{' '}
+                    <span className="text-purple-700 font-bold bg-purple-100 px-1 rounded">React, Next.js, and TypeScript</span>. Proven track record of improving performance and leading cross-functional teams.
                   </p>
                 </div>
 
                 {/* Skills */}
                 <div>
-                  <h5 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1.5">Skills</h5>
+                  <h5 className="text-xs font-bold text-ink uppercase tracking-wider mb-1.5">Skills</h5>
                   <div className="flex flex-wrap gap-1.5">
                     {['React', 'Next.js', 'TypeScript', 'Node.js', 'GraphQL', 'Tailwind CSS', 'CI/CD', 'System Design'].map((skill, i) => (
-                      <span key={skill} className={`text-[11px] font-medium px-2 py-0.5 rounded-md ${i >= 4 ? 'text-purple-600 bg-purple-50 border border-purple-200' : 'text-slate-600 bg-slate-100 border border-slate-200'}`}>
+                      <span key={skill} className={`text-[11px] font-bold px-2 py-0.5 rounded-md border-2 ${i >= 4 ? 'text-purple-700 bg-purple-100 border-line' : 'text-ink bg-surface-2 border-line-soft'}`}>
                         {skill}
                         {i >= 4 && <span className="ml-1 text-[9px]">✨</span>}
                       </span>
@@ -621,17 +603,17 @@ export default function Home() {
 
                 {/* Experience Snippet */}
                 <div>
-                  <h5 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1.5">Experience</h5>
+                  <h5 className="text-xs font-bold text-ink uppercase tracking-wider mb-1.5">Experience</h5>
                   <div className="space-y-2">
                     <div className="flex items-start space-x-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1.5 shrink-0"></div>
-                      <p className="text-xs text-slate-500 leading-relaxed">
-                        Led migration to <span className="text-purple-600 font-semibold bg-purple-50 px-1 rounded">Next.js 14</span> reducing page load time by 40% and improving Core Web Vitals.
+                      <div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-1.5 shrink-0"></div>
+                      <p className="text-xs text-muted leading-relaxed">
+                        Led migration to <span className="text-purple-700 font-bold bg-purple-100 px-1 rounded">Next.js 14</span> reducing page load time by 40% and improving Core Web Vitals.
                       </p>
                     </div>
                     <div className="flex items-start space-x-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mt-1.5 shrink-0"></div>
-                      <p className="text-xs text-slate-500 leading-relaxed">
+                      <div className="w-1.5 h-1.5 rounded-full bg-muted-2 mt-1.5 shrink-0"></div>
+                      <p className="text-xs text-muted leading-relaxed">
                         Built component library serving 3 product teams, improving UI consistency and reducing development time by 25%.
                       </p>
                     </div>
@@ -644,7 +626,7 @@ export default function Home() {
       </section>
 
       {/* ═══════════════ PERSONALIZED COVER LETTER ═══════════════ */}
-      <section className="py-20 bg-white border-y border-slate-100">
+      <section className="py-20 bg-surface border-y-[2.5px] border-line">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left — Cover Letter Preview Mockup */}
@@ -655,39 +637,39 @@ export default function Home() {
               transition={{ duration: 0.5 }}
               className="order-2 lg:order-1"
             >
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl shadow-slate-200/40 space-y-4">
+              <div className="bg-canvas border-[2.5px] border-line rounded-xl p-6 shadow-brutal-lg space-y-4">
                 {/* Letter Header */}
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center justify-between border-b-2 border-line-soft pb-3">
                   <div className="flex items-center space-x-2">
                     <Mail className="w-4 h-4 text-amber-600" />
-                    <span className="text-sm font-bold text-slate-900">Cover Letter</span>
+                    <span className="text-sm font-bold text-ink">Cover Letter</span>
                   </div>
                   <div className="flex items-center space-x-1.5">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 font-semibold border border-amber-200">AI Generated</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-semibold border border-emerald-200">Role-Specific</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-amber-100 text-amber-700 font-bold border-2 border-line">AI Generated</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 font-bold border-2 border-line">Role-Specific</span>
                   </div>
                 </div>
 
                 {/* Letter Content */}
-                <div className="space-y-3 text-xs text-slate-600 leading-relaxed">
+                <div className="space-y-3 text-xs text-muted leading-relaxed">
                   <p>Dear Hiring Manager,</p>
                   <p>
                     I&apos;m writing to express my strong interest in the{' '}
-                    <span className="text-amber-700 font-semibold bg-amber-50 px-1 rounded">Senior Frontend Engineer</span>{' '}
-                    position at <span className="text-amber-700 font-semibold bg-amber-50 px-1 rounded">Nimbus Cloud</span>. With over six years of experience building production-grade applications with React and TypeScript, I&apos;m excited by the opportunity to contribute to your team.
+                    <span className="text-amber-700 font-bold bg-amber-100 px-1 rounded">Senior Frontend Engineer</span>{' '}
+                    position at <span className="text-amber-700 font-bold bg-amber-100 px-1 rounded">Nimbus Cloud</span>. With over six years of experience building production-grade applications with React and TypeScript, I&apos;m excited by the opportunity to contribute to your team.
                   </p>
                   <p>
                     In my current role at TechCorp, I led the migration of our flagship product to{' '}
-                    <span className="text-amber-700 font-semibold bg-amber-50 px-1 rounded">Next.js</span>, resulting in a{' '}
-                    <span className="text-emerald-600 font-semibold">40% improvement</span> in page load performance and significantly improved Core Web Vitals scores. I&apos;ve also architected and maintained a shared component library that serves multiple product teams.
+                    <span className="text-amber-700 font-bold bg-amber-100 px-1 rounded">Next.js</span>, resulting in a{' '}
+                    <span className="text-emerald-600 font-bold">40% improvement</span> in page load performance and significantly improved Core Web Vitals scores. I&apos;ve also architected and maintained a shared component library that serves multiple product teams.
                   </p>
                   <p>
                     I&apos;m particularly drawn to Nimbus Cloud&apos;s commitment to building user-first experiences at scale, and I believe my track record of shipping performant, accessible frontends aligns well with your team&apos;s mission.
                   </p>
-                  <p className="text-slate-500">
+                  <p className="text-muted">
                     I&apos;d love the opportunity to discuss how my experience can contribute to your team&apos;s goals.
                   </p>
-                  <p className="font-medium text-slate-700">
+                  <p className="font-bold text-ink">
                     Best regards,<br />
                     Alex Johnson
                   </p>
@@ -703,15 +685,18 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="space-y-6 order-1 lg:order-2"
             >
-              <span className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold uppercase tracking-wider">
-                <Mail className="w-3.5 h-3.5 text-amber-500" />
+              <span className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-md bg-amber-400 border-2 border-line text-[#0B0B0F] text-xs font-bold uppercase tracking-wider">
+                <Mail className="w-3.5 h-3.5" />
                 <span>Cover Letter Generation</span>
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-tight">
+              <h2 className="text-3xl sm:text-4xl font-heading font-bold text-ink tracking-tight leading-tight">
                 A cover letter that{' '}
-                <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">actually gets read</span>
+                <span className="relative inline-block">
+                  <span className="relative z-10">actually gets read</span>
+                  <span className="absolute left-0 right-0 bottom-1 h-3 bg-amber-300 -z-0 -rotate-1"></span>
+                </span>
               </h2>
-              <p className="text-slate-500 text-[15px] leading-relaxed max-w-md">
+              <p className="text-muted text-[15px] leading-relaxed max-w-md font-medium">
                 No more generic templates. Our AI crafts a personalized cover letter that references the specific role, company, and your most relevant experience.
               </p>
               <ul className="space-y-3">
@@ -720,7 +705,7 @@ export default function Home() {
                   'References your real skills and achievements',
                   'Professional tone with a personal touch',
                 ].map((item, i) => (
-                  <li key={i} className="flex items-start space-x-3 text-sm text-slate-600">
+                  <li key={i} className="flex items-start space-x-3 text-sm text-ink font-medium">
                     <CheckCircle2 className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                     <span>{item}</span>
                   </li>
@@ -728,7 +713,7 @@ export default function Home() {
               </ul>
               <button
                 onClick={() => handleOpenTool('cover-letter')}
-                className="inline-flex items-center space-x-2 text-sm font-semibold text-amber-600 hover:text-amber-700 transition-colors group"
+                className="inline-flex items-center space-x-2 text-sm font-bold text-ink hover:text-amber-600 transition-colors group"
               >
                 <span>Generate your cover letter</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -740,9 +725,7 @@ export default function Home() {
 
       {/* ═══════════════ RESPONSIBLE AI ═══════════════ */}
       <section className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-50/50 rounded-full blur-[120px]"></div>
-        </div>
+        <div className="absolute inset-0 bg-dots pointer-events-none opacity-40"></div>
         <div className="relative z-10 max-w-4xl mx-auto px-4 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -751,15 +734,18 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             className="space-y-6"
           >
-            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold uppercase tracking-wider">
-              <Shield className="w-3.5 h-3.5 text-emerald-500" />
+            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-md bg-emerald-500 border-2 border-line text-white text-xs font-bold uppercase tracking-wider">
+              <Shield className="w-3.5 h-3.5" />
               <span>Responsible AI</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-slate-900 tracking-tight leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-heading font-bold text-ink tracking-tight leading-tight">
               We don&apos;t invent. We highlight what you{' '}
-              <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">genuinely know.</span>
+              <span className="relative inline-block">
+                <span className="relative z-10">genuinely know.</span>
+                <span className="absolute left-0 right-0 bottom-1 h-3 bg-lime-400 -z-0 -rotate-1"></span>
+              </span>
             </h2>
-            <p className="text-slate-500 text-[15px] sm:text-base leading-relaxed max-w-2xl mx-auto">
+            <p className="text-muted text-[15px] sm:text-base leading-relaxed max-w-2xl mx-auto font-medium">
               Our AI works exclusively with information from your real resume and the actual job description. No hallucinated skills, no fabricated experiences — just your authentic qualifications, presented in the best light.
             </p>
           </motion.div>
@@ -777,12 +763,12 @@ export default function Home() {
               { icon: Lock, title: 'Privacy First', desc: 'Your data is never stored, shared, or used for training. Full control, always.' },
               { icon: Eye, title: 'Full Transparency', desc: 'See exactly what was changed, what keywords were added, and why.' },
             ].map((item) => (
-              <div key={item.title} className="p-5 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow text-center space-y-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mx-auto">
+              <div key={item.title} className="p-5 rounded-xl bg-surface border-[2.5px] border-line shadow-brutal-sm hover:shadow-brutal-md transition-shadow text-center space-y-3">
+                <div className="w-10 h-10 rounded-lg bg-lime-400 border-2 border-line flex items-center justify-center text-[#0B0B0F] mx-auto">
                   <item.icon className="w-5 h-5" />
                 </div>
-                <h4 className="text-base font-bold text-slate-900">{item.title}</h4>
-                <p className="text-[13px] text-slate-500 leading-relaxed">{item.desc}</p>
+                <h4 className="text-base font-bold text-ink font-heading">{item.title}</h4>
+                <p className="text-[13px] text-muted leading-relaxed font-medium">{item.desc}</p>
               </div>
             ))}
           </motion.div>
@@ -790,10 +776,8 @@ export default function Home() {
       </section>
 
       {/* ═══════════════ FINAL CTA ═══════════════ */}
-      <section className="py-20 bg-[#0f172a] relative overflow-hidden">
-        {/* Decorative orbs */}
-        <div className="absolute top-0 left-[20%] w-64 h-64 bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
-        <div className="absolute bottom-0 right-[20%] w-72 h-72 bg-teal-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+      <section className="py-20 bg-ink relative overflow-hidden">
+        <div className="absolute inset-0 bg-dots pointer-events-none opacity-10"></div>
 
         <div className="relative z-10 max-w-3xl mx-auto px-4 lg:px-8 text-center">
           <motion.div
@@ -803,37 +787,37 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             className="space-y-6"
           >
-            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/10 text-emerald-400 text-xs font-semibold">
+            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-md bg-lime-400 text-[#0B0B0F] text-xs font-bold border-2 border-canvas">
               <Bot className="w-3.5 h-3.5" />
               <span>Ready to get started?</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-white tracking-tight leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-heading font-bold text-canvas tracking-tight leading-tight">
               Build your next application<br />
-              <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">in minutes, not hours</span>
+              <span className="text-lime-400">in minutes, not hours</span>
             </h2>
-            <p className="text-slate-400 text-[15px] leading-relaxed max-w-lg mx-auto">
+            <p className="text-muted-2 text-[15px] leading-relaxed max-w-lg mx-auto font-medium">
               Analyze a job posting, get a tailored resume and cover letter, and see exactly where you stand — no credit card, no signup required to try it.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
               <a
                 href="/analyze"
-                className="bg-emerald-500 hover:bg-emerald-400 text-white font-semibold px-8 py-4 rounded-xl text-[15px] transition-all duration-200 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-400/35 flex items-center space-x-2 hover:-translate-y-0.5"
+                className="inline-flex items-center space-x-2 bg-lime-400 hover:bg-lime-300 text-[#0B0B0F] font-bold px-8 py-4 rounded-lg text-[15px] border-2 border-canvas shadow-[4px_4px_0_0_var(--color-emerald-500)] hover:-translate-y-0.5 hover:-translate-x-0.5 transition-all duration-150"
               >
                 <span>Analyze a Job Now</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
               <button
                 onClick={() => handleOpenTool('resume-analyzer')}
-                className="bg-white/10 hover:bg-white/15 text-white border border-white/10 font-medium px-6 py-4 rounded-xl text-[15px] transition-all duration-200 flex items-center space-x-2"
+                className="bg-transparent hover:bg-canvas/10 text-canvas border-2 border-canvas font-bold px-6 py-4 rounded-lg text-[15px] transition-all duration-150 flex items-center space-x-2"
               >
-                <FileUp className="w-4 h-4 text-emerald-400" />
+                <FileUp className="w-4 h-4" />
                 <span>Upload Your Resume</span>
               </button>
             </div>
 
             {/* Trust note */}
-            <div className="flex items-center justify-center space-x-2 pt-4 text-xs text-slate-400">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <div className="flex items-center justify-center space-x-2 pt-4 text-xs text-muted-2 font-bold">
+              <ShieldCheck className="w-4 h-4 text-lime-400" />
               <span>We never fabricate skills or experience you don&apos;t have</span>
             </div>
           </motion.div>
@@ -842,21 +826,21 @@ export default function Home() {
 
       {/* ═══════════════ AI WORKSPACE (Hidden until CTA clicked) ═══════════════ */}
       {showToolSection && (
-        <section id="ai-agent-tools" className="py-12 bg-slate-50">
+        <section id="ai-agent-tools" className="py-12 bg-canvas">
           <div className="max-w-7xl mx-auto px-4 lg:px-8 space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
-                  <Zap className="w-3.5 h-3.5 text-emerald-600" />
+                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-md bg-emerald-500 border-2 border-line text-white text-xs font-bold">
+                  <Zap className="w-3.5 h-3.5" />
                   <span>Live AI Engine</span>
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight mt-1">
+                <h2 className="text-2xl font-heading font-bold text-ink tracking-tight mt-1">
                   AI Application Workspace
                 </h2>
               </div>
 
               {/* Tool Tabs */}
-              <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
+              <div className="flex items-center gap-1 bg-surface p-1 rounded-lg border-2 border-line overflow-x-auto">
                 {[
                   { id: 'job-agent' as ActiveTab, label: 'AI Agent', icon: Bot },
                   { id: 'resume-analyzer' as ActiveTab, label: 'Resume', icon: FileUp },
@@ -869,13 +853,13 @@ export default function Home() {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`relative flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-200 whitespace-nowrap ${
+                      className={`relative flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-all duration-150 whitespace-nowrap ${
                         isActive
-                          ? 'text-emerald-700 bg-emerald-50 border border-emerald-200 font-semibold'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                          ? 'text-white bg-emerald-500 border-2 border-line'
+                          : 'text-muted hover:text-ink hover:bg-surface-2'
                       }`}
                     >
-                      <tab.icon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-600' : 'text-slate-400'}`} />
+                      <tab.icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-muted-2'}`} />
                       <span>{tab.label}</span>
                     </button>
                   );
@@ -891,6 +875,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.25, ease: 'easeOut' }}
+                className="dark"
               >
                 {activeTab === 'job-agent' && <JobAgentTab />}
                 {activeTab === 'resume-analyzer' && <ResumeAnalyzerTab />}
@@ -904,28 +889,28 @@ export default function Home() {
       )}
 
       {/* ═══════════════ FOOTER ═══════════════ */}
-      <footer className="border-t border-slate-200 bg-white py-10">
+      <footer className="border-t-[2.5px] border-line bg-surface py-10">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Logo */}
             <div className="flex items-center space-x-2.5">
-              <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center shadow-sm">
+              <div className="w-7 h-7 rounded-md border-2 border-line bg-emerald-500 flex items-center justify-center">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
-              <span className="text-base font-bold text-slate-900 flex items-center">
+              <span className="text-base font-bold font-heading text-ink flex items-center">
                 ApplyAI
-                <span className="relative -top-0.5 ml-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+                <span className="relative -top-0.5 ml-0.5 w-1.5 h-1.5 rounded-full bg-lime-400 inline-block"></span>
               </span>
             </div>
 
             {/* Links */}
-            <nav className="flex items-center space-x-6 text-[13px] font-medium text-slate-500">
-              <a href="#features" className="hover:text-slate-900 transition-colors">Features</a>
-              <a href="#how-it-works" className="hover:text-slate-900 transition-colors">How it Works</a>
+            <nav className="flex items-center space-x-6 text-[13px] font-bold text-muted">
+              <a href="#features" className="hover:text-ink transition-colors">Features</a>
+              <a href="#how-it-works" className="hover:text-ink transition-colors">How it Works</a>
             </nav>
 
             {/* Copyright */}
-            <p className="text-[13px] text-slate-400">
+            <p className="text-[13px] text-muted-2 font-medium">
               © 2026 ApplyAI. Built with Next.js & FastAPI.
             </p>
           </div>

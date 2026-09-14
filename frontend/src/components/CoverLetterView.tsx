@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { ApplyAiLogo } from '@/components/ApplyAiLogo';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import {
   Sparkles,
 
@@ -78,13 +79,13 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
 
   if (!data || (!letterBodyText && !emailBodyText)) {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
-        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6">
+      <div className="min-h-screen bg-canvas text-ink flex flex-col font-sans">
+        <header className="bg-surface border-b border-line-soft h-16 flex items-center justify-between px-6">
           <div className="flex items-center space-x-2">
             <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center shadow-md">
               <Sparkles className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold text-slate-900 text-base">ApplyAI</span>
+            <span className="font-bold text-ink text-base">ApplyAI</span>
           </div>
         </header>
         <main className="max-w-3xl mx-auto px-4 py-16 text-center space-y-6">
@@ -92,8 +93,8 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
             <FileText className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-slate-900">No Cover Letter Session Active</h2>
-            <p className="text-slate-500 text-sm max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-ink">No Cover Letter Session Active</h2>
+            <p className="text-muted text-sm max-w-md mx-auto">
               Upload your PDF resume and target job posting URL to generate your personalized cover letter and job application email.
             </p>
           </div>
@@ -148,15 +149,15 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-purple-500 selection:text-white pb-20">
+    <div className="min-h-screen bg-canvas text-ink font-sans selection:bg-purple-500 selection:text-white pb-20">
       {/* Top Application Bar */}
-      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
+      <header className="sticky top-0 z-40 bg-surface border-b border-line-soft shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             {onBackToDashboard ? (
               <button
                 onClick={onBackToDashboard}
-                className="flex items-center space-x-1.5 text-slate-500 hover:text-slate-900 transition-colors text-xs font-semibold"
+                className="flex items-center space-x-1.5 text-muted hover:text-ink transition-colors text-xs font-semibold"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Analysis</span>
@@ -164,20 +165,21 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
             ) : (
               <Link
                 href="/dashboard"
-                className="flex items-center space-x-1.5 text-slate-500 hover:text-slate-900 transition-colors text-xs font-semibold"
+                className="flex items-center space-x-1.5 text-muted hover:text-ink transition-colors text-xs font-semibold"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to Analysis</span>
               </Link>
             )}
 
-            <span className="text-slate-300">|</span>
+            <span className="text-muted-2">|</span>
 
-            <ApplyAiLogo size="sm" withText textClassName="text-slate-900 text-base" />
+            <ApplyAiLogo size="sm" withText textClassName="text-ink text-base" />
 
           </div>
 
           <div className="flex items-center space-x-3">
+            <ThemeToggle />
             <span className="hidden sm:inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               <span>AI Validation Passed</span>
@@ -189,29 +191,29 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
       {/* Main Workspace Container */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-6">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line-soft pb-5">
           <div>
             <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-md border border-purple-200/80 uppercase tracking-wider mb-1">
               <span>Step 5 of 5 • Final Application</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight">
               Cover Letter
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
-              {jobTitle} · <span className="font-semibold text-slate-800">{company}</span> ({location})
+            <p className="text-xs sm:text-sm text-muted font-normal mt-0.5">
+              {jobTitle} · <span className="font-semibold text-ink">{company}</span> ({location})
             </p>
           </div>
 
           {/* Action Toolbar */}
           <div className="flex items-center gap-2">
             {/* Mode Switcher Tabs */}
-            <div className="flex items-center bg-slate-200/80 p-1 rounded-xl border border-slate-300 text-xs font-semibold">
+            <div className="flex items-center bg-surface-2 p-1 rounded-xl border border-line-soft text-xs font-semibold">
               <button
                 onClick={() => setDocType('letter')}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
                   docType === 'letter'
-                    ? 'bg-white text-purple-700 shadow-xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-surface text-purple-700 shadow-xs font-bold'
+                    : 'text-ink hover:text-ink'
                 }`}
               >
                 Cover Letter
@@ -220,8 +222,8 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
                 onClick={() => setDocType('email')}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
                   docType === 'email'
-                    ? 'bg-white text-purple-700 shadow-xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-surface text-purple-700 shadow-xs font-bold'
+                    : 'text-ink hover:text-ink'
                 }`}
               >
                 Email Version
@@ -231,7 +233,7 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
             {/* Copy Button */}
             <button
               onClick={handleCopy}
-              className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:border-slate-400 text-slate-700 font-semibold text-xs transition-colors flex items-center space-x-1.5 shadow-xs cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-surface border border-line-soft hover:border-line text-ink font-semibold text-xs transition-colors flex items-center space-x-1.5 shadow-xs cursor-pointer"
             >
               {copied ? (
                 <>
@@ -240,7 +242,7 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
                 </>
               ) : (
                 <>
-                  <Copy className="w-3.5 h-3.5 text-slate-500" />
+                  <Copy className="w-3.5 h-3.5 text-muted" />
                   <span>{docType === 'email' ? 'Copy Email' : 'Copy'}</span>
                 </>
               )}
@@ -263,52 +265,52 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column: Cover Letter / Email Document Sheet */}
           <div className="lg:col-span-8 space-y-4">
-            <div className="bg-white border border-slate-200 rounded-2xl p-8 sm:p-12 shadow-lg shadow-slate-200/50 min-h-[680px] font-sans relative">
+            <div className="bg-surface border border-line-soft rounded-2xl p-8 sm:p-12 shadow-lg shadow-slate-200/50 min-h-[680px] font-sans relative">
               {docType === 'letter' ? (
                 /* Standard Formal Cover Letter View */
-                <div className="space-y-6 max-w-2xl mx-auto text-slate-800 text-[15px] leading-[1.6]">
+                <div className="space-y-6 max-w-2xl mx-auto text-ink text-[15px] leading-[1.6]">
                   {/* Sender Header */}
-                  <div className="border-b border-slate-100 pb-4">
-                    <h2 className="text-xl font-bold text-slate-900">{candidateName}</h2>
-                    <p className="text-xs text-slate-500 font-medium">
+                  <div className="border-b border-line-soft pb-4">
+                    <h2 className="text-xl font-bold text-ink">{candidateName}</h2>
+                    <p className="text-xs text-muted font-medium">
                       {[candidateLocation, candidateEmail, candidatePhone, candidateLinkedin, candidateGithub].filter(Boolean).join(' • ')}
                     </p>
-                    <p className="text-xs text-slate-400 mt-2">
+                    <p className="text-xs text-muted-2 mt-2">
                       {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                     </p>
                   </div>
 
                   {/* Recipient */}
-                  <div className="text-xs text-slate-600 space-y-0.5 font-medium">
-                    <p className="font-bold text-slate-900">Hiring Manager / Recruitment Team</p>
-                    <p className="font-semibold text-slate-800">{company}</p>
+                  <div className="text-xs text-ink space-y-0.5 font-medium">
+                    <p className="font-bold text-ink">Hiring Manager / Recruitment Team</p>
+                    <p className="font-semibold text-ink">{company}</p>
                     {location && <p>{location}</p>}
                   </div>
 
                   {/* Body Paragraphs */}
-                  <div className="space-y-4 whitespace-pre-line font-normal text-slate-800 leading-relaxed">
+                  <div className="space-y-4 whitespace-pre-line font-normal text-ink leading-relaxed">
                     {letterBodyText}
                   </div>
                 </div>
               ) : (
                 /* Email Version View */
                 <div className="space-y-5 max-w-2xl mx-auto">
-                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                    <div className="flex items-center space-x-2 text-xs font-semibold text-slate-700">
-                      <span className="text-slate-400 w-16 uppercase shrink-0">Subject:</span>
-                      <span className="font-bold text-slate-900">{emailSubject}</span>
+                  <div className="p-4 rounded-xl bg-canvas border border-line-soft space-y-2">
+                    <div className="flex items-center space-x-2 text-xs font-semibold text-ink">
+                      <span className="text-muted-2 w-16 uppercase shrink-0">Subject:</span>
+                      <span className="font-bold text-ink">{emailSubject}</span>
                     </div>
-                    <div className="flex items-center space-x-2 text-xs font-semibold text-slate-700 border-t border-slate-200/80 pt-2">
-                      <span className="text-slate-400 w-16 uppercase shrink-0">To:</span>
+                    <div className="flex items-center space-x-2 text-xs font-semibold text-ink border-t border-line-soft pt-2">
+                      <span className="text-muted-2 w-16 uppercase shrink-0">To:</span>
                       <span className="text-purple-700 font-bold">{emailRecipient}</span>
                     </div>
                   </div>
 
-                  <div className="p-6 rounded-xl border border-slate-200 bg-white font-sans text-[14.5px] leading-[1.6] text-slate-800 whitespace-pre-line shadow-xs">
+                  <div className="p-6 rounded-xl border border-line-soft bg-surface font-sans text-[14.5px] leading-[1.6] text-ink whitespace-pre-line shadow-xs">
                     {emailBodyText}
                     {(!emailBodyText?.includes(candidateName) && (candidatePhone || candidateEmail)) && (
-                      <div className="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600 space-y-0.5">
-                        <p className="font-bold text-slate-900">{candidateName}</p>
+                      <div className="mt-4 pt-3 border-t border-line-soft text-xs text-ink space-y-0.5">
+                        <p className="font-bold text-ink">{candidateName}</p>
                         {candidateEmail && <p>Email: {candidateEmail}</p>}
                         {candidatePhone && <p>Phone: {candidatePhone}</p>}
                         {candidateLinkedin && <p>LinkedIn: {candidateLinkedin}</p>}
@@ -327,15 +329,15 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4 }}
-              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4"
+              className="bg-surface border border-line-soft rounded-2xl p-5 shadow-xs space-y-4"
             >
-              <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
+              <div className="flex items-center space-x-2 border-b border-line-soft pb-3">
                 <Sparkles className="w-4 h-4 text-purple-600" />
-                <h3 className="text-sm font-bold text-slate-900">AI Summary</h3>
+                <h3 className="text-sm font-bold text-ink">AI Summary</h3>
               </div>
 
-              <div className="space-y-2 text-xs text-slate-700 font-medium">
-                <p className="text-slate-400 text-[11px] uppercase tracking-wider font-bold">
+              <div className="space-y-2 text-xs text-ink font-medium">
+                <p className="text-muted-2 text-[11px] uppercase tracking-wider font-bold">
                   Generated from:
                 </p>
                 <div className="space-y-1.5">
@@ -360,17 +362,17 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
-              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4"
+              className="bg-surface border border-line-soft rounded-2xl p-5 shadow-xs space-y-4"
             >
-              <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
+              <div className="flex items-center space-x-2 border-b border-line-soft pb-3">
                 <Zap className="w-4 h-4 text-purple-600" />
-                <h3 className="text-sm font-bold text-slate-900">Why this letter?</h3>
+                <h3 className="text-sm font-bold text-ink">Why this letter?</h3>
               </div>
 
               <div className="space-y-3">
                 {/* Profile matches */}
                 <div className="space-y-1.5">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                  <span className="text-[11px] font-bold text-muted-2 uppercase tracking-wider block">
                     Based on your profile
                   </span>
                   <div className="flex flex-wrap gap-1.5">
@@ -387,7 +389,7 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
 
                 {/* Role requirements */}
                 <div className="space-y-1.5 pt-1">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                  <span className="text-[11px] font-bold text-muted-2 uppercase tracking-wider block">
                     Matched with the role
                   </span>
                   <div className="flex flex-wrap gap-1.5">
@@ -404,12 +406,12 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
               </div>
 
               {/* AI Safety Box */}
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1 mt-2">
-                <div className="flex items-center space-x-1.5 text-xs font-bold text-slate-800">
+              <div className="p-3.5 rounded-xl bg-canvas border border-line-soft space-y-1 mt-2">
+                <div className="flex items-center space-x-1.5 text-xs font-bold text-ink">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
                   <span>AI Safety Assurance</span>
                 </div>
-                <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                <p className="text-[11px] text-muted leading-relaxed font-normal">
                   This letter does not claim experience that wasn&apos;t found in your resume.
                 </p>
               </div>
@@ -420,16 +422,16 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: 0.15 }}
-              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4"
+              className="bg-surface border border-line-soft rounded-2xl p-5 shadow-xs space-y-4"
             >
-              <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
+              <div className="flex items-center space-x-2 border-b border-line-soft pb-3">
                 <Sliders className="w-4 h-4 text-purple-600" />
-                <h3 className="text-sm font-bold text-slate-900">Customization</h3>
+                <h3 className="text-sm font-bold text-ink">Customization</h3>
               </div>
 
               {/* Tone Selection */}
               <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                <label className="text-[11px] font-bold text-muted-2 uppercase tracking-wider block">
                   Writing Tone
                 </label>
                 <div className="grid grid-cols-3 gap-1.5 text-xs font-semibold">
@@ -440,7 +442,7 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
                       className={`py-1.5 px-2 rounded-lg border text-center transition-all ${
                         tone === t
                           ? 'bg-purple-50 text-purple-700 border-purple-300 font-bold'
-                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                          : 'bg-surface text-ink border-line-soft hover:bg-canvas'
                       }`}
                     >
                       {t}
@@ -451,7 +453,7 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
 
               {/* Length Selection */}
               <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                <label className="text-[11px] font-bold text-muted-2 uppercase tracking-wider block">
                   Length
                 </label>
                 <div className="grid grid-cols-3 gap-1.5 text-xs font-semibold">
@@ -462,7 +464,7 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
                       className={`py-1.5 px-2 rounded-lg border text-center transition-all ${
                         length === l
                           ? 'bg-purple-50 text-purple-700 border-purple-300 font-bold'
-                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                          : 'bg-surface text-ink border-line-soft hover:bg-canvas'
                       }`}
                     >
                       {l}
@@ -475,7 +477,7 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
               <button
                 onClick={handleRegenerate}
                 disabled={isRegenerating}
-                className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors flex items-center justify-center space-x-2 cursor-pointer mt-2"
+                className="w-full py-2.5 rounded-xl bg-surface-2 hover:bg-line-soft text-ink font-bold text-xs transition-colors flex items-center justify-center space-x-2 cursor-pointer mt-2"
               >
                 <RotateCw className={`w-3.5 h-3.5 ${isRegenerating ? 'animate-spin text-purple-600' : ''}`} />
                 <span>{isRegenerating ? 'Regenerating...' : 'Regenerate'}</span>
@@ -489,10 +491,10 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="bg-slate-900 text-white rounded-2xl p-6 sm:p-8 text-center space-y-5 shadow-xl"
+          className="border-[2.5px] border-line bg-ink text-canvas rounded-2xl p-6 sm:p-8 text-center space-y-5 shadow-brutal-md"
         >
           <div className="space-y-2">
-            <h3 className="text-xl font-bold">Your application is ready.</h3>
+            <h3 className="text-xl font-bold font-heading">Your application is ready.</h3>
             <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-emerald-400 pt-1">
               <span className="flex items-center gap-1.5 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
                 <Check className="w-3.5 h-3.5" /> Job analyzed
@@ -528,14 +530,14 @@ export const CoverLetterView: React.FC<CoverLetterViewProps> = ({
             {onBackToDashboard ? (
               <button
                 onClick={onBackToDashboard}
-                className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-xs sm:text-sm border border-white/10 transition-colors"
+                className="px-5 py-3 rounded-xl bg-canvas/10 hover:bg-canvas/15 text-canvas font-semibold text-xs sm:text-sm border-2 border-canvas/20 transition-colors"
               >
                 ← Back to Analysis
               </button>
             ) : (
               <Link
                 href="/dashboard"
-                className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-xs sm:text-sm border border-white/10 transition-colors"
+                className="px-5 py-3 rounded-xl bg-canvas/10 hover:bg-canvas/15 text-canvas font-semibold text-xs sm:text-sm border-2 border-canvas/20 transition-colors"
               >
                 ← Back to Analysis
               </Link>

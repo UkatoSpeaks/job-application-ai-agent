@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ActiveTab } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 import { ApplyAiLogo } from '@/components/ApplyAiLogo';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { ArrowRight, LayoutDashboard, LogOut, User as UserIcon } from 'lucide-react';
 
 
@@ -14,35 +15,35 @@ interface NavbarProps {
   onOpenApp?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenApp }) => {
+export const Navbar: React.FC<NavbarProps> = ({ setActiveTab }) => {
   const { user, isAuthenticated, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0f172a] border-b border-white/[0.06]">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 lg:px-8 h-[56px]">
-        
+    <header className="sticky top-0 z-50 bg-canvas border-b-[2.5px] border-line">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 lg:px-8 h-[60px]">
+
         {/* Logo */}
         <Link
           href="/"
           className="cursor-pointer shrink-0"
           onClick={() => setActiveTab('job-agent')}
         >
-          <ApplyAiLogo size="md" withText textClassName="text-white text-[18px]" />
+          <ApplyAiLogo size="md" withText textClassName="text-ink text-[18px]" />
         </Link>
 
 
         {/* Center Navigation Links */}
-        <nav className="hidden lg:flex items-center space-x-8 text-[14px] font-medium">
+        <nav className="hidden lg:flex items-center space-x-8 text-[14px] font-bold font-heading">
           <a
             href="#features"
-            className="text-slate-300 hover:text-white transition-colors duration-200"
+            className="text-ink hover:text-emerald-500 transition-colors duration-150"
           >
             Features
           </a>
           <a
             href="#how-it-works"
-            className="text-slate-300 hover:text-white transition-colors duration-200"
+            className="text-ink hover:text-emerald-500 transition-colors duration-150"
           >
             How it Works
           </a>
@@ -50,23 +51,25 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
 
         {/* Right CTA Actions */}
         <div className="flex items-center space-x-2">
+          <ThemeToggle className="hidden sm:flex" />
+
           {isAuthenticated ? (
-            <div className="flex items-center space-x-3">
-              <span className="hidden md:flex items-center space-x-1.5 text-[13px] text-slate-300 font-medium px-2 py-1 bg-slate-800/80 rounded-lg border border-slate-700/50">
-                <UserIcon className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="flex items-center space-x-2.5">
+              <span className="hidden md:flex items-center space-x-1.5 text-[13px] text-ink font-bold px-2.5 py-1.5 bg-surface-2 rounded-md border-2 border-line">
+                <UserIcon className="w-3.5 h-3.5 text-emerald-500" />
                 <span className="max-w-[100px] truncate">{user?.name}</span>
               </span>
               <Link
                 href="/dashboard"
-                className="bg-emerald-500 hover:bg-emerald-400 text-white text-[13px] font-semibold px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-1.5 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-400/30"
+                className="brutal-btn bg-lime-400 hover:bg-lime-300 text-[#0B0B0F] text-[13px] font-bold px-4 py-2 flex items-center space-x-1.5"
               >
                 <LayoutDashboard className="w-3.5 h-3.5" />
-                <span>Go to Dashboard</span>
+                <span>Dashboard</span>
               </Link>
               <button
                 onClick={logout}
                 title="Sign Out"
-                className="p-2 rounded-lg text-slate-400 hover:text-red-400 hover:bg-white/[0.06] transition-all duration-200"
+                className="p-2 rounded-md border-2 border-line text-ink hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-150"
               >
                 <LogOut className="w-[18px] h-[18px]" />
               </button>
@@ -75,15 +78,15 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
             <>
               <Link
                 href="/signin"
-                className="text-[14px] font-medium text-slate-300 hover:text-white px-3 py-2 transition-colors hidden sm:block"
+                className="text-[14px] font-bold font-heading text-ink hover:text-emerald-500 px-3 py-2 transition-colors hidden sm:block"
               >
                 Sign in
               </Link>
               <Link
                 href="/signup"
-                className="bg-emerald-500 hover:bg-emerald-400 text-white text-[13px] font-semibold px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-1.5 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-400/30"
+                className="brutal-btn bg-lime-400 hover:bg-lime-300 text-[#0B0B0F] text-[13px] font-bold px-4 py-2 flex items-center space-x-1.5"
               >
-                <span>Get Started Free</span>
+                <span>Get Started</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </>
@@ -92,7 +95,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
           {/* Mobile menu toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-all"
+            className="lg:hidden p-2 rounded-md border-2 border-line text-ink transition-all"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               {mobileMenuOpen ? (
@@ -107,22 +110,26 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-white/[0.06] bg-[#0f172a] px-4 py-4 space-y-2">
+        <div className="lg:hidden border-t-[2.5px] border-line bg-canvas px-4 py-4 space-y-2">
+          <div className="flex items-center justify-between px-1 pb-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-muted">Theme</span>
+            <ThemeToggle />
+          </div>
           {isAuthenticated ? (
             <>
-              <div className="px-3 py-2 text-xs font-semibold text-emerald-400">
+              <div className="px-3 py-2 text-xs font-bold text-emerald-500">
                 Signed in as {user?.name} ({user?.email})
               </div>
               <Link
                 href="/dashboard"
-                className="flex items-center space-x-2 px-3 py-2.5 text-[14px] text-white bg-emerald-600 rounded-lg font-medium"
+                className="flex items-center space-x-2 px-3 py-2.5 text-[14px] text-[#0B0B0F] bg-lime-400 border-2 border-line rounded-md font-bold"
               >
                 <LayoutDashboard className="w-4 h-4" />
                 <span>Go to Dashboard</span>
               </Link>
               <button
                 onClick={logout}
-                className="w-full text-left flex items-center space-x-2 px-3 py-2.5 text-[14px] text-red-400 hover:bg-white/[0.06] rounded-lg font-medium transition-colors"
+                className="w-full text-left flex items-center space-x-2 px-3 py-2.5 text-[14px] text-red-500 hover:bg-surface-2 rounded-md font-bold transition-colors"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Sign Out</span>
@@ -132,22 +139,22 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
             <>
               <Link
                 href="/signin"
-                className="block px-3 py-2.5 text-[14px] text-slate-300 hover:text-white hover:bg-white/[0.06] rounded-lg font-medium transition-colors"
+                className="block px-3 py-2.5 text-[14px] text-ink hover:bg-surface-2 rounded-md font-bold transition-colors"
               >
                 Sign In
               </Link>
               <Link
                 href="/signup"
-                className="block px-3 py-2.5 text-[14px] text-emerald-400 hover:bg-white/[0.06] rounded-lg font-medium transition-colors"
+                className="block px-3 py-2.5 text-[14px] text-[#0B0B0F] bg-lime-400 border-2 border-line rounded-md font-bold transition-colors"
               >
                 Sign Up Free
               </Link>
             </>
           )}
-          <a href="#features" className="block px-3 py-2.5 text-[14px] text-slate-300 hover:text-white hover:bg-white/[0.06] rounded-lg font-medium transition-colors">
+          <a href="#features" className="block px-3 py-2.5 text-[14px] text-ink hover:bg-surface-2 rounded-md font-bold transition-colors">
             Features
           </a>
-          <a href="#how-it-works" className="block px-3 py-2.5 text-[14px] text-slate-300 hover:text-white hover:bg-white/[0.06] rounded-lg font-medium transition-colors">
+          <a href="#how-it-works" className="block px-3 py-2.5 text-[14px] text-ink hover:bg-surface-2 rounded-md font-bold transition-colors">
             How it Works
           </a>
         </div>
@@ -155,4 +162,3 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
     </header>
   );
 };
-

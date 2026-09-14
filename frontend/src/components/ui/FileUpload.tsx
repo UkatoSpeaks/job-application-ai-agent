@@ -56,7 +56,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
   return (
     <div className="w-full">
-      <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+      <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-2">
         {label}
       </label>
 
@@ -82,7 +82,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 ${
               isDragging
                 ? 'border-emerald-500 bg-emerald-50 scale-[1.01]'
-                : 'border-slate-300 hover:border-emerald-500 bg-slate-50/50 hover:bg-emerald-50/30'
+                : 'border-line-soft hover:border-emerald-500 bg-canvas/50 hover:bg-emerald-50/30'
             }`}
           >
             <div className="flex flex-col items-center justify-center gap-3">
@@ -90,10 +90,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 <FileUp className="w-6 h-6 animate-bounce" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-700">
+                <p className="text-sm font-semibold text-ink">
                   <span className="text-emerald-600 font-bold">Click to upload</span> or drag and drop
                 </p>
-                <p className="text-xs text-slate-500 mt-1">PDF Resume files supported (Max 10MB)</p>
+                <p className="text-xs text-muted mt-1">PDF Resume files supported (Max 10MB)</p>
               </div>
             </div>
           </motion.div>
@@ -110,7 +110,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 <FileText className="w-5 h-5" />
               </div>
               <div className="truncate">
-                <p className="text-sm font-bold text-slate-900 truncate">{selectedFile.name}</p>
+                <p className="text-sm font-bold text-ink truncate">{selectedFile.name}</p>
                 <p className="text-xs text-emerald-700 flex items-center space-x-1 mt-0.5 font-medium">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   <span>Ready for parsing ({(selectedFile.size / 1024).toFixed(1)} KB)</span>
@@ -120,7 +120,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
             <button
               onClick={handleRemove}
-              className="p-1.5 rounded-lg hover:bg-emerald-100 text-slate-400 hover:text-rose-600 transition-colors ml-2"
+              className="p-1.5 rounded-lg hover:bg-emerald-100 text-muted-2 hover:text-rose-600 transition-colors ml-2"
               title="Remove file"
             >
               <X className="w-4 h-4" />

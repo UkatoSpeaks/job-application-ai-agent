@@ -21,8 +21,8 @@ export default function CoverLetterPage() {
 
   if (isLoading || !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center">
-        <div className="flex items-center space-x-3 text-emerald-400 font-medium text-sm">
+      <div className="min-h-screen bg-canvas flex items-center justify-center">
+        <div className="flex items-center space-x-3 text-emerald-500 font-bold text-sm">
           <Loader2 className="w-5 h-5 animate-spin" />
           <span>Authenticating...</span>
         </div>

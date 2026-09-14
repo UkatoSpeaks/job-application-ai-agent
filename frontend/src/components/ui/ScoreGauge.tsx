@@ -71,14 +71,14 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
         </svg>
 
         <div className="absolute flex flex-col items-center justify-center text-center">
-          <span className={`${dimensions.fontSize} font-extrabold tracking-tight text-slate-900`}>
+          <span className={`${dimensions.fontSize} font-extrabold tracking-tight text-ink`}>
             {Math.round(normalizedScore)}%
           </span>
         </div>
       </div>
 
       <div className="mt-3 text-center">
-        <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">{title}</p>
+        <p className="text-xs text-muted uppercase font-bold tracking-wider">{title}</p>
         <span className={`inline-block mt-1 text-xs font-bold px-3 py-1 rounded-full border ${badgeColor}`}>
           {badgeText}
         </span>
