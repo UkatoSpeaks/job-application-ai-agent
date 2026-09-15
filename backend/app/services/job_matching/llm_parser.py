@@ -3,7 +3,7 @@ import json
 from pydantic import ValidationError
 
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_mistralai import ChatMistralAI
+from langchain_groq import ChatGroq
 
 from app.core.config import settings
 from app.schemas.job_description import JobDescription
@@ -33,18 +33,20 @@ class JobDescriptionLLMParser:
         print("ENTERED LLM PARSER")
         print("===================================")
 
-        print("API KEY EXISTS :", bool(settings.MISTRAL_API_KEY))
+        print("API KEY EXISTS :", bool(settings.GROQ_API_KEY))
         print("MODEL :", settings.MODEL_NAME)
 
-        if not settings.MISTRAL_API_KEY:
+        if not settings.GROQ_API_KEY:
             raise ValueError(
-                "Missing Mistral API Key."
+                "Missing Groq API Key."
             )
 
-        llm = ChatMistralAI(
-            api_key=settings.MISTRAL_API_KEY,
+        llm = ChatGroq(
+            api_key=settings.GROQ_API_KEY,
             model=settings.MODEL_NAME,
             temperature=0,
+            reasoning_effort="low",
+            max_tokens=8192,
         )
 
         messages = cls.prompt.format_messages(
@@ -53,7 +55,7 @@ class JobDescriptionLLMParser:
 
         try:
 
-            print("\nCalling Mistral...\n")
+            print("\nCalling Groq...\n")
 
             response = llm.invoke(messages)
 

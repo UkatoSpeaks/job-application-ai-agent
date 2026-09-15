@@ -1,7 +1,7 @@
 import json
 
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_mistralai import ChatMistralAI
+from langchain_groq import ChatGroq
 from pydantic import ValidationError
 
 from app.core.config import settings
@@ -30,10 +30,12 @@ class ResumeTailor:
         job_description: str,
     ) -> ResumeTailorResponse:
 
-        llm = ChatMistralAI(
-            api_key=settings.MISTRAL_API_KEY,
+        llm = ChatGroq(
+            api_key=settings.GROQ_API_KEY,
             model=settings.MODEL_NAME,
             temperature=0,
+            reasoning_effort="low",
+            max_tokens=8192,
         )
 
         messages = cls.prompt.format_messages(
@@ -41,7 +43,7 @@ class ResumeTailor:
             job_description=job_description,
         )
 
-        print("\n========== SENDING TO MISTRAL ==========\n")
+        print("\n========== SENDING TO GROQ ==========\n")
 
         response = llm.invoke(messages)
 

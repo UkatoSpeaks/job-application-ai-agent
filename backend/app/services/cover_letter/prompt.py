@@ -35,13 +35,13 @@ OUTPUT RULES:
 Return ONLY valid JSON with no markdown syntax, fences, or commentary.
 
 Return exactly:
-{
+{{
     "company": "",
     "job_title": "",
     "cover_letter": "",
     "email_subject": "",
     "email_body": ""
-}
+}}
 """
 
 

@@ -3,7 +3,7 @@ import json
 from pydantic import ValidationError
 
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_mistralai import ChatMistralAI
+from langchain_groq import ChatGroq
 
 from app.core.config import settings
 
@@ -43,10 +43,12 @@ class CoverLetterGenerator:
             print("\nPrevious validation feedback:")
             print(validation_feedback)
 
-        llm = ChatMistralAI(
-            api_key=settings.MISTRAL_API_KEY,
+        llm = ChatGroq(
+            api_key=settings.GROQ_API_KEY,
             model=settings.MODEL_NAME,
             temperature=0,
+            reasoning_effort="low",
+            max_tokens=8192,
         )
 
         messages = cls.prompt.format_messages(
@@ -58,7 +60,7 @@ class CoverLetterGenerator:
 
         try:
 
-            print("\nInvoking Mistral...\n")
+            print("\nInvoking Groq...\n")
 
             response = llm.invoke(messages)
 

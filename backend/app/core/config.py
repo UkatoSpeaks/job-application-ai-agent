@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
-    MISTRAL_API_KEY: str = ""
-    MODEL_NAME: str = "mistral-small-latest"
+    GROQ_API_KEY: str = ""
+    MODEL_NAME: str = "openai/gpt-oss-20b"
 
     LOG_LEVEL: str
 
